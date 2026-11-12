@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="EnFoco: o teu dia em foquitos, um de cada vez. Protótipo de hackathon para adultos com PHDA. Não é uma ferramenta médica.">
-<title>EnFoco — um foquito de cada vez</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23151b2e'/%3E%3Ccircle cx='16' cy='13' r='8' fill='%23ffc15e'/%3E%3Crect x='12' y='21' width='8' height='6' rx='2' fill='%239aa3b8'/%3E%3C/svg%3E">
+<meta name="description" content="EnFoco: um calendário low poly em que cada dia se ilumina com o foco que lhe deste. Protótipo de hackathon para adultos com PHDA. Não é uma ferramenta médica.">
+<title>EnFoco — o teu calendário, uma luz de cada vez</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 80'%3E%3Cpath fill='%23ffe2a6' d='M32 4 52 14 32 30z'/%3E%3Cpath fill='%23ffc15e' d='M52 14 58 34 32 30z'/%3E%3Cpath fill='%23f0a22e' d='M58 34 46 52 32 30z'/%3E%3Cpath fill='%23e08e1a' d='M46 52H18L32 30z'/%3E%3Cpath fill='%23f7b243' d='M18 52 6 34 32 30z'/%3E%3Cpath fill='%23ffd07a' d='M6 34 12 14 32 30z'/%3E%3Cpath fill='%23ffedc7' d='M12 14 32 4 32 30z'/%3E%3Cpath fill='%239aa3b8' d='M20 54H44L41 67H23z'/%3E%3Cpath fill='%235d6780' d='M25 69H39L35 77H29z'/%3E%3C/svg%3E">
 
-<!-- Three.js arrives as ES modules through this import map. The app itself never imports it statically,
-     so if the CDN or WebGL is unavailable the page still works with the simple 2D view. -->
+<!-- Three.js arrives as ES modules through this import map. The app never imports it statically,
+     so if the CDN or WebGL is unavailable the page still works with the simple 2D calendar. -->
 <script type="importmap">
 {
   "imports": {
@@ -63,23 +63,23 @@ button,input,select,textarea{font:inherit;color:inherit}
 .skip{position:absolute;left:8px;top:-60px;z-index:50;background:var(--primary);color:var(--on-primary);padding:10px 14px;border-radius:10px}
 .skip:focus{top:8px}
 
-/* ---------- chrome ---------- */
-.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:8px;
-  padding:8px max(12px,env(safe-area-inset-left)) 8px max(12px,env(safe-area-inset-right));
+/* ---------- chrome: no logo here, it lives on the cover ---------- */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:flex-end;gap:8px;
+  padding:8px max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left));
   background:var(--bg);border-bottom:1px solid var(--line)}
-.brand{display:inline-flex;align-items:center;gap:8px;min-height:var(--tap);padding:0 8px 0 4px;border:0;background:none;cursor:pointer;
-  font-weight:700;font-size:1.12rem;letter-spacing:-.01em;border-radius:10px}
-.brand svg{width:26px;height:26px;flex:none}
+body[data-view="cover"] .top{position:absolute;left:0;right:0;background:transparent;border-color:transparent}
 .tools{display:flex;align-items:center;gap:6px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
 .seg button{min-width:44px;min-height:44px;border:0;background:none;cursor:pointer;font-weight:600;font-size:.92rem;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
-.icon-btn{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}
+.icon-btn{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;flex:none}
 .icon-btn svg{width:20px;height:20px}
 #demo-banner{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;justify-content:center;padding:8px 14px;
   background:var(--amber-wash);color:var(--ink);border-bottom:1px solid var(--line);font-size:.93rem}
 #demo-banner button{min-height:40px}
+body[data-view="cover"] #demo-banner{display:none}
 main{max-width:680px;margin:0 auto;padding:14px 16px 110px}
+main.full{max-width:none;padding:0}
 .lead{color:var(--muted);font-size:1.04rem;max-width:56ch;margin:0 0 .6em}
 .note{color:var(--muted);font-size:.93rem}
 .back{display:inline-flex;align-items:center;gap:2px;min-height:44px;padding:0 10px 0 2px;margin:0 0 2px -4px;border:0;background:none;cursor:pointer;color:var(--muted);font-weight:600;border-radius:10px}
@@ -90,6 +90,7 @@ main{max-width:680px;margin:0 auto;padding:14px 16px 110px}
   border:1px solid transparent;background:var(--primary);color:var(--on-primary);font-weight:600;cursor:pointer;text-align:center;line-height:1.2}
 .btn.quiet{background:var(--surface-2);color:var(--ink);border-color:var(--line)}
 .btn.lit{background:var(--amber);color:var(--on-amber)}
+.btn.big{min-height:58px;padding:0 38px;font-size:1.15rem;border-radius:16px}
 .btn.danger{background:none;color:var(--danger);border-color:currentColor}
 .btn.ghost{background:none;color:var(--muted);border-color:transparent;padding:0 10px;min-width:44px}
 .btn.mini{min-height:44px;padding:0 12px;font-size:.92rem}
@@ -129,14 +130,34 @@ details.more>summary{font-weight:600;color:var(--muted);font-size:.95rem}
 .bullets{padding-left:1.2em;list-style:disc}
 .bullets li{margin:.35em 0;max-width:64ch}
 
-/* ---------- breathing ---------- */
+/* ---------- cover (always dusk, like the room) ---------- */
+.cover{position:relative;min-height:100dvh;display:grid;align-content:end;justify-items:center;overflow:hidden;color:#e8edf5;
+  background:radial-gradient(120% 75% at 50% 18%,#2b3657 0%,#171d32 52%,#0b0f1a 100%)}
+#cover-gl{position:absolute;inset:0}
+#cover-gl canvas{display:block;width:100%;height:100%}
+#cover-body{position:relative;z-index:1;width:100%;max-width:600px;padding:46vh 22px max(26px,env(safe-area-inset-bottom));text-align:center}
+.cover.flat #cover-body{padding-top:14vh}
+.cover-icon{display:none;width:min(46vw,190px);margin:0 auto 8px}
+.cover.flat .cover-icon{display:block}
+.wordmark{display:flex;align-items:center;justify-content:center;gap:.22em;margin:0;font-size:clamp(3.1rem,15vw,5.4rem);font-weight:750;letter-spacing:-.035em;line-height:1;color:#fff4dc}
+.wordmark svg{width:.62em;height:auto;flex:none}
+.cover.flat .wordmark svg{display:none}
+.cv-tag{font-size:clamp(1.1rem,4.4vw,1.4rem);font-weight:600;margin:.55em 0 .2em;color:#ffd08a}
+.cv-sub{color:#b9c4dc;margin:0 auto 1.2em;max-width:42ch}
+.cover .note{color:#9daac6;margin-top:1.4em;font-size:.85rem}
+.cover .btn.lit{background:#ffc15e;color:#1d1503}
+
+/* ---------- breathing: a faceted, low-poly orb ---------- */
 .breath{min-height:calc(100dvh - 150px);display:grid;justify-items:center;align-content:center;gap:6px;text-align:center}
 .b-intro{color:var(--muted);margin-bottom:14px}
 .orb-wrap{position:relative;width:min(62vw,250px);aspect-ratio:1;display:grid;place-items:center;margin:6px 0 14px}
-.orb-guide{position:absolute;inset:0;border-radius:50%;border:1.5px dashed var(--line)}
-.orb{width:100%;height:100%;border-radius:50%;transform:scale(.5);
-  background:radial-gradient(circle at 50% 40%,#ffe7b5 0%,var(--amber) 58%,#d98a14 100%);
-  box-shadow:0 0 70px -10px var(--amber);transition:transform var(--d,4s) cubic-bezier(.45,0,.35,1)}
+.orb-wrap::before{content:"";position:absolute;inset:8%;border-radius:50%;background:var(--amber);filter:blur(34px);opacity:.38}
+.orb-guide{position:absolute;inset:0;border:1.5px dashed var(--line);
+  clip-path:none;border-radius:50%}
+.orb{position:relative;width:100%;height:100%;transform:scale(.5);
+  clip-path:polygon(50% 0%,75% 6.7%,93.3% 25%,100% 50%,93.3% 75%,75% 93.3%,50% 100%,25% 93.3%,6.7% 75%,0% 50%,6.7% 25%,25% 6.7%);
+  background:conic-gradient(from 15deg,#ffd98f 0 30deg,#f0a22e 0 60deg,#ffc869 0 90deg,#e9961f 0 120deg,#ffe2a6 0 150deg,#f0a22e 0 180deg,#ffcf7a 0 210deg,#e08e1a 0 240deg,#ffc15e 0 270deg,#f5ab3a 0 300deg,#ffe2a6 0 330deg,#eb9a24 0 360deg);
+  transition:transform var(--d,4s) cubic-bezier(.45,0,.35,1)}
 .orb[data-p="inhale"],.orb[data-p="hold"]{transform:scale(1)}
 .orb[data-p="exhale"],.orb[data-p="ready"]{transform:scale(.5)}
 .b-phase{font-size:clamp(1.9rem,8vw,2.6rem);font-weight:650;letter-spacing:-.02em;margin:0;line-height:1.1}
@@ -160,42 +181,76 @@ html[data-motion="reduce"] .orb[data-p="exhale"],html[data-motion="reduce"] .orb
 @media(min-width:600px){.menu{grid-template-columns:1fr 1fr}.m-item.lit{grid-column:1/-1}}
 .lights{margin-top:18px}
 
-/* ---------- stage (always dusk, in both themes, so the bulbs can glow) ---------- */
-.stage{position:relative;height:clamp(220px,34vh,330px);border-radius:20px;overflow:hidden;margin:6px 0 4px;scroll-margin-top:72px;
+/* ---------- calendar map (always dusk, in both themes, so the lights can glow) ---------- */
+.cal-bar{display:flex;align-items:center;gap:8px;margin:4px 0 8px}
+.cal-month{flex:1;margin:0;font-weight:650;font-size:1.1rem;text-align:center}
+.stage{position:relative;height:clamp(300px,50vh,440px);border-radius:20px;overflow:hidden;margin:6px 0 4px;scroll-margin-top:72px;
   background:radial-gradient(120% 95% at 50% 0%,#28324f 0%,#161c30 55%,#0c101b 100%);color:#dfe6f5}
 #stage-gl{position:absolute;inset:0}
-#stage-gl canvas{display:block;width:100%;height:100%;touch-action:pan-y}
-#stage-labels{position:absolute;inset:0;pointer-events:none}
-.lab{position:absolute;transform:translate(-50%,0);max-width:120px;padding:2px 7px;border-radius:7px;font-size:.74rem;line-height:1.25;text-align:center;
-  background:rgba(10,14,25,.6);color:#cfd8ea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
-.lab.sel{color:#ffd08a;background:rgba(10,14,25,.82);font-weight:650;max-width:160px;z-index:2}
-.lab.done{opacity:.6}
-.stage-count{position:absolute;left:12px;top:8px;margin:0;font-size:.82rem;color:#b9c4dc}
-.stage-note{position:absolute;right:12px;bottom:8px;left:12px;margin:0;font-size:.78rem;color:#9daac6;text-align:right}
-#stage-2d{display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:6px 4px;padding:36px 8px 4px}
+#stage-gl canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#stage-gl canvas.drag{cursor:grabbing}
+#stage-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lab{position:absolute;left:0;top:0;white-space:nowrap;text-align:center;line-height:1.05;font-weight:650;color:#dfe6f5;
+  text-shadow:0 1px 2px rgba(5,8,16,.85);font-variant-numeric:tabular-nums;will-change:transform}
+.lab small{display:none;font-size:.6em;font-weight:600;color:#ffd08a;margin-top:1px}
+#stage-labels.zoomed .lab small{display:block}
+.lab.out{opacity:.38}
+.lab.today{color:#ffd08a}
+.lab.sel{color:#fff}
+.lab.wd{color:#9daac6;font-weight:600;font-size:.72em}
+.zoom{position:absolute;right:10px;bottom:10px;z-index:3;display:flex;gap:6px}
+.zoom button{width:44px;height:44px;display:grid;place-items:center;border-radius:12px;border:1px solid rgba(255,255,255,.16);
+  background:rgba(12,16,28,.72);color:#e8edf5;cursor:pointer;font-size:1.3rem;font-weight:600;line-height:1}
+.zoom button svg{width:20px;height:20px}
+.stage.flat .zoom{display:none}
+.stage-note{position:absolute;left:12px;right:12px;top:8px;margin:0;font-size:.78rem;color:#9daac6;pointer-events:none;text-shadow:0 1px 2px rgba(5,8,16,.8)}
+#stage-2d{padding:14px 10px 6px}
 .stage.flat{height:auto;min-height:200px}
 .stage.flat .stage-note{position:static;padding:4px 14px 12px;text-align:center}
 .stage.flat #stage-gl,.stage.flat #stage-labels{display:none}
-.b2{width:84px;min-height:104px;padding:6px 4px;border:0;border-radius:12px;background:none;color:#cfd8ea;cursor:pointer;display:grid;justify-items:center;gap:3px;font-size:.74rem;line-height:1.2}
-.b2.sel{background:rgba(255,255,255,.07);color:#ffd08a}
-.b2-bulb{position:relative;width:38px;height:44px;border-radius:50% 50% 46% 46%;background:#59627b;margin-bottom:9px}
-.b2-bulb::after{content:"";position:absolute;left:11px;right:11px;bottom:-9px;height:10px;border-radius:2px 2px 4px 4px;background:#8d96ab}
-.b2.st-idle .b2-bulb,.b2.st-warm .b2-bulb{background:#b99a62}
-.b2.st-paused .b2-bulb,.b2.st-rest .b2-bulb{background:#c9a258;box-shadow:0 0 10px 0 rgba(255,193,94,.35)}
-.b2.st-focus .b2-bulb{background:#ffd27a;box-shadow:0 0 26px 6px rgba(255,193,94,.7)}
-.b2.st-done .b2-bulb{background:#454d63}
-.b2-n{max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c2d{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.c2-wd{font-size:.74rem;text-align:center;color:#9daac6;padding-bottom:2px}
+.c2{position:relative;aspect-ratio:1;min-height:44px;border:0;border-radius:6px;background:#2c3654;color:#dfe6f5;cursor:pointer;font-weight:650;font-size:.92rem;
+  clip-path:polygon(12% 0,88% 0,100% 12%,100% 88%,88% 100%,12% 100%,0 88%,0 12%)}
+.c2.out{background:#1f2740;color:#7f8aa6}
+.c2.today{background:#46557f;color:#ffd08a}
+.c2[aria-pressed="true"]{background:#5a6a98;color:#fff}
+.c2 i{position:absolute;width:5px;height:5px;margin:-2.5px;background:#111729;transform:rotate(45deg)}
+.c2 i.on{background:#ffc15e;box-shadow:0 0 5px 1px rgba(255,193,94,.75)}
+.c2.pulse i.on{animation:tw 1.6s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.45}to{opacity:1}}
+.legend{margin:6px 2px 0}
 
-/* wide screens: the room stays in view on the left while the day scrolls on the right */
+/* goals: an accordion under the calendar */
+.acc{margin-top:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:2px 14px}
+.acc>summary{min-height:52px;justify-content:flex-start}
+.acc-list{padding:0 0 10px}
+.acc-item{border-top:1px solid var(--line)}
+.acc-item>summary{font-weight:600;flex-wrap:wrap;gap:2px 8px;padding:6px 0}
+.acc-item>summary .sum-v{flex-basis:100%;padding-left:22px;font-size:.88rem}
+.acc-body{padding:0 0 12px 22px}
+.stones{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 8px}
+.stones i{width:20px;height:20px;border:2px solid var(--line);background:var(--surface);transform:rotate(45deg);margin:3px}
+.stones i.on{background:var(--amber);border-color:var(--amber)}
+.stones i.next{border-color:var(--amber-ink);border-style:dashed}
+
+/* wide screens: the map stays in view on the left while the day scrolls on the right */
 @media(min-width:980px){
-  main.wide{max-width:1160px}
-  #v-day:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:0 32px;align-items:start}
-  .day-left{position:sticky;top:74px}
-  .day-left .stage:not(.flat){height:min(62vh,560px)}
-  #day-body>.blk:first-child{margin-top:0;border-top:0;padding-top:0}
+  main.wide{max-width:1200px}
+  #v-day:not([hidden]){display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:0 32px;align-items:start}
+  .day-left{position:sticky;top:70px;max-height:calc(100dvh - 78px);overflow:auto;padding-right:2px}
+  .day-left .stage:not(.flat){height:min(56vh,540px)}
 }
 
-/* ---------- now panel ---------- */
+/* ---------- opened day ---------- */
+.day-head{margin:6px 0 2px}
+.dh-row{display:flex;align-items:center;gap:8px}
+.dh-main{flex:1;min-width:0;text-align:center}
+.dh-main h2{font-size:clamp(1.15rem,4.2vw,1.4rem);margin:0}
+.dh-main h2::first-letter{text-transform:uppercase}
+.badge{display:inline-block;padding:1px 9px;border-radius:999px;background:var(--amber-wash);color:var(--amber-ink);font-weight:650;font-size:.82rem;margin-right:4px}
+.dh-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.dh-tools input{max-width:190px}
 .now{border-left:5px solid var(--line)}
 .now.run{border-color:var(--amber);border-left-color:var(--amber);box-shadow:0 14px 40px -22px var(--amber)}
 .now-l{margin:0;font-size:.9rem;font-weight:650;color:var(--amber-ink)}
@@ -213,7 +268,7 @@ html[data-motion="reduce"] .orb[data-p="exhale"],html[data-motion="reduce"] .orb
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:10}
 .ring .trk{stroke:var(--line)}
-.ring .prg{stroke:var(--amber);stroke-linecap:round;transition:stroke-dashoffset .9s linear}
+.ring .prg{stroke:var(--amber);stroke-linecap:butt;transition:stroke-dashoffset .9s linear}
 .ring .num{position:absolute;inset:0;display:grid;place-items:center;font-size:1.75rem;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .t-side{min-width:0}
 .t-side p{margin:.15em 0}
@@ -225,10 +280,11 @@ html[data-motion="reduce"] .orb[data-p="exhale"],html[data-motion="reduce"] .orb
 .bo{padding:10px 0;border-top:1px dashed var(--line)}
 .bo:first-of-type{border-top:0}
 .bo h3{display:flex;align-items:center;gap:8px}
-.ltr{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--amber-wash);color:var(--amber-ink);font-size:.9rem;font-weight:700}
+.ltr{display:inline-grid;place-items:center;width:26px;height:26px;background:var(--amber-wash);color:var(--amber-ink);font-size:.9rem;font-weight:700;
+  clip-path:polygon(50% 0,100% 28%,100% 72%,50% 100%,0 72%,0 28%)}
 .bo p{margin:.2em 0 .5em;color:var(--muted);font-size:.95rem}
 .card-twist{display:inline-block;padding:10px 14px;border-radius:12px;border:1px dashed var(--amber);background:var(--amber-wash);color:var(--ink)!important;font-weight:600}
-.swatch{width:14px;height:14px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.15)}
+.swatch{width:14px;height:14px;flex:none;transform:rotate(45deg);border:1px solid rgba(0,0,0,.15)}
 
 /* ---------- plan ---------- */
 .tlist{list-style:none;padding:0;margin:6px 0}
@@ -245,8 +301,8 @@ html[data-motion="reduce"] .orb[data-p="exhale"],html[data-motion="reduce"] .orb
 .add{margin-top:14px}
 .sub{font-size:.95rem;font-weight:650;color:var(--muted);margin:14px 0 2px}
 
-/* ---------- rhythm, goals ---------- */
-.rh-bar{position:relative;display:flex;height:16px;border-radius:999px;overflow:hidden;margin:26px 0 4px;border:1px solid var(--line)}
+/* ---------- rhythm ---------- */
+.rh-bar{position:relative;display:flex;height:16px;border-radius:4px;overflow:hidden;margin:26px 0 4px;border:1px solid var(--line)}
 .rh-bar span{display:block;height:100%}
 .rh-bar .b1{flex:5;background:var(--amber-wash)}
 .rh-bar .b2x{flex:6;background:var(--surface-2);border-left:1px solid var(--line);border-right:1px solid var(--line)}
@@ -256,11 +312,6 @@ html[data-motion="reduce"] .orb[data-p="exhale"],html[data-motion="reduce"] .orb
 .rh-now::after{content:"";position:absolute;left:50%;top:20px;width:3px;height:22px;margin-left:-1.5px;border-radius:2px;background:var(--amber-ink)}
 .rh-leg{display:flex;font-size:.82rem;color:var(--muted)}
 .rh-leg span:nth-child(1){flex:5}.rh-leg span:nth-child(2){flex:6}.rh-leg span:nth-child(3){flex:5}
-.goal{padding:10px 0;border-bottom:1px solid var(--line)}
-.stones{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-.stones i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:var(--surface)}
-.stones i.on{background:var(--amber);border-color:var(--amber)}
-.stones i.next{border-color:var(--amber-ink);border-style:dashed}
 
 /* ---------- dump, together, demo ---------- */
 .dump{list-style:none;padding:0;margin:8px 0}
@@ -270,7 +321,7 @@ html[data-motion="reduce"] .orb[data-p="exhale"],html[data-motion="reduce"] .orb
 .d-t{overflow-wrap:anywhere;font-weight:550}
 .d-step{padding:6px 0 4px}
 .co-line{display:flex;align-items:center;gap:10px;margin:10px 0 4px;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
-.co-dot{width:12px;height:12px;border-radius:50%;background:#7fb8ee;flex:none;box-shadow:0 0 0 4px rgba(127,184,238,.25)}
+.co-dot{width:12px;height:12px;background:#7fb8ee;flex:none;transform:rotate(45deg);box-shadow:0 0 0 4px rgba(127,184,238,.25)}
 .personas{list-style:none;padding:0;margin:10px 0;display:grid;gap:12px}
 .persona{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
 .persona.sel{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}
@@ -278,6 +329,14 @@ html[data-motion="reduce"] .orb[data-p="exhale"],html[data-motion="reduce"] .orb
 .srcs{list-style:none;padding:0}
 .srcs li{margin:.6em 0;max-width:66ch}
 .srcs span{display:block;color:var(--muted);font-size:.93rem}
+
+/* ---------- mini timer: stays in reach when the "Now" panel is off screen ---------- */
+#mini{position:fixed;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:35;width:min(94vw,460px);display:flex;align-items:center;gap:8px;
+  padding:6px 6px 6px 8px;border-radius:16px;background:var(--surface);border:1px solid var(--amber);box-shadow:0 12px 34px -14px rgba(0,0,0,.55)}
+.mini-main{flex:1;min-width:0;min-height:48px;display:flex;align-items:center;gap:10px;border:0;background:none;cursor:pointer;text-align:left;border-radius:10px;padding:0 6px}
+.mini-time{font-size:1.25rem;font-weight:650;font-variant-numeric:tabular-nums}
+.mini-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.93rem}
+body.has-mini #toast{bottom:calc(max(12px,env(safe-area-inset-bottom)) + 72px)}
 
 /* ---------- toast ---------- */
 #toast{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:40;max-width:min(92vw,520px);
@@ -290,14 +349,10 @@ html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-moti
   animation:none!important;transition:none!important;scroll-behavior:auto!important}
 </style>
 </head>
-<body>
+<body data-view="cover">
 <a class="skip" href="#main" data-i18n="skip_link">Saltar para o conteúdo</a>
 
 <header class="top">
-  <button type="button" class="brand" data-act="nav" data-v="menu" id="brand">
-    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="13" r="8.5" fill="var(--amber)"/><rect x="12" y="21.5" width="8" height="6" rx="2" fill="var(--muted)"/><path d="M13 13.5c1-2.2 5-2.2 6 0" fill="none" stroke="var(--on-amber)" stroke-width="1.4" stroke-linecap="round"/></svg>
-    <span>EnFoco</span>
-  </button>
   <div class="tools">
     <div class="seg" role="group" id="lang-seg">
       <button type="button" data-act="lang" data-v="pt" lang="pt">PT</button>
@@ -314,20 +369,34 @@ html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-moti
 <div id="demo-banner" hidden></div>
 
 <main id="main" tabindex="-1">
+  <section id="v-cover" class="view" hidden>
+    <div class="cover" id="cover">
+      <div id="cover-gl" aria-hidden="true"></div>
+      <div id="cover-body"></div>
+    </div>
+  </section>
   <section id="v-breath" class="view" hidden></section>
   <section id="v-menu" class="view" hidden></section>
   <section id="v-day" class="view" hidden>
     <div class="day-left">
-    <button type="button" class="back" data-act="nav" data-v="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span data-i18n="back_menu">Menu</span></button>
-    <h1 tabindex="-1" data-i18n="day_title">O meu dia</h1>
-    <div class="stage" id="stage">
-      <div id="stage-gl" aria-hidden="true"></div>
-      <div id="stage-labels" aria-hidden="true"></div>
-      <div id="stage-2d" hidden></div>
-      <p class="stage-count" id="stage-count"></p>
-      <p class="stage-note" id="stage-note"></p>
-    </div>
-    <p class="sr" id="stage-desc" role="status"></p>
+      <button type="button" class="back" data-act="nav" data-v="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span data-i18n="back_menu">Menu</span></button>
+      <h1 tabindex="-1" data-i18n="cal_title">O meu calendário</h1>
+      <div id="cal-bar"></div>
+      <div class="stage" id="stage">
+        <div id="stage-gl" aria-hidden="true"></div>
+        <div id="stage-labels" aria-hidden="true"></div>
+        <div id="stage-2d" hidden></div>
+        <div class="zoom">
+          <button type="button" data-act="zoomIn" data-i18n-aria="zoom_in"><span aria-hidden="true">+</span></button>
+          <button type="button" data-act="zoomOut" data-i18n-aria="zoom_out"><span aria-hidden="true">−</span></button>
+          <button type="button" data-act="zoomFit" data-i18n-aria="zoom_fit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+          <button type="button" data-act="camRot" data-i18n-aria="cam_rot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5"/></svg></button>
+        </div>
+        <p class="stage-note" id="stage-note"></p>
+      </div>
+      <p class="note legend" data-i18n="cal_legend"></p>
+      <p class="sr" id="stage-desc" role="status"></p>
+      <div id="goals-acc"></div>
     </div>
     <div id="day-body"></div>
   </section>
@@ -338,6 +407,7 @@ html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-moti
   <section id="v-vision" class="view" hidden></section>
 </main>
 
+<div id="mini" hidden></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <noscript><p style="padding:20px;max-width:60ch;margin:auto">O EnFoco precisa de JavaScript para funcionar. / EnFoco needs JavaScript to run.</p></noscript>
 
@@ -350,8 +420,11 @@ html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-moti
 /* ---------- configuration ---------- */
 const MODEL_PATH = './models/bulb.glb';   // optional GLB; if it is missing the bulbs are drawn in code
 const CDN_TIMEOUT = 9000;                 // ms to wait for Three.js before using the simple 2D view
-const KEY = 'enfoco.v2';                  // localStorage key
+const KEY = 'enfoco.v3';                  // localStorage key
+const V2_KEY = 'enfoco.v2';               // previous version, carried over once
 const OLD_KEY = 'foco';                   // key used by the first prototype (migrated once)
+const LIGHTS = 12;                        // small lights around each date tile (3 per side)
+const LIGHT_MIN = 10;                     // minutes of focus that turn one light on
 const GAP_DAYS = 3;                       // days away before the gentle return screen appears
 
 /* ---------- sources for the "why" notes ---------- */
@@ -370,8 +443,7 @@ const SRC = {
 const I18N = {
 pt: {
   skip_link: "Saltar para o conteúdo",
-  app_title: "EnFoco — um foquito de cada vez",
-  brand_aria: "EnFoco, ir para o menu",
+  app_title: "EnFoco — o teu calendário, uma luz de cada vez",
   lang_aria: "Língua",
   theme_auto: "Tema: automático", theme_light: "Tema: claro", theme_dark: "Tema: escuro",
   motion_auto: "Movimento: automático", motion_reduce: "Movimento: reduzido", motion_full: "Movimento: completo",
@@ -400,10 +472,10 @@ pt: {
   menu_lead_soft: "Hoje pode ser pouco. Escolhe só uma porta.",
   menu_lead_spark: "Há energia a mexer. Escolhe uma coisa e vamos.",
   menu_aria: "Menu principal",
-  m_day: "O meu dia",
-  m_day_sub: "{n} foquitos por acender. A seguir: {next}",
-  m_day_sub_1: "1 foquito por acender: {next}",
-  m_day_none: "Nada por acender. Podes acrescentar ou só espreitar.",
+  m_day: "O meu calendário",
+  m_day_sub: "{n} foquitos por acender hoje. A seguir: {next}",
+  m_day_sub_1: "1 foquito por acender hoje: {next}",
+  m_day_none: "Nada por acender hoje. Podes planear ou só espreitar o mapa.",
   m_two: "Só 2 minutos",
   m_two_d: "Começar pequeno na tarefa que mais custa.",
   m_dump: "Despejar ideias",
@@ -420,7 +492,7 @@ pt: {
   m_vis_d: "O que funciona hoje, o que é ideia e as fontes.",
   m_breath: "Respirar de novo",
   m_breath_d: "Três respirações, cerca de 35 segundos.",
-  lights: "Luzes acesas até hoje: {n}. Esta contagem nunca volta a zero.",
+  lights: "Foquitos acesos até hoje: {n}. Esta contagem nunca volta a zero.",
 
   ret_title: "Que bom ver-te de volta.",
   ret_body: "Passaram {days} dias. Não há nada para pôr em dia: escolhi até três coisas pequenas e guardei o resto, sem marcas de atraso.",
@@ -432,14 +504,11 @@ pt: {
   ret_rest: "Hoje só descanso",
   ret_kept: "Fica assim. Uma de cada vez.",
   why_return: "No estudo de Chen, Meng e Nie (2026), os adultos com PHDA entrevistados descrevem vergonha e autoculpa quando um plano falha, e valorizam marcas de progresso que sobrevivem aos dias em falta. Por isso o regresso mostra pouco e não conta atrasos.",
-
-  day_title: "O meu dia",
-  stage_count: "Luzes acesas: {n}",
-  stage_desc: "Cena com {n} foquitos. {focus}",
+  stage_desc: "Mapa do calendário de {month}. Dia aberto: {day}. {focus}",
   stage_focus: "Em foco: {t}.",
   stage_nofocus: "Nenhum em foco.",
   stage_pending: "A preparar a cena…",
-  stage_2d: "Vista simples (sem WebGL ou sem ligação à biblioteca 3D).",
+  stage_2d: "Vista simples do calendário (sem WebGL ou sem ligação à biblioteca 3D).",
 
   ci_title: "Como estás agora?",
   ci_sum: "Energia {energy}, {weather}",
@@ -553,7 +622,7 @@ pt: {
   rh_est: "{t}: previsto {plan} min, real {real} min.",
   why_rhythm: "A ADDitude recomenda tornar o tempo visível (relógios, blocos do dia) e treinar a estimativa comparando previsto e real. Chen, Meng e Nie (2026) notam que os planos costumam ser feitos para dias raros de hiperfoco, e não para um dia normal.",
 
-  go_title: "Prazos distantes",
+  go_title: "Objetivos",
   go_aria: "{done} de {parts} partes feitas",
   go_days: "Faltam {days} dias e {rem} partes. Uma parte a cada {pace} dias chega.",
   go_daily: "Faltam {days} dias e {rem} partes. Uma parte pequena por dia chega.",
@@ -563,9 +632,9 @@ pt: {
   go_today: "É hoje. Qual é a parte mais pequena que ainda faz diferença?",
   go_bring: "Trazer a próxima parte para hoje",
   go_part: "parte {n}",
-  go_add: "Acrescentar um prazo distante",
-  go_f_t: "O que é?", go_f_d: "Data", go_f_p: "Em quantas partes?", go_f_btn: "Guardar prazo",
-  go_none: "Sem prazos distantes por agora.",
+  go_add: "Acrescentar um objetivo com data",
+  go_f_t: "O que é?", go_f_d: "Data", go_f_p: "Em quantas partes?", go_f_btn: "Guardar objetivo",
+  go_none: "Ainda sem objetivos. Um prazo distante sente-se melhor quando tem partes.",
   why_goals: "Um prazo longe custa a sentir. O guia ADHD-EU aconselha a definir prazos e a tornar as tarefas concretas; o Stanford CTL sugere prazos intermédios para criar urgência sem crise.",
 
   sh_title: "Guardado para depois ({n})",
@@ -707,14 +776,14 @@ pt: {
   vi_title: "Visão e limites",
   vi_lead: "Um protótipo de hackathon. Aqui fica o que é real e o que ainda é intenção.",
   vi_works: "Funciona hoje",
-  vi_w1: "Respiração guiada à entrada, com opção de saltar.",
-  vi_w2: "O dia em foquitos: uma tarefa de cada vez, temporizador visual, passos automáticos e «mais tarde» sem culpa.",
-  vi_w3: "Despejo de ideias com primeiro passo minúsculo e arranque de 2 minutos.",
-  vi_w4: "Energia e tempo interior indicados por ti, com plano base e plano ideal.",
-  vi_w5: "Reorganização do dia sem marcas de atraso e regresso suave depois de uma ausência.",
-  vi_w6: "Sessão acompanhada, convite para copiar e nota de passagem.",
-  vi_w7: "Reforços INCUP, prazos distantes em partes e uma contagem de luzes que nunca volta a zero.",
-  vi_w8: "Dados só neste navegador, com exportação, importação e apagamento.",
+  vi_w1: "Capa com a lâmpada low poly, respiração guiada com opção de saltar e menu.",
+  vi_w2: "Calendário em mapa low poly: cada data é um bloco, e as luzes à volta acendem com o foco desse dia. Dá para aproximar, afastar e arrastar.",
+  vi_w3: "O dia aberto: uma tarefa de cada vez, temporizador visual, passos automáticos e «mais tarde» sem culpa.",
+  vi_w4: "Despejo de ideias com primeiro passo minúsculo e arranque de 2 minutos.",
+  vi_w5: "Energia e tempo interior indicados por ti, com plano base e plano ideal.",
+  vi_w6: "Reorganização do dia sem marcas de atraso e regresso suave depois de uma ausência.",
+  vi_w7: "Sessão acompanhada, convite para copiar e nota de passagem.",
+  vi_w8: "Reforços INCUP, objetivos em partes e uma contagem de foquitos que nunca volta a zero.",
   vi_sim: "Simulado ou simplificado",
   vi_s1: "A companhia do foco acompanhado é simulada. Não há ninguém do outro lado.",
   vi_s2: "O primeiro passo vem de regras por palavras-chave, não de IA.",
@@ -732,12 +801,12 @@ pt: {
   vi_l2: "Ainda não foi testado com pessoas com PHDA. As escolhas de desenho vêm da leitura das fontes, não de resultados próprios.",
   vi_l3: "As fontes são de natureza diferente: um estudo de interação pessoa-computador, um guia europeu, um folheto universitário e divulgação feita pela comunidade. Nenhuma avalia esta app.",
   vi_l4: "O armazenamento local pode ser apagado pelo navegador. Exporta o que quiseres guardar.",
-  vi_l5: "A cena 3D precisa de WebGL e de rede para carregar a biblioteca. Sem isso, a app passa para a vista simples.",
+  vi_l5: "A cena 3D precisa de WebGL e de rede para carregar a biblioteca. Foi pensada para correr sem placa gráfica, mas só a testámos em poucos equipamentos. Sem WebGL, a app passa para o calendário simples.",
   vi_scene: "Estado da cena 3D",
   scene_glb: "Cena 3D com o modelo {path}.",
-  scene_proc: "Cena 3D com lâmpadas desenhadas por código, porque {path} não foi encontrado.",
+  scene_proc: "Cena 3D low poly com lâmpadas desenhadas por código, porque {path} não foi encontrado.",
   scene_load: "Cena 3D ativa; à procura do modelo {path}.",
-  scene_2d: "Vista simples ativa: o WebGL ou a biblioteca Three.js não estão disponíveis.",
+  scene_2d: "Calendário simples ativo: o WebGL ou a biblioteca Three.js não estão disponíveis.",
   scene_pending: "A cena ainda está a carregar.",
   vi_sources: "Fontes",
   src_additude_proc: "ADDitude, «Take the First Sloppy Step»",
@@ -756,13 +825,39 @@ pt: {
   srcd_howtoadhd_mot: "Jessica McCabe: a «ponte da motivação» e como a encurtar com urgência, novidade e interesse.",
   srcd_ibns: "Megan Anna Neff sobre o modelo clínico de William Dodson; interesse, desafio, novidade e urgência em vez de importância.",
   srcd_chen: "Pré-publicação aceite na CSCW 2026: 22 entrevistas e 13 conceitos avaliados por 20 participantes; apoios relacionais, temporais e afetivos.",
+  vi_w9: "Dados só neste navegador, com exportação, importação e apagamento.",
+  cal_title: "O meu calendário",
+  cv_tag: "O teu calendário, uma luz de cada vez.",
+  cv_sub: "Para adultos com PHDA. Cada dia ilumina-se com o foco que lhe deste, e nenhum dia fica em dívida.",
+  cv_start: "Começar",
+  cv_note: "Protótipo de hackathon. Não é uma ferramenta médica. Os dados ficam neste dispositivo.",
+  m_cover: "Ecrã inicial", m_cover_d: "Voltar à capa do EnFoco.",
+  cal_prev: "Mês anterior", cal_next: "Mês seguinte", cal_today: "Hoje",
+  zoom_in: "Aproximar", zoom_out: "Afastar", zoom_fit: "Ver o mês inteiro", cam_rot: "Rodar a vista",
+  cam_iso: "Vista isométrica.", cam_map: "Vista de cima.",
+  cal_legend: "Cada luz acesa à volta de um dia vale cerca de 10 min de foco ou uma tarefa feita. Em foco, as luzes de hoje pulsam.",
+  cal_hint: "Arrasta para mover. Roda ou belisca para aproximar. Toca num dia para o abrir.",
+  mini_aria: "Ir para o temporizador",
+  d_prev: "Dia anterior", d_next: "Dia seguinte", d_pick: "Ir para uma data",
+  d_today: "Hoje", d_past: "Dia passado", d_future: "Planeado", d_back: "Voltar a hoje",
+  d_sum: "Foco: {min} min. Tarefas feitas: {done}. Luzes acesas: {lit} de {total}.",
+  d_past_note: "Este dia já passou. O que ficou por fazer veio contigo para hoje, sem marcas de atraso.",
+  d_past_none: "Nada registado neste dia. Também faz parte.",
+  d_past_done: "Feito neste dia",
+  d_future_t: "Planeado para este dia",
+  d_future_note: "No dia, estas tarefas aparecem no painel «Agora», com temporizador.",
+  d_future_none: "Ainda nada planeado para este dia.",
+  go_sum: "{done} de {parts} partes, {when}",
+  go_when: "faltam {days} dias", go_when_1: "falta 1 dia", go_when_0: "é hoje", go_when_past: "data passada",
+  go_count: "{n} em curso", go_count_1: "1 em curso", go_count_0: "nenhum por agora",
+  cell_aria: "{day}, {lit} de {total} luzes",
+  why_cal: "As luzes à volta de cada dia são um registo visual de progresso: o folheto do Stanford CTL sugere marcadores visuais, e a ADDitude recomenda tornar o tempo visível. Seguindo Chen, Meng e Nie (2026), um dia em branco não apaga os outros, e não há séries para quebrar.",
   vi_team: "Equipa EnFoco: Leonardo Cagliero e Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, com a Brainstorm."
 },
 
 en: {
   skip_link: "Skip to content",
-  app_title: "EnFoco — one little light at a time",
-  brand_aria: "EnFoco, go to the menu",
+  app_title: "EnFoco — your calendar, one light at a time",
   lang_aria: "Language",
   theme_auto: "Theme: automatic", theme_light: "Theme: light", theme_dark: "Theme: dark",
   motion_auto: "Motion: automatic", motion_reduce: "Motion: reduced", motion_full: "Motion: full",
@@ -791,10 +886,10 @@ en: {
   menu_lead_soft: "Today can be small. Pick just one door.",
   menu_lead_spark: "There's energy moving. Pick one thing and go.",
   menu_aria: "Main menu",
-  m_day: "My day",
-  m_day_sub: "{n} lights to turn on. Next: {next}",
-  m_day_sub_1: "1 light to turn on: {next}",
-  m_day_none: "Nothing to turn on. You can add something or just look around.",
+  m_day: "My calendar",
+  m_day_sub: "{n} lights to turn on today. Next: {next}",
+  m_day_sub_1: "1 light to turn on today: {next}",
+  m_day_none: "Nothing to turn on today. You can plan ahead or just look at the map.",
   m_two: "Just 2 minutes",
   m_two_d: "Start small on the task that weighs the most.",
   m_dump: "Brain dump",
@@ -811,7 +906,7 @@ en: {
   m_vis_d: "What works today, what is an idea, and the sources.",
   m_breath: "Breathe again",
   m_breath_d: "Three breaths, about 35 seconds.",
-  lights: "Lights turned on so far: {n}. This count never goes back to zero.",
+  lights: "Tasks lit so far: {n}. This count never goes back to zero.",
 
   ret_title: "Good to see you again.",
   ret_body: "It has been {days} days. There is nothing to catch up on: I picked up to three small things and put the rest away, with no overdue marks.",
@@ -823,14 +918,11 @@ en: {
   ret_rest: "Today I just rest",
   ret_kept: "That's the plan. One at a time.",
   why_return: "In the study by Chen, Meng and Nie (2026), the adults with ADHD who were interviewed describe shame and self-blame when a plan breaks, and value progress markers that survive missed days. So the return screen shows little and counts no delays.",
-
-  day_title: "My day",
-  stage_count: "Lights on: {n}",
-  stage_desc: "Scene with {n} lights. {focus}",
+  stage_desc: "Calendar map for {month}. Open day: {day}. {focus}",
   stage_focus: "In focus: {t}.",
   stage_nofocus: "None in focus.",
   stage_pending: "Preparing the scene…",
-  stage_2d: "Simple view (no WebGL, or the 3D library could not be reached).",
+  stage_2d: "Simple calendar view (no WebGL, or the 3D library could not be reached).",
 
   ci_title: "How are you right now?",
   ci_sum: "{energy} energy, {weather}",
@@ -944,7 +1036,7 @@ en: {
   rh_est: "{t}: estimated {plan} min, actual {real} min.",
   why_rhythm: "ADDitude recommends making time visible (clocks, blocks of the day) and practising estimation by comparing estimated with actual time. Chen, Meng and Nie (2026) note that plans tend to be made for rare hyperfocus days, not for an ordinary day.",
 
-  go_title: "Distant deadlines",
+  go_title: "Goals",
   go_aria: "{done} of {parts} parts done",
   go_days: "{days} days and {rem} parts to go. One part every {pace} days is enough.",
   go_daily: "{days} days and {rem} parts to go. One small part a day is enough.",
@@ -954,9 +1046,9 @@ en: {
   go_today: "It's today. What is the smallest part that still makes a difference?",
   go_bring: "Bring the next part into today",
   go_part: "part {n}",
-  go_add: "Add a distant deadline",
-  go_f_t: "What is it?", go_f_d: "Date", go_f_p: "In how many parts?", go_f_btn: "Save deadline",
-  go_none: "No distant deadlines for now.",
+  go_add: "Add a goal with a date",
+  go_f_t: "What is it?", go_f_d: "Date", go_f_p: "In how many parts?", go_f_btn: "Save goal",
+  go_none: "No goals yet. A distant deadline is easier to feel when it has parts.",
   why_goals: "A far-off deadline is hard to feel. The ADHD-EU guide advises setting deadlines and making tasks concrete; Stanford CTL suggests interim deadlines to create urgency without a crisis.",
 
   sh_title: "Put away for later ({n})",
@@ -1098,14 +1190,14 @@ en: {
   vi_title: "Vision and limits",
   vi_lead: "A hackathon prototype. Here is what is real and what is still an intention.",
   vi_works: "Works today",
-  vi_w1: "Guided breathing on entry, with a skip option.",
-  vi_w2: "The day as little lights: one task at a time, a visual timer, automatic steps and a guilt-free “later”.",
-  vi_w3: "Brain dump with a tiny first step and a 2-minute starter.",
-  vi_w4: "Energy and inner weather reported by you, with a baseline plan and an ideal plan.",
-  vi_w5: "Rearranging the day with no overdue marks, and a gentle return after time away.",
-  vi_w6: "Session with company, an invitation to copy, and a handoff note.",
-  vi_w7: "INCUP boosters, distant deadlines in parts, and a count of lights that never goes back to zero.",
-  vi_w8: "Data only in this browser, with export, import and delete.",
+  vi_w1: "Cover with the low-poly bulb, guided breathing with a skip option, and the menu.",
+  vi_w2: "A low-poly calendar map: each date is a block, and the lights around it turn on with that day's focus. You can zoom in, zoom out and drag.",
+  vi_w3: "The open day: one task at a time, a visual timer, automatic steps and a guilt-free “later”.",
+  vi_w4: "Brain dump with a tiny first step and a 2-minute starter.",
+  vi_w5: "Energy and inner weather reported by you, with a baseline plan and an ideal plan.",
+  vi_w6: "Rearranging the day with no overdue marks, and a gentle return after time away.",
+  vi_w7: "Session with company, an invitation to copy, and a handoff note.",
+  vi_w8: "INCUP boosters, goals in parts, and a count of lit tasks that never goes back to zero.",
   vi_sim: "Simulated or simplified",
   vi_s1: "The company in focus with company is simulated. Nobody is on the other side.",
   vi_s2: "The first step comes from keyword rules, not from AI.",
@@ -1123,12 +1215,12 @@ en: {
   vi_l2: "It has not yet been tested with people with ADHD. The design choices come from reading the sources, not from results of our own.",
   vi_l3: "The sources differ in kind: a human-computer interaction study, a European guide, a university handout and community-made education. None of them evaluates this app.",
   vi_l4: "Local storage can be cleared by the browser. Export whatever you want to keep.",
-  vi_l5: "The 3D scene needs WebGL and a network to load the library. Without them, the app falls back to the simple view.",
+  vi_l5: "The 3D scene needs WebGL and a network to load the library. It was designed to run without a graphics card, but we have only tried it on a few machines. Without WebGL, the app falls back to the simple calendar.",
   vi_scene: "3D scene status",
   scene_glb: "3D scene using the model {path}.",
-  scene_proc: "3D scene with bulbs drawn in code, because {path} was not found.",
+  scene_proc: "Low-poly 3D scene with bulbs drawn in code, because {path} was not found.",
   scene_load: "3D scene active; looking for the model {path}.",
-  scene_2d: "Simple view active: WebGL or the Three.js library is not available.",
+  scene_2d: "Simple calendar active: WebGL or the Three.js library is not available.",
   scene_pending: "The scene is still loading.",
   vi_sources: "Sources",
   src_additude_proc: "ADDitude, “Take the First Sloppy Step”",
@@ -1147,6 +1239,33 @@ en: {
   srcd_howtoadhd_mot: "Jessica McCabe: the “motivation bridge” and how to shorten it with urgency, novelty and interest.",
   srcd_ibns: "Megan Anna Neff on William Dodson's clinical model; interest, challenge, novelty and urgency instead of importance.",
   srcd_chen: "Preprint accepted to CSCW 2026: 22 interviews and 13 concepts assessed by 20 participants; relational, temporal and affective supports.",
+  vi_w9: "Data only in this browser, with export, import and delete.",
+  cal_title: "My calendar",
+  cv_tag: "Your calendar, one light at a time.",
+  cv_sub: "For adults with ADHD. Each day lights up with the focus you gave it, and no day is left in debt.",
+  cv_start: "Start",
+  cv_note: "Hackathon prototype. Not a medical tool. Your data stays on this device.",
+  m_cover: "Start screen", m_cover_d: "Back to the EnFoco cover.",
+  cal_prev: "Previous month", cal_next: "Next month", cal_today: "Today",
+  zoom_in: "Zoom in", zoom_out: "Zoom out", zoom_fit: "See the whole month", cam_rot: "Rotate the view",
+  cam_iso: "Isometric view.", cam_map: "View from above.",
+  cal_legend: "Each lit light around a day stands for about 10 min of focus or one finished task. While you focus, today's lights pulse.",
+  cal_hint: "Drag to move. Scroll or pinch to zoom. Tap a day to open it.",
+  mini_aria: "Go to the timer",
+  d_prev: "Previous day", d_next: "Next day", d_pick: "Go to a date",
+  d_today: "Today", d_past: "Past day", d_future: "Planned", d_back: "Back to today",
+  d_sum: "Focus: {min} min. Tasks done: {done}. Lights on: {lit} of {total}.",
+  d_past_note: "This day has passed. What was left came along with you to today, with no overdue marks.",
+  d_past_none: "Nothing recorded on this day. That is part of it too.",
+  d_past_done: "Done on this day",
+  d_future_t: "Planned for this day",
+  d_future_note: "On the day, these tasks show up in the “Now” panel, with the timer.",
+  d_future_none: "Nothing planned for this day yet.",
+  go_sum: "{done} of {parts} parts, {when}",
+  go_when: "{days} days to go", go_when_1: "1 day to go", go_when_0: "it's today", go_when_past: "date passed",
+  go_count: "{n} in progress", go_count_1: "1 in progress", go_count_0: "none for now",
+  cell_aria: "{day}, {lit} of {total} lights",
+  why_cal: "The lights around each day are a visual record of progress: the Stanford CTL handout suggests visual trackers, and ADDitude recommends making time visible. Following Chen, Meng and Nie (2026), a blank day does not erase the others, and there are no streaks to break.",
   vi_team: "Team EnFoco: Leonardo Cagliero and Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, with Brainstorm."
 }
 };
@@ -1164,6 +1283,9 @@ const sod = ts => { const d = new Date(ts); d.setHours(0, 0, 0, 0); return d.get
 const fmt = s => { s = Math.max(0, Math.round(s)); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); };
 const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 const L = (pt, en) => ({ pt, en });
+/* a date key some days away from today (or from another date key); noon-based so clock changes never shift the day */
+function dayPlus(n, from) { const d = from ? new Date(from + 'T12:00:00') : new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + n); return dayKey(d); }
+const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d));
 function dur(m) { m = Math.max(0, Math.round(m)); const h = Math.floor(m / 60), r = m % 60; return h ? (r ? h + ' h ' + pad(r) : h + ' h') : r + ' min'; }
 /* a clock time some minutes from now, rounded to the quarter hour; empty if it would fall on another day */
 function hmPlus(mins) { const d = new Date(Date.now() + mins * 60000); d.setMinutes(Math.round(d.getMinutes() / 15) * 15, 0, 0); return dayKey(d) === dayKey() ? hm(d) : ''; }
@@ -1178,7 +1300,7 @@ const ICON = {
 /* ---------- state ---------- */
 let S = null;
 const ui = {
-  view: 'breath', open: {}, gap: 0, showReturn: false, ret: [], retOff: 0,
+  view: 'cover', month: '', open: {}, gap: 0, showReturn: false, ret: [], retOff: 0,
   pick: null, fs: '', tg: { comp: 'lia', min: 25, what: '' }, msg: 'invite',
   ho: { id: null, need: 'review', where: '', by: '' }, wipe: false, refocus: null
 };
@@ -1190,7 +1312,7 @@ const store = {
 };
 function fresh() {
   return {
-    v: 2, lang: 'pt', theme: 'auto', motion: 'auto', skipBreath: false,
+    v: 3, lang: 'pt', theme: 'auto', motion: 'auto', skipBreath: false, cam: 'iso', day: '', focus: {},
     energy: 2, mood: 'cloud', plan: 'auto', checkinDay: '', pauseDay: '', replanDay: '', ugly: false,
     tasks: [], dump: [], goals: [], sessions: [], lights: 0, sel: null, glow: -1,
     notif: false, share: { task: true, time: true }, lastSeen: 0, demo: null, backup: null
@@ -1203,9 +1325,10 @@ function autoSteps(m) {
 }
 function mk(o) {
   const x = Object.assign({
-    id: uid(), t: '', m: 15, e: 2, h: '', done: false, doneAt: 0, later: 0, laterAt: 0, created: Date.now(),
+    id: uid(), t: '', m: 15, e: 2, h: '', date: dayKey(), done: false, doneAt: 0, later: 0, laterAt: 0, created: Date.now(),
     tag: '', from: '', why: '', spice: '', twist: -1, best: 0, last: 0, started: false, shelved: false, goalId: '', n: ''
   }, o);
+  if (!isDate(x.date)) x.date = dayKey();
   x.m = Math.max(1, +x.m || 15);
   x.e = Math.min(3, Math.max(1, +x.e || 2));
   x.steps = Array.isArray(o.steps) ? o.steps.filter(s => s && (s.k || s.t)).map(s => ({ k: s.k || '', t: s.t || '', d: !!s.d })) : [];
@@ -1219,6 +1342,10 @@ function normalise(o) {
   s.goals = (Array.isArray(s.goals) ? s.goals : []).filter(g => g && g.t && g.due).map(g => ({ id: g.id || uid(), t: g.t, due: String(g.due), parts: Math.max(1, +g.parts || 1), done: Math.max(0, +g.done || 0) }));
   s.sessions = Array.isArray(s.sessions) ? s.sessions.slice(0, 20) : [];
   s.share = Object.assign({ task: true, time: true }, s.share);
+  const f = {};
+  if (s.focus && typeof s.focus === 'object') Object.keys(s.focus).forEach(k => { if (isDate(k) && +s.focus[k] > 0) f[k] = Math.round(+s.focus[k]); });
+  s.focus = f; s.v = 3; s.day = dayKey();
+  if (s.cam !== 'map') s.cam = 'iso';
   if (!I18N[s.lang]) s.lang = 'pt';
   return s;
 }
@@ -1240,7 +1367,13 @@ function seedDefault() {
   ].map(t => ({ id: uid(), t, created: Date.now() }));
   S.goals = [{ id: uid(), t: L('Candidatura à bolsa de formação', 'Training grant application'), due: dayKey(new Date(Date.now() + 12 * DAY)), parts: 6, done: 2 }];
   S.lights = 7;
+  S.tasks.push(
+    mk({ t: L('Comprar a prenda da Rita', "Buy Rita's present"), m: 25, e: 2, date: dayPlus(1), tag: 'people' }),
+    mk({ t: L('Rever o orçamento do mês', "Review this month's budget"), m: 25, e: 3, date: dayPlus(3) }));
+  S.focus = focusOf([50, 20, 0, 75, 35, 10, 0, 0, 60, 25, 40, 0, 15, 30]);
 }
+/* made-up focus history: minutes for yesterday, the day before, and so on */
+function focusOf(mins) { const f = {}; mins.forEach((m, i) => { if (m) f[dayPlus(-(i + 1))] = m * 60; }); return f; }
 /* tasks from the first prototype (localStorage key "foco") are carried over once, minus its own sample tasks */
 function migrateOld() {
   try {
@@ -1257,7 +1390,13 @@ function migrateOld() {
 function load() {
   let s = null;
   try { s = JSON.parse(store.get(KEY) || 'null'); } catch (e) { s = null; }
-  if (s && s.v === 2) { S = normalise(s); return; }
+  if (s && s.v === 3) { S = normalise(s); return; }
+  let old = null;
+  try { old = JSON.parse(store.get(V2_KEY) || 'null'); } catch (e) { old = null; }
+  if (old && old.v === 2) {                       // carry v2 data over once
+    if (old.demo && old.backup) old = old.backup;
+    S = normalise(Object.assign({}, old, { demo: null, backup: null })); save(); return;
+  }
   S = fresh();
   if (!migrateOld()) seedDefault();
   S.lastSeen = Date.now();
@@ -1282,7 +1421,17 @@ const reduced = () => S.motion === 'reduce' || (S.motion === 'auto' && window.ma
 
 /* ---------- selectors over the day ---------- */
 const byId = id => S.tasks.find(x => x.id === id);
-const todays = () => S.tasks.filter(x => !x.shelved);
+const todays = () => { const k = dayKey(); return S.tasks.filter(x => !x.shelved && x.date === k); };
+const dayTasks = d => S.tasks.filter(x => !x.shelved && x.date === d);
+const dayMode = d => { const k = dayKey(); return d === k ? 'today' : d < k ? 'past' : 'future'; };
+/* what a date has earned: focus seconds, tasks done, and how many of its lights are on */
+function dayStats(d) {
+  const sec = S.focus[d] || 0, done = S.tasks.filter(x => x.done && x.date === d).length;
+  return { sec, min: Math.round(sec / 60), done, lit: Math.min(LIGHTS, Math.ceil(sec / (LIGHT_MIN * 60)) + done) };
+}
+const goToday = () => { S.day = dayKey(); ui.month = S.day.slice(0, 7); };
+const fmtDay = d => new Intl.DateTimeFormat(S.lang === 'pt' ? 'pt-PT' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(d + 'T12:00:00'));
+const fmtMonth = m => cap(new Intl.DateTimeFormat(S.lang === 'pt' ? 'pt-PT' : 'en-GB', { month: 'long', year: 'numeric' }).format(new Date(m + '-01T12:00:00')));
 const openTasks = () => todays().filter(x => !x.done);
 const ordered = list => list.slice().sort((a, b) => (a.h || '99:99').localeCompare(b.h || '99:99'));
 const planMode = () => S.plan === 'auto' ? (heavy() ? 'base' : 'ideal') : S.plan;
@@ -1301,8 +1450,8 @@ function suggest() {
   return fit[0] || o.slice().sort((a, b) => a.m - b.m)[0];
 }
 function cur() {
-  if (T.id) { const x = byId(T.id); if (x && !x.done && !x.shelved) return x; }
-  const s = S.sel && S.tasks.find(x => x.id === S.sel && !x.done && !x.shelved);
+  if (T.id) { const x = byId(T.id); if (x && !x.done && !x.shelved && x.date === dayKey()) return x; }
+  const s = S.sel && S.tasks.find(x => x.id === S.sel && !x.done && !x.shelved && x.date === dayKey());
   return s || suggest();
 }
 function baseSet(c) {
@@ -1323,12 +1472,17 @@ function notify(msg) {
 }
 
 /* ---------- timer (one for the whole app) ---------- */
-const T = { id: null, mode: '', total: 0, left: 0, endsAt: 0, running: false, ended: false, elapsed: 0, half: false, target: 0, pausedAt: 0, comp: '' };
+const T = { id: null, mode: '', total: 0, left: 0, endsAt: 0, running: false, ended: false, elapsed: 0, half: false, target: 0, pausedAt: 0, comp: '', logged: 0 };
 let tick = null;
 const stopTick = () => { clearInterval(tick); tick = null; };
+/* focus time is written to today's date; the lights around that date read from it */
+function commitFocus() {
+  const add = T.elapsed - (T.logged || 0);
+  if (T.id && add > 0) { const k = dayKey(); S.focus[k] = (S.focus[k] || 0) + add; T.logged = T.elapsed; }
+}
 function startTimer(task, mode, secs, extra) {
-  stopTick();
-  Object.assign(T, { id: task.id, mode, total: secs, left: secs, endsAt: Date.now() + secs * 1000, running: true, ended: false, elapsed: 0, half: false, target: 0, pausedAt: 0, comp: '' }, extra || {});
+  commitFocus(); stopTick();
+  Object.assign(T, { id: task.id, mode, total: secs, left: secs, endsAt: Date.now() + secs * 1000, running: true, ended: false, elapsed: 0, half: false, target: 0, pausedAt: 0, comp: '', logged: 0 }, extra || {});
   S.sel = task.id; save();
   tick = setInterval(onTick, 250);
   render();
@@ -1339,11 +1493,12 @@ function onTick() {
   T.left = Math.max(0, Math.ceil((T.endsAt - Date.now()) / 1000));
   if (T.left === prev) return;
   T.elapsed += prev - T.left;
+  if (T.elapsed - T.logged >= 20) { commitFocus(); save(); syncScene(); paintSum(); }
   paintTimer();
   if (!T.half && T.total >= 240 && T.left <= T.total / 2 && T.left > 0) { T.half = true; toast(T.mode === 'tog' ? t('tg_half') : tt('toast_half')); }
-  if (T.left <= 0) { T.running = false; T.ended = true; stopTick(); notify(t(T.mode === 'two' ? 'ended_two' : 'toast_end')); render(); }
+  if (T.left <= 0) { T.running = false; T.ended = true; stopTick(); commitFocus(); save(); notify(t(T.mode === 'two' ? 'ended_two' : 'toast_end')); render(); }
 }
-function pauseTimer() { if (!T.running) return; T.running = false; T.pausedAt = Date.now(); stopTick(); render(); }
+function pauseTimer() { if (!T.running) return; T.running = false; T.pausedAt = Date.now(); stopTick(); commitFocus(); save(); render(); }
 function resumeTimer() {
   if (T.running || !T.id || T.left <= 0) return;
   const away = T.pausedAt ? Date.now() - T.pausedAt : 0;
@@ -1359,14 +1514,35 @@ function extendTimer(mins) {
   stopTick(); tick = setInterval(onTick, 250);
   render();
 }
-function clearTimer() { stopTick(); Object.assign(T, { id: null, mode: '', total: 0, left: 0, endsAt: 0, running: false, ended: false, elapsed: 0, half: false, target: 0, pausedAt: 0, comp: '' }); }
+function clearTimer() { commitFocus(); stopTick(); Object.assign(T, { id: null, mode: '', total: 0, left: 0, endsAt: 0, running: false, ended: false, elapsed: 0, half: false, target: 0, pausedAt: 0, comp: '', logged: 0 }); }
 const RING_C = 2 * Math.PI * 56;
 function paintTimer() {
   const v = $('#v-' + ui.view); if (!v) return;
   const el = $('.js-time', v), ring = $('.js-ring', v);
   if (T.id && el) el.textContent = fmt(T.left);
   if (T.id && ring && T.total) ring.style.strokeDashoffset = (RING_C * (1 - T.left / T.total)).toFixed(2);
+  const mt = $('.js-mini-time'); if (mt && T.id) mt.textContent = fmt(T.left);
   const co = $('.js-co', v); if (co) { const txt = companionLine(); if (co.textContent !== txt) co.textContent = txt; }
+}
+/* keeps the open day's summary current while the timer runs, without re-rendering the view */
+function paintSum() {
+  const el = $('#d-sum'); if (!el || ui.view !== 'day' || dayMode(S.day) === 'future') return;
+  const st = dayStats(S.day); el.textContent = t('d_sum', { min: st.min, done: st.done, lit: st.lit, total: LIGHTS });
+}
+function paintMini() {
+  const el = $('#mini'), x = T.id ? byId(T.id) : null;
+  let show = !!x && ui.view !== 'cover' && ui.view !== 'breath' && !(ui.view === 'together' && T.mode === 'tog');
+  if (show && ui.view === 'day') {
+    const p = $('#day-body .now');
+    if (p) { const r = p.getBoundingClientRect(); show = r.bottom < 90 || r.top > window.innerHeight - 130; }
+  }
+  document.body.classList.toggle('has-mini', show);
+  if (!show) { if (!el.hidden) { el.hidden = true; el.innerHTML = ''; el.dataset.sig = ''; } return; }
+  const sig = [x.id, T.running, T.ended, S.lang, tx(x.t)].join('|');
+  if (el.dataset.sig === sig && !el.hidden) return;
+  el.dataset.sig = sig; el.hidden = false;
+  el.innerHTML = `<button type="button" class="mini-main" data-act="toTimer" aria-label="${t('mini_aria')}: ${esc(tx(x.t))}"><span class="mini-time js-mini-time">${fmt(T.left)}</span><span class="mini-t">${esc(tx(x.t))}</span></button>`
+    + (T.ended ? '' : T.running ? btn('pause', t('btn_pause'), 'lit mini') : btn('resume', t('btn_resume'), 'lit mini'));
 }
 function modeLabel() {
   if (T.mode === 'two') return t('mode_two');
@@ -1388,20 +1564,21 @@ function replan(silent) {
 }
 /* called on load: new day housekeeping and the gentle return after a gap */
 function arrive() {
-  const last = S.lastSeen || Date.now();
+  const last = S.lastSeen || Date.now(), today = dayKey();
   const gap = Math.max(0, Math.round((sod(Date.now()) - sod(last)) / DAY));
-  if (gap >= 1) {
-    S.tasks = S.tasks.filter(x => !x.done);
-    S.tasks.forEach(x => { x.h = ''; x.n = ''; x.laterAt = 0; });
-    S.sel = null; S.replanDay = '';
-  }
+  /* nothing is ever overdue: whatever was left on earlier dates simply comes along to today */
+  S.tasks.forEach(x => { if (!x.done && x.date < today) { x.date = today; x.h = ''; x.n = ''; x.laterAt = 0; } });
+  if (gap >= 1) { S.sel = null; S.replanDay = ''; }
+  const cut = dayPlus(-62);
+  S.tasks = S.tasks.filter(x => !(x.done && x.date < cut));
   ui.gap = gap;
-  ui.showReturn = gap >= GAP_DAYS && S.tasks.some(x => !x.done);
+  ui.showReturn = gap >= GAP_DAYS && S.tasks.some(x => !x.done && x.date <= today);
   if (ui.showReturn) { ui.retOff = 0; prepareReturn(); }
+  goToday();
   S.lastSeen = Date.now(); save();
 }
 function prepareReturn() {
-  const all = S.tasks.filter(x => !x.done).sort((a, b) => (a.e - b.e) || (a.m - b.m));
+  const all = S.tasks.filter(x => !x.done && x.date <= dayKey()).sort((a, b) => (a.e - b.e) || (a.m - b.m));
   const n = all.length, picks = [];
   for (let i = 0; i < Math.min(3, n); i++) picks.push(all[(ui.retOff + i) % n]);
   all.forEach(x => { x.shelved = !picks.includes(x); x.h = ''; });
@@ -1465,6 +1642,17 @@ function vBreath() {
   </div>`;
 }
 
+/* ---------- cover: the only place where the logo lives ---------- */
+const LOGO = '<svg viewBox="0 0 64 80" aria-hidden="true"><path fill="#ffe2a6" d="M32 4 52 14 32 30z"/><path fill="#ffc15e" d="M52 14 58 34 32 30z"/><path fill="#f0a22e" d="M58 34 46 52 32 30z"/><path fill="#e08e1a" d="M46 52H18L32 30z"/><path fill="#f7b243" d="M18 52 6 34 32 30z"/><path fill="#ffd07a" d="M6 34 12 14 32 30z"/><path fill="#ffedc7" d="M12 14 32 4 32 30z"/><path fill="#9aa3b8" d="M20 54H44L41 67H23z"/><path fill="#5d6780" d="M25 69H39L35 77H29z"/></svg>';
+function vCover() {
+  return `<div class="cover-icon">${LOGO}</div>
+    <h1 class="wordmark" tabindex="-1">${LOGO}<span>EnFoco</span></h1>
+    <p class="cv-tag">${t('cv_tag')}</p>
+    <p class="cv-sub">${t('cv_sub')}</p>
+    <div class="row center">${btn('begin', t('cv_start'), 'lit big')}</div>
+    <p class="note">${t('cv_note')}</p>`;
+}
+
 /* ---------- launch menu ---------- */
 function mItem(act, v, title, sub, lit) {
   return `<button type="button" class="m-item${lit ? ' lit' : ''}" data-act="${act}" data-v="${v}"><b>${title}</b><span>${sub}</span>${ICON.chevR}</button>`;
@@ -1494,6 +1682,7 @@ function vMenu() {
       ${mItem('nav', 'privacy', t('m_priv'), t('m_priv_d'))}
       ${mItem('nav', 'vision', t('m_vis'), t('m_vis_d'))}
       ${mItem('nav', 'breath', t('m_breath'), t('m_breath_d'))}
+      ${mItem('nav', 'cover', t('m_cover'), t('m_cover_d'))}
     </nav>
     <p class="note lights">${t('lights', { n: S.lights })}</p>`;
 }
@@ -1601,31 +1790,18 @@ function nowPanel(c) {
     ${why('now', [['focus', ['additude_time', 'adhdeu']], ['two', ['additude_proc', 'howtoadhd_wall']]])}
   </section>`;
 }
-function taskRow(x, c) {
+function taskRow(x, c, plain) {
   const sel = !!c && x.id === c.id && !paused();
   const title = esc(tx(x.t));
   return `<li class="trow${sel ? ' sel' : ''}${x.done ? ' done' : ''}">
     <span class="t-main"><span class="t-title">${x.done ? ICON.check : ''}${title}</span>
       <span class="t-meta">${x.done ? '' : `<span class="t-time">${x.h || t('when_free')}</span>`}<span>${effMin(x)} min</span><span>${pips(x.e)} ${t('en_' + x.e)}</span>${x.tag ? `<span>${t('tag_' + x.tag)}</span>` : ''}${x.from ? `<span>${t('from_line', { s: t('from_' + x.from) })}</span>` : ''}</span></span>
-    <span class="t-act">${x.done ? '' : (sel ? `<span class="nowmark">${t('now_label')}</span>` : `<button type="button" class="btn mini quiet" data-act="select" data-id="${x.id}" aria-label="${t('pick')}: ${title}">${t('pick')}</button>`)}
+    <span class="t-act">${plain === 'future' ? `<button type="button" class="btn mini quiet" data-act="toToday" data-id="${x.id}">${t('sh_back')}</button>` : ''}${x.done || plain ? '' : (sel ? `<span class="nowmark">${t('now_label')}</span>` : `<button type="button" class="btn mini quiet" data-act="select" data-id="${x.id}" aria-label="${t('pick')}: ${title}">${t('pick')}</button>`)}
       <button type="button" class="btn mini ghost" data-act="del" data-id="${x.id}" aria-label="${t('remove')}: ${title}">${ICON.x}</button></span></li>`;
 }
-function planBlock(c) {
-  const list = ordered(todays()), open = list.filter(x => !x.done), done = list.filter(x => x.done);
-  const base = planMode() === 'base';
-  let body = '';
-  if (base) {
-    const enough = baseSet(c), wait = open.filter(x => !enough.includes(x));
-    body = `<ul class="tlist">${enough.map(x => taskRow(x, c)).join('')}</ul>`
-      + (wait.length ? `<details class="more" ${keep('wait')}><summary>${t('plan_wait', { n: wait.length })}</summary><ul class="tlist">${wait.map(x => taskRow(x, c)).join('')}</ul></details>` : '');
-  } else body = `<ul class="tlist">${open.map(x => taskRow(x, c)).join('')}</ul>`;
+function addForm() {
   const sel = (name, opts) => `<select name="${name}">${opts.map(([v, l, s]) => `<option value="${v}"${s ? ' selected' : ''}>${l}</option>`).join('')}</select>`;
-  return `<section class="blk" aria-labelledby="plan-h">
-    <h2 id="plan-h">${base ? t('plan_base_t') : t('plan_t')}</h2>
-    ${S.replanDay === dayKey() ? `<p class="note">${t('replan_note')}</p>` : ''}
-    ${body}
-    ${done.length ? `<details class="more" ${keep('done')}><summary>${t('plan_done', { n: done.length })}</summary><ul class="tlist">${done.map(x => taskRow(x, c)).join('')}</ul></details>` : ''}
-    <form class="add" data-form="add" autocomplete="off">
+  return `<form class="add" data-form="add" autocomplete="off">
       <h3 class="sub">${t('add_h')}</h3>
       <label class="lbl" for="a-t">${t('add_title')}</label>
       <input id="a-t" name="t" type="text" required maxlength="90" placeholder="${t('add_ph')}">
@@ -1640,7 +1816,23 @@ function planBlock(c) {
       </div></details>
       <p class="note">${t('add_tip')}</p>
       <button type="submit" class="btn">${t('add_btn')}</button>
-    </form>
+    </form>`;
+}
+function planBlock(c) {
+  const list = ordered(todays()), open = list.filter(x => !x.done), done = list.filter(x => x.done);
+  const base = planMode() === 'base';
+  let body = '';
+  if (base) {
+    const enough = baseSet(c), wait = open.filter(x => !enough.includes(x));
+    body = `<ul class="tlist">${enough.map(x => taskRow(x, c)).join('')}</ul>`
+      + (wait.length ? `<details class="more" ${keep('wait')}><summary>${t('plan_wait', { n: wait.length })}</summary><ul class="tlist">${wait.map(x => taskRow(x, c)).join('')}</ul></details>` : '');
+  } else body = `<ul class="tlist">${open.map(x => taskRow(x, c)).join('')}</ul>`;
+  return `<section class="blk" aria-labelledby="plan-h">
+    <h2 id="plan-h">${base ? t('plan_base_t') : t('plan_t')}</h2>
+    ${S.replanDay === dayKey() ? `<p class="note">${t('replan_note')}</p>` : ''}
+    ${body}
+    ${done.length ? `<details class="more" ${keep('done')}><summary>${t('plan_done', { n: done.length })}</summary><ul class="tlist">${done.map(x => taskRow(x, c)).join('')}</ul></details>` : ''}
+    ${addForm()}
   </section>`;
 }
 function rhythmBlock(c) {
@@ -1672,24 +1864,62 @@ function goalLine(g) {
   const pace = Math.floor(days / rem);
   return pace >= 2 ? t('go_days', { days, rem, pace }) : pace >= 1 ? t('go_daily', { days, rem }) : t('go_tight');
 }
-function goalsBlock() {
-  return `<section class="blk" aria-labelledby="go-h">
-    <h2 id="go-h">${t('go_title')}</h2>
-    ${S.goals.length ? S.goals.map(g => `<div class="goal">
-      <p><b>${esc(tx(g.t))}</b></p>
-      <div class="stones" role="img" aria-label="${t('go_aria', { done: g.done, parts: g.parts })}">${Array.from({ length: g.parts }, (_, i) => `<i class="${i < g.done ? 'on' : i === g.done ? 'next' : ''}"></i>`).join('')}</div>
-      <p class="note">${goalLine(g)}</p>
-      <div class="row">${g.done < g.parts ? btn('goalStep', t('go_bring'), 'quiet', ` data-id="${g.id}"`) : ''}<button type="button" class="btn ghost" data-act="goalDel" data-id="${g.id}" aria-label="${t('remove')}: ${esc(tx(g.t))}">${ICON.x}</button></div>
-    </div>`).join('') : `<p class="note">${t('go_none')}</p>`}
-    <details class="more" ${keep('goaladd')}><summary>${t('go_add')}</summary>
-      <form data-form="goal" autocomplete="off"><div class="grid3">
-        <label><span class="lbl">${t('go_f_t')}</span><input name="t" type="text" required maxlength="80"></label>
-        <label><span class="lbl">${t('go_f_d')}</span><input name="due" type="date" required min="${dayKey()}"></label>
-        <label><span class="lbl">${t('go_f_p')}</span><input name="parts" type="number" min="1" max="20" value="5" required></label>
-      </div><button type="submit" class="btn quiet">${t('go_f_btn')}</button></form>
-    </details>
-    ${why('goals', [['goals', ['adhdeu', 'stanford']]])}
+const goalDays = g => Math.round((sod(new Date(g.due + 'T12:00:00').getTime()) - sod(Date.now())) / DAY);
+function goalsAcc() {
+  const active = S.goals.filter(g => g.done < g.parts).length;
+  return `${why('cal', [['cal', ['stanford', 'additude_time', 'chen']]])}
+  <details class="acc" ${keep('goals')}>
+    <summary><span>${t('go_title')}</span><span class="sum-v">${tn('go_count', active, { n: active })}</span></summary>
+    <div class="acc-list">
+      ${S.goals.length ? S.goals.map(g => {
+        const days = goalDays(g), when = days < 0 ? t('go_when_past') : tn('go_when', days, { days }), title = esc(tx(g.t));
+        return `<details class="acc-item" ${keep('g_' + g.id)}><summary><span>${title}</span><span class="sum-v">${t('go_sum', { done: g.done, parts: g.parts, when })}</span></summary>
+          <div class="acc-body">
+            <div class="stones" role="img" aria-label="${t('go_aria', { done: g.done, parts: g.parts })}">${Array.from({ length: g.parts }, (_, i) => `<i class="${i < g.done ? 'on' : i === g.done ? 'next' : ''}"></i>`).join('')}</div>
+            <p class="note">${goalLine(g)}</p>
+            <div class="row">${g.done < g.parts ? btn('goalStep', t('go_bring'), 'quiet', ` data-id="${g.id}"`) : ''}<button type="button" class="btn ghost" data-act="goalDel" data-id="${g.id}" aria-label="${t('remove')}: ${title}">${ICON.x}</button></div>
+          </div></details>`;
+      }).join('') : `<p class="note">${t('go_none')}</p>`}
+      <details class="acc-item" ${keep('goaladd')}><summary>${t('go_add')}</summary>
+        <div class="acc-body"><form data-form="goal" autocomplete="off"><div class="grid3">
+          <label><span class="lbl">${t('go_f_t')}</span><input name="t" type="text" required maxlength="80"></label>
+          <label><span class="lbl">${t('go_f_d')}</span><input name="due" type="date" required min="${dayKey()}"></label>
+          <label><span class="lbl">${t('go_f_p')}</span><input name="parts" type="number" min="1" max="20" value="5" required></label>
+        </div><button type="submit" class="btn quiet">${t('go_f_btn')}</button></form></div>
+      </details>
+      ${why('goals', [['goals', ['adhdeu', 'stanford']]])}
+    </div>
+  </details>`;
+}
+function calBar() {
+  return `<div class="cal-bar"><button type="button" class="icon-btn" data-act="monthShift" data-v="-1" aria-label="${t('cal_prev')}">${ICON.chevL}</button>
+    <p class="cal-month" aria-live="polite">${fmtMonth(ui.month)}</p>
+    <button type="button" class="icon-btn" data-act="monthShift" data-v="1" aria-label="${t('cal_next')}">${ICON.chevR}</button>
+    ${btn('calToday', t('cal_today'), 'mini quiet')}</div>`;
+}
+function dayHead(d, mode) {
+  const st = dayStats(d);
+  return `<section class="day-head" aria-labelledby="day-h">
+    <div class="dh-row">
+      <button type="button" class="icon-btn" data-act="dayShift" data-v="-1" aria-label="${t('d_prev')}">${ICON.chevL}</button>
+      <div class="dh-main"><h2 id="day-h">${fmtDay(d)}</h2>
+        <p class="note"><span class="badge">${t('d_' + mode)}</span><span id="d-sum">${mode === 'future' ? '' : t('d_sum', { min: st.min, done: st.done, lit: st.lit, total: LIGHTS })}</span></p></div>
+      <button type="button" class="icon-btn" data-act="dayShift" data-v="1" aria-label="${t('d_next')}">${ICON.chevR}</button>
+    </div>
+    <div class="dh-tools"><label class="sr" for="d-pick">${t('d_pick')}</label><input type="date" id="d-pick" data-chg="datePick" value="${d}">
+      ${mode !== 'today' ? btn('calToday', t('d_back'), 'quiet') : ''}</div>
   </section>`;
+}
+function pastBlock(d) {
+  const done = dayTasks(d).filter(x => x.done), st = dayStats(d);
+  return `<section class="panel"><p>${t('d_past_note')}</p>
+    ${done.length ? `<h3 class="sub">${t('d_past_done')}</h3><ul class="tlist">${done.map(x => taskRow(x, null, 'past')).join('')}</ul>` : (st.sec ? '' : `<p class="note">${t('d_past_none')}</p>`)}</section>`;
+}
+function futureBlock(d) {
+  const list = ordered(dayTasks(d));
+  return `<section class="panel"><h3>${t('d_future_t')}</h3>
+    ${list.length ? `<ul class="tlist">${list.map(x => taskRow(x, null, 'future')).join('')}</ul><p class="note">${t('d_future_note')}</p>` : `<p class="note">${t('d_future_none')}</p>`}
+    ${addForm()}</section>`;
 }
 function shelfBlock() {
   const sh = S.tasks.filter(x => x.shelved && !x.done);
@@ -1703,8 +1933,15 @@ function shelfBlock() {
   </details></section>`;
 }
 function vDay() {
+  const d = S.day, mode = dayMode(d);
+  if (mode !== 'today') return dayHead(d, mode) + (mode === 'future' ? futureBlock(d) : pastBlock(d));
   const c = cur();
-  return checkin() + nowPanel(c) + planBlock(c) + rhythmBlock(c) + goalsBlock() + shelfBlock();
+  return dayHead(d, mode) + checkin() + nowPanel(c) + planBlock(c) + rhythmBlock(c) + shelfBlock();
+}
+function openDay(d, stay) {
+  if (!isDate(d)) return;
+  S.day = d; ui.month = d.slice(0, 7); save(); render();
+  if (!stay) sceneGo(d);
 }
 
 /* ---------- brain dump ---------- */
@@ -1845,7 +2082,7 @@ const PERSONAS = ['marta', 'tiago', 'joana', 'sofia', 'pedro'];
 const DEMOS = {
   marta() {
     return {
-      energy: 3, mood: 'wind', lights: 4,
+      energy: 3, mood: 'wind', lights: 4, focus: focusOf([20, 90, 0, 5, 130, 0, 45, 0, 10]),
       tasks: [mk({ t: L('Abrir a janela e beber água', 'Open the window and drink water'), m: 5, e: 1, done: true, doneAt: Date.now() }),
         mk({ t: L('Arrumar a mesa de trabalho', 'Clear the work table'), m: 10, e: 1, tag: 'home' })],
       dump: [L('Podcast sobre os bairros de Lisboa', 'Podcast about Lisbon neighbourhoods'), L('Curso de cerâmica', 'Pottery course'), L('Reorganizar o portefólio', 'Reorganise the portfolio'),
@@ -1858,14 +2095,14 @@ const DEMOS = {
     const a = mk({ t: L('Enviar o comprovativo de morada à senhoria', 'Send the proof of address to the landlady'), m: 5, e: 1, later: 7, created: Date.now() - 23 * DAY, from: 'email',
       steps: [{ t: L('Encontrar o ficheiro', 'Find the file') }, { t: L('Anexar e enviar, sem rever três vezes', 'Attach and send, without re-reading three times') }] });
     return {
-      energy: 2, mood: 'fog', ugly: true, lights: 11, sel: a.id,
+      energy: 2, mood: 'fog', ugly: true, lights: 11, sel: a.id, focus: focusOf([15, 0, 25, 10, 0, 30, 0, 20, 0, 35]),
       tasks: [a, mk({ t: L('Levar o vidro ao ecoponto', 'Take the glass to the recycling bank'), m: 10, e: 1, h: hmPlus(60), tag: 'home' }),
         mk({ t: L('Rever o orçamento do mês', "Review this month's budget"), m: 25, e: 3, h: hmPlus(150) })]
     };
   },
   joana() {
     return {
-      energy: 1, mood: 'cloud', lights: 19,
+      energy: 1, mood: 'cloud', lights: 19, focus: focusOf([0, 0, 110, 120, 0, 0, 30, 95, 100, 0]),
       tasks: [mk({ t: L('Rever o capítulo 2', 'Revise chapter 2'), m: 40, e: 3, h: hmPlus(-180), tag: 'work' }),
         mk({ t: L('Enviar a ata da reunião', 'Send the meeting minutes'), m: 15, e: 2, h: hmPlus(-105), from: 'email' }),
         mk({ t: L('Preparar a aula de quinta', "Prepare Thursday's class"), m: 40, e: 3, h: hmPlus(-45), tag: 'work' }),
@@ -1885,7 +2122,7 @@ const DEMOS = {
       ['Ligar à avó', 'Call grandma', 10, 1, 'head'], ['Atualizar o currículo', 'Update the CV', 40, 3, 'head']
     ];
     return {
-      energy: 2, mood: 'cloud', lights: 31, lastSeen: Date.now() - 12 * DAY,
+      energy: 2, mood: 'cloud', lights: 31, lastSeen: Date.now() - 12 * DAY, focus: focusOf([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 65, 20, 0, 50, 30]),
       tasks: rows.map(([pt, en, m, e, from], i) => mk({ t: L(pt, en), m, e, from, created: Date.now() - (14 + i) * DAY, h: i < 5 ? pad(9 + i) + ':00' : '' }))
     };
   },
@@ -1895,7 +2132,7 @@ const DEMOS = {
         { t: L('Escrever a página «Quem somos»', 'Write the “About us” page'), d: true }, { t: L('Montar a página de contactos', 'Build the contact page') },
         { t: L('Pedir o domínio', 'Request the domain') }, { t: L('Publicar e avisar os vizinhos', 'Publish and tell the neighbours') }] });
     return {
-      energy: 2, mood: 'fog', lights: 9, sel: a.id,
+      energy: 2, mood: 'fog', lights: 9, sel: a.id, focus: focusOf([30, 0, 0, 45, 0, 0, 0, 60, 40, 70]),
       tasks: [a, mk({ t: L('Pagar a quota da associação', 'Pay the association fee'), m: 5, e: 1 }),
         mk({ t: L('Marcar a reunião de direção', 'Schedule the board meeting'), m: 10, e: 2, from: 'chat' })]
     };
@@ -1909,6 +2146,7 @@ function loadDemo(name) {
   S = Object.assign(fresh(), keepPrefs, { lastSeen: Date.now() }, DEMOS[name](), { demo: name, backup });
   Object.assign(ui, { showReturn: false, pick: null, fs: '', msg: 'invite', tg: { comp: 'lia', min: 25, what: '' }, ho: { id: null, need: 'review', where: '', by: '' } });
   ui.open = { checkin: false, boost: false };
+  goToday();
   save();
   toast(t('de_loaded', { name: t('p_' + name) }));
   if (name === 'marta') nav('dump');
@@ -1926,7 +2164,7 @@ function exitDemo() {
   const prefs = { lang: S.lang, theme: S.theme, motion: S.motion };
   S = normalise(Object.assign({}, S.backup || {}, prefs, { demo: null, backup: null, lastSeen: Date.now() }));
   if (!S.tasks.length && !S.dump.length && !S.goals.length) seedDefault();
-  ui.showReturn = false; ui.pick = null;
+  ui.showReturn = false; ui.pick = null; goToday();
   save(); toast(t('de_restored')); nav('demo');
 }
 function vDemo() {
@@ -1968,8 +2206,8 @@ function importData(file) {
   r.onload = () => {
     try {
       const o = JSON.parse(String(r.result));
-      if (!o || o.v !== 2 || !Array.isArray(o.tasks)) throw new Error('shape');
-      clearTimer(); S = normalise(Object.assign(o, { demo: null, backup: null, lastSeen: Date.now() })); save();
+      if (!o || (o.v !== 2 && o.v !== 3) || !Array.isArray(o.tasks)) throw new Error('shape');
+      clearTimer(); S = normalise(Object.assign(o, { demo: null, backup: null, lastSeen: Date.now() })); goToday(); save();
       toast(t('pr_imported')); render();
     } catch (e) { toast(t('pr_bad')); }
   };
@@ -1987,7 +2225,7 @@ function sceneStatus() {
 function vVision() {
   const list = (p, n) => `<ul class="bullets">${Array.from({ length: n }, (_, i) => `<li>${t(p + (i + 1))}</li>`).join('')}</ul>`;
   return `${back()}<h1 tabindex="-1">${t('vi_title')}</h1><p class="lead">${t('vi_lead')}</p>
-    <section class="blk" aria-labelledby="vi-1"><h2 id="vi-1">${t('vi_works')}</h2>${list('vi_w', 8)}</section>
+    <section class="blk" aria-labelledby="vi-1"><h2 id="vi-1">${t('vi_works')}</h2>${list('vi_w', 9)}</section>
     <section class="blk" aria-labelledby="vi-2"><h2 id="vi-2">${t('vi_sim')}</h2>${list('vi_s', 4)}</section>
     <section class="blk" aria-labelledby="vi-3"><h2 id="vi-3">${t('vi_future')}</h2>${list('vi_f', 6)}</section>
     <section class="blk" aria-labelledby="vi-4"><h2 id="vi-4">${t('vi_limits')}</h2>${list('vi_l', 5)}</section>
@@ -1998,7 +2236,7 @@ function vVision() {
 }
 
 /* ---------- chrome, render, navigation ---------- */
-const VIEWS = { breath: vBreath, menu: vMenu, day: vDay, dump: vDump, together: vTogether, demo: vDemo, privacy: vPrivacy, vision: vVision };
+const VIEWS = { cover: vCover, breath: vBreath, menu: vMenu, day: vDay, dump: vDump, together: vTogether, demo: vDemo, privacy: vPrivacy, vision: vVision };
 function paintChrome() {
   const h = document.documentElement;
   h.lang = S.lang === 'pt' ? 'pt-PT' : 'en';
@@ -2006,7 +2244,7 @@ function paintChrome() {
   h.dataset.motion = reduced() ? 'reduce' : 'full';
   document.title = t('app_title');
   $$('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
-  $('#brand').setAttribute('aria-label', t('brand_aria'));
+  $$('[data-i18n-aria]').forEach(el => { const l = t(el.dataset.i18nAria); el.setAttribute('aria-label', l); el.title = l; });
   $('#lang-seg').setAttribute('aria-label', t('lang_aria'));
   $$('#lang-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === S.lang)));
   const bt = $('#btn-theme'); bt.setAttribute('aria-label', t('theme_' + S.theme)); bt.title = t('theme_' + S.theme);
@@ -2025,28 +2263,36 @@ function focusKey() {
 }
 function render() {
   paintChrome();
-  const v = ui.view;
+  const v = ui.view, scope = $('#v-' + v);
+  document.body.dataset.view = v;
   $$('.view').forEach(s => { s.hidden = s.id !== 'v-' + v; });
-  $('#main').classList.toggle('wide', v === 'day');
-  const host = v === 'day' ? $('#day-body') : $('#v-' + v);
-  $$('.view').forEach(s => { if (s.hidden) { const body = s.id === 'v-day' ? $('#day-body') : s; if (body.firstChild) body.innerHTML = ''; } });
-  const fk = host.contains(document.activeElement) ? focusKey() : null;
+  const main = $('#main'); main.classList.toggle('wide', v === 'day'); main.classList.toggle('full', v === 'cover');
+  const bodyOf = id => id === 'v-day' ? $('#day-body') : id === 'v-cover' ? $('#cover-body') : $('#' + id);
+  $$('.view').forEach(s => { if (s.hidden) { const b = bodyOf(s.id); if (b.firstChild) b.innerHTML = ''; } });
+  const host = bodyOf('v-' + v);
+  const fk = scope.contains(document.activeElement) ? focusKey() : null;
   host.innerHTML = VIEWS[v]();
-  if (ui.refocus) { const el = $(ui.refocus, host); if (el) el.focus({ preventScroll: true }); ui.refocus = null; }
-  else if (fk) { let el = null; try { el = $(fk, host); } catch (e) { el = null; } if (el) el.focus({ preventScroll: true }); }
+  if (v === 'day') { $('#cal-bar').innerHTML = calBar(); $('#goals-acc').innerHTML = goalsAcc(); }
+  if (ui.refocus) { const el = $(ui.refocus, scope); if (el) el.focus({ preventScroll: true }); ui.refocus = null; }
+  else if (fk) { let el = null; try { el = $(fk, scope); } catch (e) { el = null; } if (el) el.focus({ preventScroll: true }); }
   refreshOut();
   if (v === 'breath') paintBreath();
   syncScene();
+  paintMini();
 }
 function nav(v) {
   if (!VIEWS[v]) v = 'menu';
   if (ui.view === 'breath' && v !== 'breath') stopBreath();
   ui.view = v; ui.wipe = false;
+  if (v === 'day' && T.id) goToday();
   if (v === 'breath') startBreath();
   render();
   window.scrollTo(0, 0);
   const h = $('#v-' + v + ' h1'); if (h) h.focus({ preventScroll: true });
-  try { if (v !== 'breath' && location.hash.slice(1) !== v) location.hash = v; } catch (e) { /* hash is a convenience only */ }
+  try {
+    if (v === 'cover') { if (location.hash) history.replaceState(null, '', location.pathname + location.search); }
+    else if (v !== 'breath' && location.hash.slice(1) !== v) location.hash = v;
+  } catch (e) { /* the hash is a convenience only */ }
 }
 async function copyFrom(id) {
   const el = $('#' + id); if (!el) return;
@@ -2089,6 +2335,7 @@ function startTwo(x) { if (!x) return; startTimer(x, 'two', 120); showRoom(); }
 /* on narrow screens, bring the room into view so the bulb can be seen lighting up */
 function showRoom() {
   const st = $('#stage'); if (!st || ui.view !== 'day') return;
+  sceneGo(dayKey(), true);
   const r = st.getBoundingClientRect();
   if (r.top < 60 || r.bottom > window.innerHeight) st.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' });
 }
@@ -2099,7 +2346,26 @@ const ACT = {
   theme: () => { S.theme = { auto: 'light', light: 'dark', dark: 'auto' }[S.theme] || 'auto'; save(); paintChrome(); toast(t('theme_' + S.theme)); },
   motion: () => { S.motion = { auto: 'reduce', reduce: 'full', full: 'auto' }[S.motion] || 'auto'; save(); paintChrome(); syncScene(); toast(t('motion_' + S.motion)); },
   skipBreath: () => nav('menu'),
-  twoMenu: () => { const c = cur(); if (S.pauseDay) S.pauseDay = ''; if (c) { ui.view = 'day'; startTwo(c); nav('day'); } else nav('day'); },
+  begin: () => nav(S.skipBreath ? 'menu' : 'breath'),
+  toTimer: () => {
+    if (T.mode === 'tog') { nav('together'); return; }
+    goToday(); nav('day');
+    const p = $('#day-body .now'); if (p) p.scrollIntoView({ block: 'center' });
+    paintMini();
+  },
+  openDay: d => openDay(d.v),
+  dayShift: d => openDay(dayPlus(+d.v || 0, S.day)),
+  calToday: () => openDay(dayKey()),
+  monthShift: d => {
+    const [y, m] = ui.month.split('-').map(Number), n = new Date(y, m - 1 + (+d.v || 0), 1, 12);
+    ui.month = n.getFullYear() + '-' + pad(n.getMonth() + 1); render(); sceneFit();
+  },
+  zoomIn: () => sceneZoom(1.4),
+  zoomOut: () => sceneZoom(1 / 1.4),
+  zoomFit: () => sceneFit(),
+  camRot: () => { S.cam = S.cam === 'iso' ? 'map' : 'iso'; save(); sceneCam(); toast(t('cam_' + S.cam)); },
+  toToday: d => { const x = byId(d.id); if (x) { x.date = dayKey(); x.h = ''; save(); toast(t('toast_added')); render(); } },
+  twoMenu: () => { goToday(); const c = cur(); if (S.pauseDay) S.pauseDay = ''; if (c) { ui.view = 'day'; startTwo(c); nav('day'); } else nav('day'); },
   select: d => { if (choose(d.id)) { save(); render(); } },
   start: d => { const x = byId(d.id) || cur(); if (x) { startTimer(x, 'focus', effMin(x) * 60); showRoom(); } },
   two: d => startTwo(byId(d.id) || cur()),
@@ -2120,7 +2386,7 @@ const ACT = {
   challenge: () => { const c = cur(); if (!c) return; const target = c.best ? c.best : Math.round(effMin(c) * 60 * 0.8); startTimer(c, 'chal', Math.max(effMin(c) * 60, target), { target }); showRoom(); },
   sprint: d => { const c = cur(); if (c) { startTimer(c, 'sprint', (+d.v || 5) * 60); showRoom(); } },
   focusAdd: () => { const el = $('#a-t'); if (el) { el.scrollIntoView({ block: 'center' }); el.focus({ preventScroll: true }); } },
-  shelfBack: d => { const x = byId(d.id); if (x) { x.shelved = false; save(); render(); } },
+  shelfBack: d => { const x = byId(d.id); if (x) { x.shelved = false; x.date = dayKey(); save(); render(); } },
   goalStep: d => {
     const g = S.goals.find(k => k.id === d.id); if (!g) return;
     let x = S.tasks.find(k => k.goalId === g.id && !k.done);
@@ -2128,7 +2394,7 @@ const ACT = {
       const n = g.done + 1, name = typeof g.t === 'object' ? L(g.t.pt + ', ' + I18N.pt.go_part.replace('{n}', n), g.t.en + ', ' + I18N.en.go_part.replace('{n}', n)) : g.t + ', ' + t('go_part', { n });
       x = mk({ t: name, m: 15, e: 2, goalId: g.id }); S.tasks.push(x);
     }
-    x.shelved = false; choose(x.id); save(); toast(t('toast_added')); render();
+    x.shelved = false; x.date = dayKey(); goToday(); choose(x.id); save(); toast(t('toast_added')); render();
     const p = $('#now-t'); if (p) p.scrollIntoView({ block: 'center' });
   },
   goalDel: d => { S.goals = S.goals.filter(g => g.id !== d.id); save(); render(); },
@@ -2136,7 +2402,7 @@ const ACT = {
   dumpRandom: () => { if (!S.dump.length) return; const k = S.dump[Math.floor(Math.random() * S.dump.length)]; ui.pick = k.id; ui.fs = firstStep(tx(k.t)); ui.refocus = '#fs-in'; render(); const el = $('#fs-in'); if (el) el.scrollIntoView({ block: 'center' }); },
   dumpDel: d => { S.dump = S.dump.filter(x => x.id !== d.id); if (ui.pick === d.id) ui.pick = null; save(); render(); },
   dumpToday: d => { const x = dumpToTask(d.id); if (x) { choose(x.id); save(); toast(t('du_moved')); render(); } },
-  dumpGo: d => { const x = dumpToTask(d.id); if (x) { S.pauseDay = ''; ui.view = 'day'; startTwo(x); nav('day'); } },
+  dumpGo: d => { const x = dumpToTask(d.id); if (x) { S.pauseDay = ''; goToday(); ui.view = 'day'; startTwo(x); nav('day'); } },
   tgComp: d => { ui.tg.comp = d.v; render(); },
   tgMin: d => { ui.tg.min = +d.v || 25; render(); },
   tgStart: () => {
@@ -2146,7 +2412,7 @@ const ACT = {
     S.pauseDay = ''; ui.tg.what = '';
     startTimer(x, 'tog', ui.tg.min * 60, { comp: ui.tg.comp });
   },
-  tgEnd: () => { T.running = false; T.ended = true; stopTick(); ui.refocus = '#wrap-in'; render(); },
+  tgEnd: () => { T.running = false; T.ended = true; stopTick(); commitFocus(); save(); ui.refocus = '#wrap-in'; render(); },
   msg: d => { ui.msg = d.v; render(); },
   need: d => { ui.ho.need = d.v; render(); },
   copy: d => copyFrom(d.v),
@@ -2155,14 +2421,14 @@ const ACT = {
   export: () => exportData(),
   wipe: () => {
     if (!ui.wipe) { ui.wipe = true; render(); setTimeout(() => { if (ui.wipe) { ui.wipe = false; if (ui.view === 'privacy') render(); } }, 6000); return; }
-    clearTimer(); store.del(KEY); store.del(OLD_KEY);
+    clearTimer(); store.del(KEY); store.del(V2_KEY); store.del(OLD_KEY);
     const prefs = { lang: S.lang, theme: S.theme, motion: S.motion };
-    S = Object.assign(fresh(), prefs, { lastSeen: Date.now() }); ui.wipe = false; ui.showReturn = false; save();
+    S = Object.assign(fresh(), prefs, { lastSeen: Date.now() }); goToday(); ui.wipe = false; ui.showReturn = false; save();
     toast(t('pr_wiped')); render();
   },
-  retKeep: () => { ui.showReturn = false; if (ui.ret[0]) choose(ui.ret[0]); save(); toast(t('ret_kept')); nav('day'); },
+  retKeep: () => { ui.showReturn = false; goToday(); if (ui.ret[0]) choose(ui.ret[0]); save(); toast(t('ret_kept')); nav('day'); },
   retSwap: () => { ui.retOff += 3; prepareReturn(); render(); },
-  retRest: () => { S.tasks.forEach(x => { if (!x.done) x.shelved = true; }); S.pauseDay = dayKey(); ui.showReturn = false; save(); nav('day'); }
+  retRest: () => { S.tasks.forEach(x => { if (!x.done) x.shelved = true; }); S.pauseDay = dayKey(); ui.showReturn = false; goToday(); save(); nav('day'); }
 };
 const CHG = {
   skipAlways: el => { S.skipBreath = el.checked; save(); },
@@ -2175,6 +2441,7 @@ const CHG = {
   },
   share: el => { S.share[el.dataset.k] = el.checked; save(); refreshOut(); },
   hoTask: el => { ui.ho.id = el.value; refreshOut(); },
+  datePick: el => { if (isDate(el.value)) openDay(el.value); },
   notif: el => {
     if (!el.checked) { S.notif = false; save(); return; }
     if (!('Notification' in window)) { el.checked = false; toast(t('pr_notif_no')); return; }
@@ -2194,7 +2461,7 @@ const BIND = {
 const FORMS = {
   add: f => {
     const d = new FormData(f), title = String(d.get('t') || '').trim(); if (!title) return;
-    S.tasks.push(mk({ t: title, m: +d.get('m') || 15, e: +d.get('e') || 2, h: String(d.get('h') || ''), tag: String(d.get('tag') || ''), from: String(d.get('from') || '') }));
+    S.tasks.push(mk({ t: title, date: dayMode(S.day) === 'past' ? dayKey() : S.day, m: +d.get('m') || 15, e: +d.get('e') || 2, h: String(d.get('h') || ''), tag: String(d.get('tag') || ''), from: String(d.get('from') || '') }));
     save(); toast(t('toast_added')); ui.refocus = '#a-t'; render();
   },
   dump: f => {
@@ -2220,39 +2487,76 @@ const FORMS = {
 };
 
 /* =====================================================================
-   The room: an isometric Three.js scene where every task is a light bulb.
-   Order of fallbacks: GLB model -> bulbs drawn in code -> simple 2D view.
+   The 3D part: one WebGL canvas shared by two flat-shaded, low-poly scenes.
+     cover  a slowly turning bulb on a small island
+     map    the calendar as an isometric board: one tile per date, twelve
+            small lights around each tile, the day's task bulbs on today's tile
+   Order of fallbacks: GLB model -> bulb drawn in code -> simple 2D calendar.
+   Kept light on purpose: instanced meshes, emissive/basic materials, one point
+   light per scene, pixel ratio capped at 1.5, about 30 frames per second.
    ===================================================================== */
-const scene3 = { mode: 'pending', model: 'pending', err: '', bulbs: new Map(), dirty: true };
-const STATE_GLOW = { idle: 0.3, warm: 0.55, paused: 0.7, rest: 0.14, focus: 2.2, done: 0.02 };
+const scene3 = { mode: 'pending', model: 'pending', err: '', dirty: true, labDirty: true };
+const STATE_GLOW = { idle: 0.35, warm: 0.6, paused: 0.85, rest: 0.15, focus: 2.3, done: 0.03 };
+const STEP = 3.2, TILE = 2.3, TILE_H = 0.4;                 // grid step, tile size, tile height
+const CAMS = { iso: { yaw: Math.PI / 4, el: Math.atan(Math.SQRT1_2) }, map: { yaw: 0.22, el: 0.96 } };
+const MAX_BULBS = 6;
 
-function sceneItems() {
+/* ---------- what the calendar shows (shared by the 3D map and the 2D fallback) ---------- */
+function calModel() {
+  const [y, m] = ui.month.split('-').map(Number);
+  const off = (new Date(y, m - 1, 1, 12).getDay() + 6) % 7, dim = new Date(y, m, 0).getDate(), rows = Math.ceil((off + dim) / 7);
+  const today = dayKey(), cells = [];
+  for (let i = 0; i < rows * 7; i++) {
+    const d = new Date(y, m - 1, 1 - off + i, 12), k = dayKey(d), st = dayStats(k);
+    cells.push({
+      date: k, num: d.getDate(), col: i % 7, row: Math.floor(i / 7), inMonth: d.getMonth() === m - 1,
+      today: k === today, sel: k === S.day, future: k > today, lit: st.lit, min: st.min,
+      pulse: k === today && T.running, goal: S.goals.some(g => g.due === k && g.done < g.parts)
+    });
+  }
+  return { key: ui.month, rows, cells };
+}
+function bulbItems() {
   const c = cur(), rest = paused();
   let list = ordered(todays());
-  if (list.length > 12) { list = list.slice(0, 12); if (c && !list.includes(c)) list[11] = c; }
+  if (list.length > MAX_BULBS) {
+    const open = list.filter(x => !x.done);
+    list = open.concat(list.filter(x => x.done)).slice(0, MAX_BULBS);
+    if (c && !list.includes(c)) list[MAX_BULBS - 1] = c;
+  }
   return list.map(x => ({
-    id: x.id, time: x.h || '', title: tx(x.t), sel: !!c && c.id === x.id && !rest && !x.done,
+    id: x.id, title: tx(x.t), sel: !!c && c.id === x.id && !rest && !x.done,
     state: x.done ? 'done' : rest ? 'rest' : T.id === x.id ? (T.running ? 'focus' : 'paused') : x.started ? 'warm' : 'idle'
   }));
 }
-function syncScene() {
-  const items = sceneItems(), focus = items.find(i => i.state === 'focus');
-  $('#stage-count').textContent = t('stage_count', { n: S.lights });
-  const desc = t('stage_desc', { n: items.length, focus: focus ? t('stage_focus', { t: focus.title }) : t('stage_nofocus') });
-  const sd = $('#stage-desc'); if (sd.textContent !== desc) sd.textContent = desc;
-  $('#stage-note').textContent = scene3.mode === 'pending' ? t('stage_pending') : scene3.mode === '2d' ? t('stage_2d') : '';
-  $('#stage').classList.toggle('flat', scene3.mode === '2d');
-  if (scene3.mode === '3d') { $('#stage-2d').hidden = true; sync3D(items); }
-  else if (scene3.mode === '2d') render2D(items);
+function wdNames() {
+  const f = new Intl.DateTimeFormat(S.lang === 'pt' ? 'pt-PT' : 'en-GB', { weekday: 'long' });
+  return Array.from({ length: 7 }, (_, i) => f.format(new Date(2024, 0, 1 + i, 12)).slice(0, 3));   // 1 Jan 2024 was a Monday
 }
-function render2D(items) {
+function syncScene() {
+  const mode = scene3.mode;
+  $('#cover').classList.toggle('flat', mode === '2d');
+  $('#stage').classList.toggle('flat', mode === '2d');
+  $('#stage-note').textContent = mode === 'pending' ? t('stage_pending') : mode === '2d' ? t('stage_2d') : (scene3.map && scene3.map.zoomed ? '' : t('cal_hint'));
+  scene3.dirty = true;
+  if (ui.view !== 'day') return;
+  const model = calModel(), items = bulbItems(), focus = items.find(i => i.state === 'focus');
+  const desc = t('stage_desc', { month: fmtMonth(ui.month), day: fmtDay(S.day), focus: focus ? t('stage_focus', { t: focus.title }) : t('stage_nofocus') });
+  const sd = $('#stage-desc'); if (sd.textContent !== desc) sd.textContent = desc;
+  if (mode === '3d') { $('#stage-2d').hidden = true; syncMap(model, items); }
+  else if (mode === '2d') render2D(model);
+}
+/* simple calendar: the same dates and the same twelve lights, drawn with HTML and CSS */
+function render2D(model) {
   const host = $('#stage-2d'); host.hidden = false; $('#stage-labels').innerHTML = '';
-  host.innerHTML = items.map(i => `<button type="button" class="b2 st-${i.state}${i.sel ? ' sel' : ''}" data-act="select" data-id="${i.id}"${i.state === 'done' ? ' disabled' : ''}>
-    <span class="b2-bulb"></span><span>${i.state === 'done' ? '✓' : (i.time || '&nbsp;')}</span><span class="b2-n">${esc(i.title)}</span></button>`).join('');
+  const at = [[27, 9], [50, 9], [73, 9], [91, 27], [91, 50], [91, 73], [73, 91], [50, 91], [27, 91], [9, 73], [9, 50], [9, 27]];
+  host.innerHTML = `<div class="c2d">${wdNames().map(n => `<span class="c2-wd">${n}</span>`).join('')}${model.cells.map(c =>
+    `<button type="button" class="c2${c.inMonth ? '' : ' out'}${c.today ? ' today' : ''}${c.pulse ? ' pulse' : ''}" data-act="openDay" data-v="${c.date}" aria-pressed="${c.sel}" aria-label="${t('cell_aria', { day: fmtDay(c.date), lit: c.lit, total: LIGHTS })}">${c.num}${
+      at.map((p, j) => `<i class="${j < c.lit ? 'on' : ''}" style="left:${p[0]}%;top:${p[1]}%"></i>`).join('')}</button>`).join('')}</div>`;
 }
 
+/* ---------- start-up ---------- */
 async function initScene() {
-  const host = $('#stage-gl');
   try {
     const probe = document.createElement('canvas');
     if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) throw new Error('no-webgl');
@@ -2260,231 +2564,463 @@ async function initScene() {
       import('three'),
       new Promise((_, rej) => setTimeout(() => rej(new Error('three-timeout')), CDN_TIMEOUT))
     ]);
-    build3D(THREE, host);
+    build3D(THREE);
     scene3.mode = '3d';
     syncScene();
     loadModel(THREE);
-  } catch (err) {
-    scene3.mode = '2d'; scene3.err = String((err && err.message) || err);
-    host.innerHTML = '';
-    syncScene();
-  }
+  } catch (err) { to2D(String((err && err.message) || err)); }
   if (ui.view === 'vision') render();
 }
 function to2D(reason) {
   const R = scene3;
   if (R.raf) cancelAnimationFrame(R.raf);
   R.mode = '2d'; R.err = reason;
-  $('#stage-gl').innerHTML = '';
+  if (R.cv && R.cv.parentNode) R.cv.parentNode.removeChild(R.cv);
   syncScene();
 }
+function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
-function build3D(THREE, host) {
-  const R = scene3; R.THREE = THREE; R.host = host;
-  R.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
-  R.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+function build3D(THREE) {
+  const R = scene3; R.THREE = THREE;
+  R.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  R.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   R.renderer.setClearColor(0x000000, 0);
-  const cv = R.renderer.domElement; host.appendChild(cv);
-  R.scene = new THREE.Scene();
-  /* orthographic camera on the (1,1,1) diagonal = true isometric view */
-  R.cam = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 200);
-  R.cam.position.set(30, 30, 30); R.cam.lookAt(0, 0, 0);
-  R.scene.add(new THREE.HemisphereLight(0xc9d6ff, 0x141a2c, 1.7));
-  const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(4, 12, 9); R.scene.add(sun);
-  R.lamp = new THREE.PointLight(0xffb347, 0, 12, 1.8); R.scene.add(R.lamp);
-  R.root = new THREE.Group(); R.scene.add(R.root);
-  R.path = new THREE.Group(); R.scene.add(R.path);
+  R.cv = R.renderer.domElement;
+  R.hosts = { cover: $('#cover-gl'), day: $('#stage-gl') };
   R.glow = new THREE.Color(GLOWS[glowIndex()][1]);
+  R.v3 = new THREE.Vector3(); R.col = new THREE.Color(); R.dummy = new THREE.Object3D();
+  R.ray = new THREE.Raycaster(); R.ndc = new THREE.Vector2(); R.plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  const flat = (color, extra) => new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.9, metalness: 0, flatShading: true }, extra || {}));
+  R.flat = flat;
 
-  /* shared geometry and materials */
-  const prof = [[0.19, 0.5], [0.21, 0.6], [0.3, 0.78], [0.43, 0.98], [0.5, 1.2], [0.47, 1.4], [0.36, 1.57], [0.19, 1.68], [0, 1.71]].map(p => new THREE.Vector2(p[0], p[1]));
+  /* shared low-poly geometry */
+  const tile = new THREE.CylinderGeometry(TILE / Math.SQRT2, (TILE + 0.36) / Math.SQRT2, TILE_H, 4, 1);
+  tile.rotateY(Math.PI / 4); tile.translate(0, TILE_H / 2, 0);
+  const frame = new THREE.RingGeometry(1.56, 1.74, 4, 1); frame.rotateX(-Math.PI / 2); frame.rotateY(Math.PI / 4);
   R.geo = {
-    glass: new THREE.LatheGeometry(prof, 40),
-    cap: new THREE.CylinderGeometry(0.2, 0.17, 0.36, 24),
-    ring: new THREE.TorusGeometry(0.196, 0.026, 8, 24),
-    tip: new THREE.CylinderGeometry(0.085, 0.05, 0.1, 16),
-    fil: new THREE.TorusGeometry(0.11, 0.02, 8, 20, Math.PI),
-    post: new THREE.CylinderGeometry(0.012, 0.012, 0.5, 6),
-    disc: new THREE.CylinderGeometry(0.78, 0.84, 0.14, 40),
-    sel: new THREE.TorusGeometry(0.98, 0.035, 8, 56),
-    pick: new THREE.CylinderGeometry(0.85, 0.85, 2.1, 12)
+    glass: new THREE.IcosahedronGeometry(0.52, 1), neck: new THREE.CylinderGeometry(0.36, 0.2, 0.44, 6),
+    cap: new THREE.CylinderGeometry(0.21, 0.17, 0.34, 6), tip: new THREE.CylinderGeometry(0.1, 0.05, 0.1, 5),
+    ring: new THREE.TorusGeometry(0.66, 0.05, 4, 10), pick: new THREE.CylinderGeometry(0.75, 0.75, 2, 6),
+    light: new THREE.OctahedronGeometry(0.16, 0), tile, frame,
+    tree: new THREE.ConeGeometry(0.7, 1.7, 5), trunk: new THREE.CylinderGeometry(0.12, 0.16, 0.5, 5),
+    rock: new THREE.IcosahedronGeometry(0.55, 0), pole: new THREE.CylinderGeometry(0.035, 0.035, 1, 4), flag: new THREE.ConeGeometry(0.24, 0.5, 3)
   };
   R.mat = {
-    cap: new THREE.MeshStandardMaterial({ color: 0x9aa3b8, roughness: 0.45, metalness: 0.7 }),
-    tip: new THREE.MeshStandardMaterial({ color: 0x2b3145, roughness: 0.8 }),
-    post: new THREE.MeshBasicMaterial({ color: 0x6f7890 }),
-    disc: new THREE.MeshStandardMaterial({ color: 0x2c3654, roughness: 0.92 }),
-    discDone: new THREE.MeshStandardMaterial({ color: 0x222a40, roughness: 0.95 }),
+    cap: flat(0x9aa3b8, { roughness: 0.5, metalness: 0.55 }), tip: flat(0x2b3145),
+    tree: flat(0x2f6457), trunk: flat(0x4a3c36), rock: flat(0x46506e),
+    pole: flat(0xc9d2e6), flag: new THREE.MeshBasicMaterial({ color: 0xb9a2ff }),
     sel: new THREE.MeshBasicMaterial({ color: 0xffc15e }),
-    path: new THREE.MeshStandardMaterial({ color: 0x232b45, roughness: 1 }),
     pick: new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
   };
-
-  /* soft halo for the bulb in focus */
-  const hc = document.createElement('canvas'); hc.width = hc.height = 128;
-  const g = hc.getContext('2d'), grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  /* soft halo texture, used once per scene */
+  const hc = document.createElement('canvas'); hc.width = hc.height = 64;
+  const g = hc.getContext('2d'), grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
   grad.addColorStop(0, 'rgba(255,255,255,0.95)'); grad.addColorStop(0.35, 'rgba(255,255,255,0.35)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
-  g.fillStyle = grad; g.fillRect(0, 0, 128, 128);
-  R.halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(hc), color: R.glow, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
-  R.halo.renderOrder = 5; R.halo.visible = false; R.scene.add(R.halo);
+  g.fillStyle = grad; g.fillRect(0, 0, 64, 64);
+  R.haloTex = new THREE.CanvasTexture(hc);
+  R.mkHalo = () => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: R.haloTex, color: R.glow, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false })); s.renderOrder = 5; return s; };
 
-  /* the companion's bulb, shown during a session with company */
-  R.comp = makeUnit(new THREE.Color(0x8fd3ff)); R.comp.group.scale.setScalar(0.7); R.comp.group.visible = false; R.scene.add(R.comp.group);
-
-  R.ray = new THREE.Raycaster(); R.ptr = new THREE.Vector2();
-  const hit = e => {
-    const r = cv.getBoundingClientRect();
-    R.ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-    R.ray.setFromCamera(R.ptr, R.cam);
-    const h = R.ray.intersectObjects(Array.from(R.bulbs.values()).map(b => b.pick), false)[0];
-    return h ? h.object.userData.id : null;
-  };
-  cv.addEventListener('click', e => { const id = hit(e); const x = id && byId(id); if (x && !x.done) ACT.select({ id }); });
-  cv.addEventListener('pointermove', e => { const id = hit(e), x = id && byId(id); cv.style.cursor = x && !x.done ? 'pointer' : 'default'; });
-  cv.addEventListener('webglcontextlost', e => { e.preventDefault(); to2D('context-lost'); });
-
-  const resize = () => {
-    const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return;
-    R.renderer.setSize(w, h, false); fitCamera(); placeLabels(); R.dirty = true;
-  };
-  if ('ResizeObserver' in window) new ResizeObserver(resize).observe(host); else window.addEventListener('resize', resize);
-  R.resize = resize;
+  buildCover(); buildMap(); bindMap();
+  const mark = () => { R.sizeDirty = true; };
+  if ('ResizeObserver' in window) { const ro = new ResizeObserver(mark); ro.observe(R.hosts.cover); ro.observe(R.hosts.day); } else window.addEventListener('resize', mark);
+  R.cv.addEventListener('webglcontextlost', e => { e.preventDefault(); to2D('context-lost'); });
   R.raf = requestAnimationFrame(loop);
 }
 
-/* one bulb: glass, screw cap, filament. Returns the materials that carry the glow. */
+/* one low-poly bulb: icosahedron glass, six-sided neck and screw cap. Returns the materials that carry the glow. */
 function makeUnit(color) {
   const R = scene3, THREE = R.THREE, group = new THREE.Group(), vis = new THREE.Group();
-  const glassMat = new THREE.MeshStandardMaterial({ color: 0xffe6bd, emissive: color.clone(), emissiveIntensity: 0.2, roughness: 0.28, metalness: 0, transparent: true, opacity: 0.92 });
-  const filMat = new THREE.MeshBasicMaterial({ color: color.clone() });
-  vis.add(new THREE.Mesh(R.geo.glass, glassMat));
-  const cap = new THREE.Mesh(R.geo.cap, R.mat.cap); cap.position.y = 0.34; vis.add(cap);
-  [0.24, 0.34, 0.44].forEach(y => { const r = new THREE.Mesh(R.geo.ring, R.mat.cap); r.rotation.x = Math.PI / 2; r.position.y = y; vis.add(r); });
-  const tip = new THREE.Mesh(R.geo.tip, R.mat.tip); tip.position.y = 0.12; vis.add(tip);
-  const fil = new THREE.Mesh(R.geo.fil, filMat); fil.position.y = 1.06; vis.add(fil);
-  [-0.11, 0.11].forEach(x => { const p = new THREE.Mesh(R.geo.post, R.mat.post); p.position.set(x, 0.81, 0); vis.add(p); });
-  vis.position.y = -0.07;
+  const glassMat = R.flat(0xffe6bd, { emissive: color.clone(), emissiveIntensity: 0.3, roughness: 0.45 });
+  const glass = new THREE.Mesh(R.geo.glass, glassMat); glass.scale.set(1, 1.14, 1); glass.position.y = 1.2; vis.add(glass);
+  const neck = new THREE.Mesh(R.geo.neck, glassMat); neck.position.y = 0.69; vis.add(neck);
+  const cap = new THREE.Mesh(R.geo.cap, R.mat.cap); cap.position.y = 0.32; vis.add(cap);
+  const tip = new THREE.Mesh(R.geo.tip, R.mat.tip); tip.position.y = 0.1; vis.add(tip);
+  vis.position.y = -0.05;
   group.add(vis);
-  return { group, vis, mats: [glassMat], glass: glassMat, fil: filMat, proc: true };
+  return { group, vis, mats: [glassMat], glass: glassMat, proc: true };
 }
+
+/* ---------- cover scene ---------- */
+function buildCover() {
+  const R = scene3, THREE = R.THREE, sc = new THREE.Scene(), rnd = mulberry(11);
+  sc.add(new THREE.HemisphereLight(0xc9d6ff, 0x10162a, 1.4));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.5); sun.position.set(-5, 10, 7); sc.add(sun);
+  const lamp = new THREE.PointLight(R.glow, 30, 15, 1.8); lamp.position.set(0, 2.7, 0); sc.add(lamp);
+  const turn = new THREE.Group(); sc.add(turn);                       // everything on the island turns together
+  const island = new THREE.Mesh(new THREE.CylinderGeometry(3.1, 2.3, 1.2, 7), R.flat(0x2c3654)); island.position.y = -0.6; turn.add(island);
+  const under = new THREE.Mesh(new THREE.ConeGeometry(2.3, 1.9, 7), R.flat(0x1f2740)); under.rotation.x = Math.PI; under.position.y = -2.15; turn.add(under);
+  const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.15, 0.3, 6), R.flat(0x3c4970)); ped.position.y = 0.15; turn.add(ped);
+  const bulb = makeUnit(R.glow); bulb.group.scale.setScalar(1.75); bulb.group.position.y = 0.3; bulb.glass.emissiveIntensity = 1.7; turn.add(bulb.group);
+  [[2.1, 0.4], [-1.9, 1.3], [-0.6, -2.2]].forEach(([x, z]) => {
+    const s = 0.7 + rnd() * 0.4, tr = new THREE.Mesh(R.geo.tree, R.mat.tree), tk = new THREE.Mesh(R.geo.trunk, R.mat.trunk);
+    tr.scale.setScalar(s); tr.position.set(x, 0.5 * s + 0.85 * s, z); tk.scale.setScalar(s); tk.position.set(x, 0.25 * s, z); turn.add(tr, tk);
+  });
+  [[1.2, 2.1, 0.5], [-2.3, -0.9, 0.38]].forEach(([x, z, s]) => { const rk = new THREE.Mesh(R.geo.rock, R.mat.rock); rk.scale.set(s, s * 0.7, s); rk.position.set(x, 0.12, z); rk.rotation.y = rnd() * 3; turn.add(rk); });
+  /* a string of lights around the island, the same lights that surround each date */
+  const N = 14, ring = new THREE.InstancedMesh(R.geo.light, new THREE.MeshBasicMaterial(), N);
+  for (let i = 0; i < N; i++) { const a = i / N * Math.PI * 2; R.dummy.position.set(Math.cos(a) * 2.85, 0.32, Math.sin(a) * 2.85); R.dummy.scale.setScalar(1.3); R.dummy.rotation.set(0, 0, 0); R.dummy.updateMatrix(); ring.setMatrixAt(i, R.dummy.matrix); ring.setColorAt(i, R.col.copy(R.glow).multiplyScalar(0.7)); }
+  turn.add(ring);
+  const halo = R.mkHalo(); halo.position.set(0, 2.45, 0); halo.scale.setScalar(7.5); halo.material.opacity = 0.6; sc.add(halo);
+  const cam = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 200), b = CAMS.iso;
+  cam.position.set(Math.sin(b.yaw) * Math.cos(b.el) * 40, Math.sin(b.el) * 40 + 0.9, Math.cos(b.yaw) * Math.cos(b.el) * 40); cam.lookAt(0, 0.9, 0);
+  R.cover = { scene: sc, cam, turn, bulb, ring, halo, lamp, N };
+}
+function coverCam(w, h) {
+  const C = scene3.cover, ppu = Math.min(w / 9.6, (h * 0.46) / 7.6);
+  /* the island sits in the upper part of the screen; the title and the Start button take the rest */
+  C.cam.left = -w / (2 * ppu); C.cam.right = w / (2 * ppu); C.cam.top = (h * 0.25) / ppu; C.cam.bottom = -(h * 0.75) / ppu;
+  C.cam.updateProjectionMatrix();
+}
+
+/* ---------- calendar map ---------- */
+function buildMap() {
+  const R = scene3, THREE = R.THREE, sc = new THREE.Scene(), rnd = mulberry(7), CAP = 42;
+  sc.add(new THREE.HemisphereLight(0xc9d6ff, 0x10162a, 1.9));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.7); sun.position.set(-6, 14, 8); sc.add(sun);
+  const lamp = new THREE.PointLight(R.glow, 0, 13, 1.8); sc.add(lamp);
+  /* faceted ground that rises away from the board */
+  const tg = new THREE.PlaneGeometry(70, 70, 16, 16); tg.rotateX(-Math.PI / 2);
+  const tp = tg.attributes.position;
+  for (let i = 0; i < tp.count; i++) { const out = Math.max(Math.abs(tp.getX(i)) - 13, Math.abs(tp.getZ(i)) - 11.5); tp.setY(i, out > 0 ? -0.55 + rnd() * Math.min(2.2, out * 0.3) : -0.55); }
+  tg.computeVertexNormals();
+  sc.add(new THREE.Mesh(tg, R.flat(0x141b31)));
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(7 * STEP + 1.4, 0.36, 6 * STEP + 1.4), R.flat(0x1a2240)); slab.position.y = -0.2; sc.add(slab);
+  const tiles = new THREE.InstancedMesh(R.geo.tile, new THREE.MeshLambertMaterial({ flatShading: true }), CAP);
+  const lights = new THREE.InstancedMesh(R.geo.light, new THREE.MeshBasicMaterial(), CAP * LIGHTS);
+  for (let i = 0; i < CAP; i++) tiles.setColorAt(i, R.col.set(0x364263));
+  for (let i = 0; i < CAP * LIGHTS; i++) lights.setColorAt(i, R.col.set(0x3b4666));
+  tiles.frustumCulled = false; lights.frustumCulled = false;
+  const sgeo = new THREE.BufferGeometry(); sgeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(CAP * LIGHTS * 6), 3));
+  const string = new THREE.LineSegments(sgeo, new THREE.LineBasicMaterial({ color: 0x0d1221 })); string.frustumCulled = false;
+  const fToday = new THREE.Mesh(R.geo.frame, R.mat.sel), fSel = new THREE.Mesh(R.geo.frame, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  fToday.visible = fSel.visible = false;
+  const bulbs = new THREE.Group(), flags = new THREE.Group(), deco = new THREE.Group();
+  /* trees stand on the far sides so they never hide a date; low rocks on the near sides */
+  for (let i = 0; i < 12; i++) {
+    const far = i % 2 === 0, s = 0.8 + rnd() * 0.7, x = far ? -(13.2 + rnd() * 4.5) : -12 + rnd() * 24, z = far ? -11 + rnd() * 22 : -(11.8 + rnd() * 4.5);
+    const tr = new THREE.Mesh(R.geo.tree, R.mat.tree), tk = new THREE.Mesh(R.geo.trunk, R.mat.trunk);
+    tr.scale.setScalar(s); tr.position.set(x, -0.3 + 0.5 * s + 0.85 * s, z); tr.rotation.y = rnd() * 3; tk.scale.setScalar(s); tk.position.set(x, -0.3 + 0.25 * s, z); deco.add(tr, tk);
+  }
+  for (let i = 0; i < 8; i++) {
+    const near = i % 2 === 0, s = 0.5 + rnd() * 0.6, x = near ? 13.2 + rnd() * 3 : -11 + rnd() * 22, z = near ? -9 + rnd() * 18 : 11.8 + rnd() * 3;
+    const rk = new THREE.Mesh(R.geo.rock, R.mat.rock); rk.scale.set(s, s * 0.6, s); rk.position.set(x, -0.4, z); rk.rotation.y = rnd() * 3; deco.add(rk);
+  }
+  const halo = R.mkHalo(); halo.visible = false;
+  /* the companion's bulb, shown beside yours during a session with company */
+  const comp = makeUnit(new THREE.Color(0x8fd3ff)); comp.group.scale.setScalar(0.3); comp.group.visible = false;
+  sc.add(tiles, lights, string, fToday, fSel, bulbs, flags, deco, halo, comp.group);
+  const cam = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 400);
+  const c0 = CAMS[S.cam] || CAMS.iso;
+  R.map = { scene: sc, cam, lamp, slab, tiles, lights, string, fToday, fSel, bulbs, flags, halo, comp, units: new Map(), cells: [], rows: 5, pulse: -1,
+    cv: { x: 0, z: 0, ppu: 20, yaw: c0.yaw, el: c0.el }, cg: { x: 0, z: 0, ppu: 20, yaw: c0.yaw, el: c0.el }, w: 0, h: 0, minPpu: 5, maxPpu: 80, fitted: false };
+}
+/* where light j sits around a tile: three per side, clockwise from the far-left corner */
+function lightPos(j) {
+  const side = Math.floor(j / 3), tp = (j % 3 - 1) * 0.74, d = TILE / 2 + 0.22;
+  return side === 0 ? [tp, -d] : side === 1 ? [d, tp] : side === 2 ? [-tp, d] : [-d, -tp];
+}
+const basis = (yaw, el) => ({ r: [Math.cos(yaw), 0, -Math.sin(yaw)], n: [Math.sin(yaw), 0, Math.cos(yaw)], d: [Math.sin(yaw) * Math.cos(el), Math.sin(el), Math.cos(yaw) * Math.cos(el)] });
+
 function makeBulb(id) {
   const R = scene3, THREE = R.THREE, group = new THREE.Group();
-  const disc = new THREE.Mesh(R.geo.disc, R.mat.disc); disc.position.y = -0.07; group.add(disc);
-  const ring = new THREE.Mesh(R.geo.sel, R.mat.sel); ring.rotation.x = Math.PI / 2; ring.position.y = 0.02; ring.visible = false; group.add(ring);
+  const ring = new THREE.Mesh(R.geo.ring, R.mat.sel); ring.rotation.x = Math.PI / 2; ring.position.y = 0.04; ring.visible = false; group.add(ring);
   const unit = makeUnit(R.glow); group.add(unit.group);
-  const pick = new THREE.Mesh(R.geo.pick, R.mat.pick); pick.position.y = 0.95; pick.userData.id = id; group.add(pick);
-  const b = { id, group, disc, ring, unit, pick, cur: 0.2, target: 0.2, pos: [0, 0, 0], item: null };
+  const pick = new THREE.Mesh(R.geo.pick, R.mat.pick); pick.position.y = 1; pick.userData.id = id; group.add(pick);
+  group.scale.setScalar(0.4);
+  const b = { id, group, ring, unit, pick, cur: 0.3, target: 0.3, item: null };
   if (R.template) useModel(b);
   return b;
 }
-function dropBulb(b) {
-  scene3.root.remove(b.group);
-  b.unit.mats.forEach(m => m.dispose()); if (b.unit.fil) b.unit.fil.dispose();
-}
-/* a gentle zig-zag across the screen; a new row every five bulbs */
-function layout(n) {
-  const rows = Math.ceil(n / 5), per = Math.ceil(n / Math.max(1, rows)), out = [], k = Math.SQRT1_2;
-  for (let i = 0; i < n; i++) {
-    const row = Math.floor(i / per), col = i % per, inRow = Math.min(per, n - row * per);
-    const u = (col - (inRow - 1) / 2) * 1.75, w = row * 2.9 + (col % 2 ? 0.55 : -0.55);
-    out.push([(u + w) * k, 0, (-u + w) * k]);
-  }
-  return out;
-}
 function setLook(b) {
   const done = b.item.state === 'done', u = b.unit;
-  b.disc.material = done ? scene3.mat.discDone : scene3.mat.disc;
-  if (u.proc) {
-    u.glass.color.set(done ? 0x717a93 : 0xffe6bd); u.glass.opacity = done ? 0.5 : 0.92;
-    u.fil.color.copy(done ? new scene3.THREE.Color(0x4a5268) : scene3.glow);
-  } else u.mats.forEach(m => { if (m.color && m.userData.base) m.color.copy(m.userData.base).multiplyScalar(done ? 0.3 : 1); });
+  if (u.proc) u.glass.color.set(done ? 0x6b748d : 0xffe6bd);
+  else u.mats.forEach(m => { if (m.color && m.userData.base) m.color.copy(m.userData.base).multiplyScalar(done ? 0.3 : 1); });
 }
-function applyGlow(b, k) {
-  b.unit.mats.forEach(m => { m.emissive.copy(scene3.glow); m.emissiveIntensity = b.cur * (k || 1); });
-}
-function sync3D(items) {
-  const R = scene3, THREE = R.THREE, ids = new Set(items.map(i => i.id));
-  R.glow.set(GLOWS[glowIndex()][1]); R.halo.material.color.copy(R.glow); R.lamp.color.copy(R.glow);
-  R.bulbs.forEach((b, id) => { if (!ids.has(id)) { dropBulb(b); R.bulbs.delete(id); } });
-  const pos = layout(items.length), still = reduced();
-  items.forEach((it, i) => {
-    let b = R.bulbs.get(it.id), fresh = false;
-    if (!b) { b = makeBulb(it.id); R.bulbs.set(it.id, b); R.root.add(b.group); fresh = true; }
-    b.pos = pos[i]; b.group.position.set(pos[i][0], 0, pos[i][2]);
+function applyGlow(b, k) { b.unit.mats.forEach(m => { m.emissive.copy(scene3.glow); m.emissiveIntensity = b.cur * (k || 1); }); }
+
+function syncMap(model, items) {
+  const R = scene3, THREE = R.THREE, M = R.map, D = R.dummy, col = R.col, warm = new THREE.Color(0xe3a24a);
+  R.glow.set(GLOWS[glowIndex()][1]); M.halo.material.color.copy(R.glow); M.lamp.color.copy(R.glow);
+  const rows = model.rows, cells = model.cells, changed = M.key !== model.key;
+  M.rows = rows; M.cells = cells; M.key = model.key; M.pulse = -1;
+  M.slab.scale.z = (rows * STEP + 1.4) / (6 * STEP + 1.4);
+  const sp = M.string.geometry.attributes.position.array, still = reduced();
+  let todayCell = null, selCell = null;
+  D.rotation.set(0, 0, 0);
+  cells.forEach((c, i) => {
+    const x = (c.col - 3) * STEP, z = (c.row - (rows - 1) / 2) * STEP, lift = !c.inMonth ? -0.14 : c.sel ? 0.26 : c.today ? 0.12 : 0;
+    c.x = x; c.z = z; c.top = lift + TILE_H;
+    if (c.today) todayCell = c; if (c.sel) selCell = c; if (c.pulse) M.pulse = i;
+    D.position.set(x, lift, z); D.scale.set(1, 1, 1); D.updateMatrix(); M.tiles.setMatrixAt(i, D.matrix);
+    /* lit lights warm the tile itself, so a day with focus reads as lit from a distance */
+    col.set(!c.inMonth ? 0x262e48 : c.today ? 0x6072a8 : c.future ? 0x3f4b73 : 0x47557f).lerp(warm, Math.min(1, c.lit / LIGHTS) * (c.inMonth ? 0.8 : 0.4));
+    if (c.sel) col.multiplyScalar(1.22);
+    M.tiles.setColorAt(i, col);
+    for (let j = 0; j < LIGHTS; j++) {
+      const p = lightPos(j), q = lightPos((j + 1) % LIGHTS), on = j < c.lit, k = i * LIGHTS + j, ly = c.top + 0.17;
+      D.position.set(x + p[0], ly, z + p[1]); D.scale.setScalar(on ? 1.35 : 0.8); D.updateMatrix(); M.lights.setMatrixAt(k, D.matrix);
+      if (on) col.copy(R.glow).multiplyScalar(c.inMonth ? 1 : 0.55);
+      else if (c.pulse && j === c.lit && still) col.copy(R.glow).multiplyScalar(0.55);
+      else col.set(c.inMonth ? 0x59668f : 0x343d5a);
+      M.lights.setColorAt(k, col);
+      sp.set([x + p[0], ly, z + p[1], x + q[0], ly, z + q[1]], k * 6);
+    }
+  });
+  M.tiles.count = cells.length; M.lights.count = cells.length * LIGHTS;
+  M.string.geometry.setDrawRange(0, cells.length * LIGHTS * 2);
+  M.tiles.instanceMatrix.needsUpdate = true; M.tiles.instanceColor.needsUpdate = true;
+  M.lights.instanceMatrix.needsUpdate = true; M.lights.instanceColor.needsUpdate = true;
+  M.string.geometry.attributes.position.needsUpdate = true;
+  M.tiles.computeBoundingSphere();
+  M.fToday.visible = !!todayCell; if (todayCell) M.fToday.position.set(todayCell.x, todayCell.top + 0.03, todayCell.z);
+  M.fSel.visible = !!selCell && selCell !== todayCell; if (selCell) M.fSel.position.set(selCell.x, selCell.top + 0.03, selCell.z);
+
+  /* a small pennant on dates where a goal is due */
+  while (M.flags.children.length) M.flags.remove(M.flags.children[0]);
+  cells.forEach(c => {
+    if (!c.goal) return;
+    const pole = new THREE.Mesh(R.geo.pole, R.mat.pole), flag = new THREE.Mesh(R.geo.flag, R.mat.flag);
+    pole.position.set(c.x + 0.86, c.top + 0.5, c.z - 0.86); flag.rotation.z = -Math.PI / 2; flag.position.set(c.x + 1.1, c.top + 0.84, c.z - 0.86); M.flags.add(pole, flag);
+  });
+
+  /* today's tasks stand on today's tile as bulbs */
+  const show = todayCell ? items : [], ids = new Set(show.map(i => i.id)), b0 = basis(M.cg.yaw, M.cg.el);
+  M.units.forEach((b, id) => { if (!ids.has(id)) { M.bulbs.remove(b.group); b.unit.mats.forEach(m => m.dispose()); M.units.delete(id); } });
+  show.forEach((it, i) => {
+    let b = M.units.get(it.id), isNew = false;
+    if (!b) { b = makeBulb(it.id); M.units.set(it.id, b); M.bulbs.add(b.group); isNew = true; }
+    const row = Math.floor(i / 3), inRow = Math.min(3, show.length - row * 3), u = (i % 3 - (inRow - 1) / 2) * 0.64, w = show.length > 3 ? (row === 0 ? -0.5 : 0.18) : -0.2;
+    b.pos = [todayCell.x + b0.r[0] * u + b0.n[0] * w, todayCell.top, todayCell.z + b0.r[2] * u + b0.n[2] * w];
+    b.group.position.set(b.pos[0], b.pos[1], b.pos[2]);
     b.item = it; b.ring.visible = it.sel; b.target = STATE_GLOW[it.state];
-    if (fresh || still) b.cur = b.target;
+    if (isNew || still) b.cur = b.target;
     setLook(b); applyGlow(b);
   });
-  /* the path that joins the bulbs in day order */
-  while (R.path.children.length) { const m = R.path.children.pop(); m.geometry.dispose(); }
-  for (let i = 1; i < pos.length; i++) {
-    const a = pos[i - 1], c = pos[i], dx = c[0] - a[0], dz = c[2] - a[2], len = Math.hypot(dx, dz);
-    const seg = new THREE.Mesh(new THREE.BoxGeometry(len, 0.03, 0.2), R.mat.path);
-    seg.position.set((a[0] + c[0]) / 2, -0.13, (a[2] + c[2]) / 2); seg.rotation.y = -Math.atan2(dz, dx); R.path.add(seg);
-  }
-  const lit = items.find(i => i.state === 'focus' || i.state === 'paused');
-  R.focus = lit ? R.bulbs.get(lit.id) : null;
-  const withComp = R.focus && T.mode === 'tog';
-  R.comp.group.visible = !!withComp;
+  M.hasBulbs = show.length > 0;
+  const lit = show.find(i => i.state === 'focus' || i.state === 'paused');
+  M.focus = lit ? M.units.get(lit.id) : null;
+  M.today = todayCell;
+  const withComp = !!M.focus && T.mode === 'tog';
+  M.comp.group.visible = withComp;
   if (withComp) {
-    const p = R.focus.pos, k = Math.SQRT1_2;
-    R.comp.group.position.set(p[0] + 1.75 * k, 0, p[2] - 0.25 * k);
-    R.comp.glass.emissiveIntensity = T.running ? 1.5 : 0.4;
+    const fp = M.focus.pos;
+    M.comp.group.position.set(fp[0] + b0.r[0] * 0.36 + b0.n[0] * 0.3, fp[1], fp[2] + b0.r[2] * 0.36 + b0.n[2] * 0.3);
+    M.comp.glass.emissiveIntensity = T.running ? 1.6 : 0.4;
   }
-  fitCamera(); placeLabels(); R.dirty = true;
+
+  /* labels: date numbers and weekday names, positioned over the canvas */
+  const host = $('#stage-labels');
+  host.innerHTML = cells.map((c, i) => `<span class="lab${c.inMonth ? '' : ' out'}${c.today ? ' today' : ''}${c.sel ? ' sel' : ''}" data-i="${i}">${c.num}${c.min ? `<small>${c.min} min</small>` : ''}</span>`).join('')
+    + wdNames().map((n, i) => `<span class="lab wd" data-w="${i}">${n}</span>`).join('');
+  M.labs = Array.from(host.children);
+  if (M.w && (changed || !M.fitted)) sceneFit(true);
+  R.labDirty = true; R.dirty = true;
 }
-function fitCamera() {
-  const R = scene3, THREE = R.THREE, w = R.host.clientWidth || 1, h = R.host.clientHeight || 1, aspect = w / h;
-  R.cam.updateMatrixWorld();
-  const inv = R.cam.matrixWorldInverse, v = new THREE.Vector3();
+
+/* ---------- camera: orthographic, with zoom and pan like a map ---------- */
+function camApply() {
+  const R = scene3, M = R.map, c = M.cv, b = basis(c.yaw, c.el);
+  M.cam.position.set(c.x + b.d[0] * 90, b.d[1] * 90, c.z + b.d[2] * 90); M.cam.up.set(0, 1, 0); M.cam.lookAt(c.x, 0, c.z);
+  M.cam.left = -M.w / (2 * c.ppu); M.cam.right = M.w / (2 * c.ppu); M.cam.top = M.h / (2 * c.ppu); M.cam.bottom = -M.h / (2 * c.ppu);
+  M.cam.updateProjectionMatrix(); M.cam.updateMatrixWorld();
+  R.labDirty = true; R.dirty = true;
+}
+/* zoom level and centre that show the whole month for a given camera angle */
+function fitFor(yaw, el) {
+  const M = scene3.map, hx = 3.5 * STEP + 0.4, hz = M.rows / 2 * STEP + 0.4, sy = Math.sin(yaw), cy = Math.cos(yaw), se = Math.sin(el), ce = Math.cos(el);
   let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
-  const pts = [];
-  R.bulbs.forEach(b => { pts.push([b.pos[0], 0, b.pos[2]], [b.pos[0], 1.85, b.pos[2]]); });
-  if (!pts.length) pts.push([0, 0, 0], [0, 1.85, 0]);
-  pts.forEach(p => {
-    v.set(p[0], p[1], p[2]).applyMatrix4(inv);
-    x0 = Math.min(x0, v.x - 1.15); x1 = Math.max(x1, v.x + 1.15); y0 = Math.min(y0, v.y - 1.35); y1 = Math.max(y1, v.y + 0.75);
+  [[-hx, -hz - 1.3], [hx, -hz - 1.3], [-hx, hz], [hx, hz]].forEach(([x, z]) => [0, 1.4].forEach(y => {
+    const px = x * cy - z * sy, py = y * ce - (x * sy + z * cy) * se;
+    x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py);
+  }));
+  const ppu = Math.min(M.w / (x1 - x0 + 0.6), M.h / (y1 - y0 + 0.9)), mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  return { ppu, x: cy * mx - sy * (my / se), z: -sy * mx - cy * (my / se) };
+}
+function limits() {
+  const M = scene3.map, f = fitFor(M.cg.yaw, M.cg.el);
+  M.minPpu = f.ppu * 0.72; M.maxPpu = Math.max(f.ppu * 1.2, Math.min(M.w, M.h) / (STEP * 1.3));
+  return f;
+}
+/* the gesture hint leaves once the map has been moved */
+const hintOff = () => { const M = scene3.map; if (!M.zoomed) { M.zoomed = true; $('#stage-note').textContent = ''; } };
+const clampCam = c => {
+  const M = scene3.map, hx = 3.5 * STEP, hz = M.rows / 2 * STEP + 1;
+  c.x = Math.min(hx, Math.max(-hx, c.x)); c.z = Math.min(hz, Math.max(-hz, c.z)); c.ppu = Math.min(M.maxPpu, Math.max(M.minPpu, c.ppu));
+};
+function sceneFit(snap) {
+  const R = scene3; if (R.mode !== '3d' || !R.map.w) return;
+  const M = R.map, f = limits();
+  Object.assign(M.cg, { x: f.x, z: f.z, ppu: f.ppu }); M.fitted = true; M.zoomed = false; $('#stage-note').textContent = t('cal_hint');
+  if (snap || reduced()) { Object.assign(M.cv, M.cg); camApply(); }
+  R.dirty = true;
+}
+function sceneZoom(f) {
+  const R = scene3; if (R.mode !== '3d' || !R.map.w) return;
+  const M = R.map; M.cg.ppu *= f; clampCam(M.cg); hintOff(); R.dirty = true;
+}
+/* centre a date; unless told to keep the zoom, come close enough to see its lights */
+function sceneGo(date, keepZoom) {
+  const R = scene3; if (R.mode !== '3d' || !R.map.w) return;
+  const M = R.map, c = M.cells.find(k => k.date === date); if (!c) return;
+  M.cg.x = c.x; M.cg.z = c.z;
+  if (!keepZoom) M.cg.ppu = Math.max(M.cg.ppu, Math.min(M.w, M.h) / (STEP * 3.4));
+  clampCam(M.cg); hintOff(); R.dirty = true;
+}
+function sceneCam() {
+  const R = scene3; if (R.mode !== '3d') return;
+  const M = R.map, c = CAMS[S.cam] || CAMS.iso;
+  M.cg.yaw = c.yaw; M.cg.el = c.el;
+  syncScene();
+  if (M.w) { if (M.zoomed) { limits(); clampCam(M.cg); } else sceneFit(false); }
+}
+function groundAt(cx, cy) {
+  const R = scene3, M = R.map, r = R.cv.getBoundingClientRect();
+  R.ndc.set(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
+  R.ray.setFromCamera(R.ndc, M.cam);
+  return R.ray.ray.intersectPlane(R.plane, new R.THREE.Vector3());
+}
+function panBy(dx, dy) {
+  const M = scene3.map, c = M.cv, b = basis(c.yaw, c.el), k = dy / (c.ppu * Math.sin(c.el));
+  c.x -= b.r[0] * dx / c.ppu + b.n[0] * k; c.z -= b.r[2] * dx / c.ppu + b.n[2] * k;
+  clampCam(c); M.cg.x = c.x; M.cg.z = c.z; hintOff(); camApply();
+}
+function zoomAt(cx, cy, f) {
+  const M = scene3.map, c = M.cv, p0 = groundAt(cx, cy);
+  c.ppu *= f; clampCam(c); M.cg.ppu = c.ppu; camApply();
+  const p1 = groundAt(cx, cy);
+  if (p0 && p1) { c.x += p0.x - p1.x; c.z += p0.z - p1.z; clampCam(c); camApply(); }
+  M.cg.x = c.x; M.cg.z = c.z; hintOff();
+}
+function bindMap() {
+  const R = scene3, cv = R.cv, ptrs = new Map();
+  let drag = null, pinch = 0;
+  const onMap = () => ui.view === 'day' && R.mode === '3d';
+  const hit = e => {
+    const M = R.map, r = cv.getBoundingClientRect();
+    R.ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    R.ray.setFromCamera(R.ndc, M.cam);
+    const hb = R.ray.intersectObjects(Array.from(M.units.values()).map(b => b.pick), false)[0];
+    if (hb) return { task: hb.object.userData.id };
+    const ht = R.ray.intersectObject(M.tiles, false)[0];
+    return ht && ht.instanceId < M.cells.length ? { date: M.cells[ht.instanceId].date } : null;
+  };
+  cv.addEventListener('pointerdown', e => {
+    if (!onMap()) return;
+    try { cv.setPointerCapture(e.pointerId); } catch (_) { /* not critical */ }
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.size === 1) drag = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false };
+    else if (ptrs.size === 2) { const [a, b] = Array.from(ptrs.values()); pinch = Math.hypot(a.x - b.x, a.y - b.y); if (drag) drag.moved = true; }
   });
-  let cw = Math.max(x1 - x0, 7.5), ch = y1 - y0;
-  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-  if (cw / ch < aspect) cw = ch * aspect; else ch = cw / aspect;
-  R.cam.left = cx - cw / 2; R.cam.right = cx + cw / 2; R.cam.top = cy + ch / 2; R.cam.bottom = cy - ch / 2;
-  R.cam.updateProjectionMatrix();
-  R.unit = h / ch;
+  cv.addEventListener('pointermove', e => {
+    if (!onMap()) return;
+    if (!ptrs.has(e.pointerId)) { const h = hit(e); cv.style.cursor = h ? 'pointer' : ''; return; }
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.size === 2 && pinch) {
+      const [a, b] = Array.from(ptrs.values()), d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d > 0) zoomAt((a.x + b.x) / 2, (a.y + b.y) / 2, d / pinch);
+      pinch = d; return;
+    }
+    if (!drag) return;
+    if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 6) { drag.moved = true; cv.classList.add('drag'); }
+    if (drag.moved) panBy(e.clientX - drag.x, e.clientY - drag.y);
+    drag.x = e.clientX; drag.y = e.clientY;
+  });
+  const up = e => {
+    if (!ptrs.has(e.pointerId)) return;
+    ptrs.delete(e.pointerId);
+    if (ptrs.size < 2) pinch = 0;
+    if (ptrs.size === 0) {
+      if (drag && !drag.moved && e.type === 'pointerup' && onMap()) {
+        const h = hit(e);
+        if (h && h.task) { const x = byId(h.task); if (x && !x.done) { if (S.day !== dayKey()) goToday(); ACT.select({ id: h.task }); } }
+        else if (h && h.date) openDay(h.date);
+      }
+      drag = null; cv.classList.remove('drag');
+    } else if (ptrs.size === 1) { const p = Array.from(ptrs.values())[0]; drag = { x: p.x, y: p.y, sx: p.x, sy: p.y, moved: true }; }
+  };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  cv.addEventListener('wheel', e => { if (!onMap()) return; e.preventDefault(); zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0016))); }, { passive: false });
 }
 function placeLabels() {
-  const R = scene3, host = $('#stage-labels'), w = R.host.clientWidth, h = R.host.clientHeight, v = new R.THREE.Vector3();
-  let html = '';
-  R.bulbs.forEach(b => {
-    const it = b.item, text = it.sel ? it.title : it.state === 'done' ? '✓' : it.time;
-    if (!text) return;
-    v.set(b.pos[0], 0, b.pos[2]).project(R.cam);
-    const x = Math.min(w - 34, Math.max(34, (v.x + 1) / 2 * w)), y = (1 - v.y) / 2 * h + 0.5 * R.unit + 3;
-    html += `<span class="lab${it.sel ? ' sel' : ''}${it.state === 'done' ? ' done' : ''}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${esc(text)}</span>`;
+  const R = scene3, M = R.map, v = R.v3, c = M.cv, n = basis(c.yaw, c.el).n, host = $('#stage-labels');
+  host.style.fontSize = Math.max(9, Math.min(26, c.ppu * 0.6)).toFixed(1) + 'px';
+  host.classList.toggle('zoomed', c.ppu >= 30);
+  M.labs.forEach(el => {
+    let x, y, z;
+    if (el.dataset.i != null) { const k = M.cells[+el.dataset.i], off = k.today && M.hasBulbs ? 0.98 : 0; x = k.x + n[0] * off; z = k.z + n[2] * off; y = k.top + 0.02; }
+    else { x = (+el.dataset.w - 3) * STEP; z = -(M.rows / 2) * STEP - 0.8; y = 0; }
+    v.set(x, y, z).project(M.cam);
+    el.style.transform = `translate(${((v.x + 1) / 2 * M.w).toFixed(1)}px,${((1 - v.y) / 2 * M.h).toFixed(1)}px) translate(-50%,-50%)`;
   });
-  host.innerHTML = html;
+}
+
+/* ---------- render loop: one canvas, moved to whichever screen needs it ---------- */
+function useHost(name) {
+  const R = scene3, host = R.hosts[name];
+  if (R.cv.parentNode !== host) { host.appendChild(R.cv); R.sizeDirty = true; }
+  const w = host.clientWidth, h = host.clientHeight;
+  if (!w || !h) return false;
+  if (R.sizeDirty || w !== R.cw || h !== R.ch) {
+    R.cw = w; R.ch = h; R.sizeDirty = false; R.renderer.setSize(w, h, false);
+    if (name === 'cover') coverCam(w, h);
+    else {
+      const M = R.map; M.w = w; M.h = h;
+      if (!M.fitted || !M.zoomed) sceneFit(true); else { limits(); clampCam(M.cg); clampCam(M.cv); camApply(); }
+    }
+    R.dirty = true;
+  }
+  return true;
 }
 function loop(ts) {
   const R = scene3;
   R.raf = requestAnimationFrame(loop);
-  if (ui.view !== 'day' || document.hidden) return;
+  const v = ui.view;
+  if (document.hidden || (v !== 'day' && v !== 'cover')) return;
+  if (ts - (R.last || 0) < 31) return;                                 // about 30 frames per second is plenty here
+  R.last = ts;
   const anim = !reduced();
-  let moving = false;
-  R.bulbs.forEach(b => {
-    const d = b.target - b.cur;
-    if (Math.abs(d) > 0.004) { b.cur = anim ? b.cur + d * 0.07 : b.target; moving = true; applyGlow(b); }
-    else if (b.cur !== b.target) { b.cur = b.target; moving = true; applyGlow(b); }
+  if (v === 'cover') {
+    if (!useHost('cover')) return;
+    const C = R.cover;
+    if (anim) {
+      const k = 1 + Math.sin(ts / 1100) * 0.1, lead = Math.floor(ts / 320) % C.N;
+      C.turn.rotation.y = ts * 0.00042;
+      C.bulb.glass.emissiveIntensity = 1.7 * k; C.halo.material.opacity = 0.6 * k; C.lamp.intensity = 30 * k;
+      for (let i = 0; i < C.N; i++) { const d = (i - lead + C.N) % C.N; C.ring.setColorAt(i, R.col.copy(R.glow).multiplyScalar(d === 0 ? 1 : d < 4 ? 0.8 - d * 0.12 : 0.32)); }
+      C.ring.instanceColor.needsUpdate = true;
+    }
+    if (anim || R.dirty) { R.renderer.render(C.scene, C.cam); R.dirty = false; }
+    return;
+  }
+  if (!useHost('day')) return;
+  const M = R.map; let moving = false, cm = false;
+  ['x', 'z', 'ppu', 'yaw', 'el'].forEach(k => {
+    const d = M.cg[k] - M.cv[k];
+    if (Math.abs(d) > (k === 'ppu' ? 0.02 : 0.001)) { M.cv[k] = anim ? M.cv[k] + d * 0.2 : M.cg[k]; cm = true; }
+    else if (d !== 0) { M.cv[k] = M.cg[k]; cm = true; }
   });
-  const f = R.focus;
-  if (f) {
-    const on = f.item.state === 'focus', k = anim && on ? 1 + Math.sin(ts / 950) * 0.12 : 1;
-    if (anim && on) { applyGlow(f, k); moving = true; }
-    const lvl = Math.min(1, Math.max(0, (f.cur - 0.3) / 1.8));
-    R.halo.visible = true; R.halo.position.set(f.pos[0], 1.05, f.pos[2]);
-    R.halo.material.opacity = (0.25 + 0.6 * lvl) * (on ? k : 1); R.halo.scale.setScalar((3 + 1.6 * lvl) * (on ? k : 1));
-    R.lamp.position.set(f.pos[0], 1.5, f.pos[2]); R.lamp.intensity = 5 + 22 * lvl;
-  } else if (R.halo.visible) { R.halo.visible = false; R.lamp.intensity = 0; moving = true; }
-  if (moving || R.dirty) { R.renderer.render(R.scene, R.cam); R.dirty = false; }
+  if (cm) { camApply(); moving = true; }
+  M.units.forEach(b => {
+    const d = b.target - b.cur;
+    if (Math.abs(d) > 0.004) { b.cur = anim ? b.cur + d * 0.12 : b.target; moving = true; applyGlow(b); }
+    else if (d !== 0) { b.cur = b.target; moving = true; applyGlow(b); }
+  });
+  /* focusing now: today's lights breathe, and the next light to be earned blinks */
+  const pc = M.pulse >= 0 ? M.cells[M.pulse] : null, f = M.focus;
+  if (pc && anim) {
+    const k = 0.72 + 0.28 * Math.sin(ts / 420), nx = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(ts / 260));
+    for (let j = 0; j < LIGHTS; j++) { if (j < pc.lit) M.lights.setColorAt(M.pulse * LIGHTS + j, R.col.copy(R.glow).multiplyScalar(k)); else if (j === pc.lit) M.lights.setColorAt(M.pulse * LIGHTS + j, R.col.copy(R.glow).multiplyScalar(nx)); }
+    M.lights.instanceColor.needsUpdate = true; moving = true;
+  }
+  if (f || pc) {
+    const on = !!pc, k = anim && on ? 1 + Math.sin(ts / 950) * 0.12 : 1, p = f ? f.pos : [pc.x, pc.top, pc.z];
+    if (f && anim && on) applyGlow(f, k);
+    M.halo.visible = true; M.halo.position.set(p[0], p[1] + (f ? 0.5 : 0.3), p[2]);
+    M.halo.material.opacity = (on ? 0.7 : 0.3) * k; M.halo.scale.setScalar((on ? 3.4 : 2.2) * k);
+    M.lamp.position.set(p[0], p[1] + 1.6, p[2]); M.lamp.intensity = (on ? 24 : 7) * k;
+  } else if (M.halo.visible) { M.halo.visible = false; M.lamp.intensity = 0; moving = true; }
+  if (R.labDirty && M.labs && M.w) { placeLabels(); R.labDirty = false; }
+  if (moving || R.dirty) { R.renderer.render(M.scene, M.cam); R.dirty = false; }
 }
 
 /* optional GLB: try once; on any failure the bulbs drawn in code stay */
@@ -2498,26 +3034,27 @@ async function loadModel(THREE) {
     let meshes = 0; src.traverse(o => { if (o.isMesh) meshes++; });
     if (!meshes) throw new Error('no-mesh');
     src.position.set(-mid.x, -box.min.y, -mid.z);
-    const holder = new THREE.Group(); holder.add(src); holder.scale.setScalar(1.66 / size.y);
+    const holder = new THREE.Group(); holder.add(src); holder.scale.setScalar(1.75 / size.y);
     R.template = holder; R.model = 'glb';
-    R.bulbs.forEach(b => { useModel(b); if (b.item) setLook(b); applyGlow(b); });
+    R.map.units.forEach(b => { useModel(b); if (b.item) setLook(b); applyGlow(b); });
+    const cb = { unit: R.cover.bulb, cur: 1.7 }; useModel(cb); applyGlow(cb);
     R.dirty = true;
   } catch (err) { R.model = 'procedural'; R.modelErr = String((err && err.message) || err); }
   if (ui.view === 'vision') render();
 }
+/* swap the coded bulb for a copy of the GLB; its materials are flat-shaded to match the rest */
 function useModel(b) {
   const R = scene3, clone = R.template.clone(true), mats = [];
   clone.traverse(o => {
     if (!o.isMesh) return;
-    const many = Array.isArray(o.material);
-    const cloned = (many ? o.material : [o.material]).map(m => m.clone());
+    const many = Array.isArray(o.material), cloned = (many ? o.material : [o.material]).map(m => m.clone());
     o.material = many ? cloned : cloned[0];
-    cloned.forEach(m => { if (m.emissive) { if (m.color) m.userData.base = m.color.clone(); mats.push(m); } });
+    cloned.forEach(m => { if ('flatShading' in m) { m.flatShading = true; m.needsUpdate = true; } if (m.emissive) { if (m.color) m.userData.base = m.color.clone(); mats.push(m); } });
   });
   if (!mats.length) return;
-  b.unit.group.remove(b.unit.vis); b.unit.glass.dispose(); b.unit.fil.dispose();
+  b.unit.group.remove(b.unit.vis); if (b.unit.glass) b.unit.glass.dispose();
   b.unit.group.add(clone);
-  b.unit = Object.assign(b.unit, { vis: clone, mats, proc: false });
+  Object.assign(b.unit, { vis: clone, mats, glass: mats[0], proc: false });
 }
 
 /* ---------- wiring ---------- */
@@ -2538,7 +3075,9 @@ function bindEvents() {
     }
   });
   document.addEventListener('toggle', e => { const k = e.target.dataset && e.target.dataset.keep; if (k) ui.open[k] = e.target.open; }, true);
-  window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (v && v !== ui.view && VIEWS[v] && v !== 'breath') nav(v); });
+  let scrollQueued = false;
+  window.addEventListener('scroll', () => { if (!T.id || scrollQueued) return; scrollQueued = true; requestAnimationFrame(() => { scrollQueued = false; paintMini(); }); }, { passive: true });
+  window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (v && v !== ui.view && VIEWS[v] && v !== 'breath' && v !== 'cover') nav(v); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { onTick(); scene3.dirty = true; } });
   if (window.matchMedia) {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)'), on = () => { paintChrome(); syncScene(); };
@@ -2547,6 +3086,7 @@ function bindEvents() {
 }
 function heartbeat() {
   const n = hm(); let changed = false;
+  if (heartbeat.day !== dayKey()) { heartbeat.day = dayKey(); arrive(); changed = true; }   // midnight passed with the app open
   if (!paused()) openTasks().forEach(x => { if (x.h === n && x.n !== dayKey()) { x.n = dayKey(); changed = true; notify(t('remind', { t: tx(x.t) })); } });
   if (replan(true)) changed = true;
   S.lastSeen = Date.now(); save();
@@ -2560,9 +3100,9 @@ function boot() {
   replan(true);
   bindEvents();
   const hash = (location.hash || '').slice(1);
-  nav(S.skipBreath ? (VIEWS[hash] && hash !== 'breath' ? hash : 'menu') : 'breath');
+  nav(VIEWS[hash] && hash !== 'breath' && hash !== 'cover' ? hash : 'cover');   // a plain visit always opens on the cover
   initScene();
-  heartbeat.last = hm();
+  heartbeat.last = hm(); heartbeat.day = dayKey();
   setInterval(heartbeat, 20000);
   window.__enfoco = { get state() { return S; }, timer: T, scene: scene3, ui };   // small debugging handle, read-only use
 }
