@@ -1,51 +1,2572 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EnFoco – calendario diario para TDAH</title>
+<!doctype html>
+<html lang="pt-PT" data-theme="auto" data-motion="full">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="EnFoco: o teu dia em foquitos, um de cada vez. Protótipo de hackathon para adultos com PHDA. Não é uma ferramenta médica.">
+<title>EnFoco — um foquito de cada vez</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23151b2e'/%3E%3Ccircle cx='16' cy='13' r='8' fill='%23ffc15e'/%3E%3Crect x='12' y='21' width='8' height='6' rx='2' fill='%239aa3b8'/%3E%3C/svg%3E">
+
+<!-- Three.js arrives as ES modules through this import map. The app itself never imports it statically,
+     so if the CDN or WebGL is unavailable the page still works with the simple 2D view. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+    "three/examples/jsm/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
 <style>
-body{font-family:system-ui,sans-serif;margin:0;background:#f6f4ff;color:#222}
-header{background:#5b4bdb;color:#fff;padding:16px 20px}h1{margin:0;font-size:22px}header p{margin:4px 0 0;opacity:.85}
-main{max-width:720px;margin:auto;padding:16px}.card{background:#fff;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #0001}
-#now{font-size:26px;font-weight:700}.big{font-size:44px;font-weight:800;color:#5b4bdb}
-button{border:0;border-radius:10px;padding:10px 14px;margin:4px;font-size:15px;cursor:pointer;background:#5b4bdb;color:#fff}
-button.alt{background:#e6e2ff;color:#3a2fa8}input,select{padding:10px;border-radius:10px;border:1px solid #ccc;font-size:15px;margin:4px}
-.task{display:flex;align-items:center;justify-content:space-between;padding:8px;border-bottom:1px solid #eee}.done{text-decoration:line-through;opacity:.5}
-.tag{font-size:12px;padding:2px 8px;border-radius:8px;background:#ffe9b3;margin-left:6px}.e1{background:#c9f7d4}.e3{background:#ffc9c9}
-#streak{font-size:18px}
-</style></head><body>
-<header><h1>EnFoco</h1><p>Tu día, una cosa a la vez. Hecho para personas con TDAH.</p></header>
-<main>
-<div class="card"><div>Ahora mismo:</div><div id="now">Nada pendiente 🎉</div><div class="big" id="timer">--:--</div>
-<button onclick="start()">Empezar</button><button class="alt" onclick="pause()">Pausa</button><button class="alt" onclick="doneNow()">Listo ✔</button><button class="alt" onclick="skip()">Más tarde</button>
-<div id="steps"></div></div>
-<div class="card"><b>Agregar al día</b><br>
-<input id="t" placeholder="Ej: Ordenar la cocina" size="24"><select id="m"><option value="10">10 min</option><option value="15" selected>15 min</option><option value="25">25 min</option></select>
-<select id="e"><option value="1">Energía baja</option><option value="2" selected>Media</option><option value="3">Alta</option></select>
-<input id="h" type="time"><button onclick="add()">Agregar</button>
-<div style="font-size:13px;color:#666">Tip: las tareas de más de 25 min se parten solas en pasos chicos.</div></div>
-<div class="card"><b>Hoy</b> <span id="streak"></span><div id="list"></div></div>
-<div class="card"><b>¿Cómo está tu energía?</b><br><button class="alt" onclick="energy(1)">🔋 Baja</button><button class="alt" onclick="energy(2)">⚡ Media</button><button class="alt" onclick="energy(3)">🚀 Alta</button>
-<div id="sug" style="margin-top:6px"></div></div>
+/* ---------- tokens ---------- */
+:root{
+  --bg:#eef1f5; --surface:#ffffff; --surface-2:#f4f6f9; --ink:#1c2333; --muted:#566076; --line:#d5dbe5;
+  --amber:#f0a22e; --amber-ink:#7a4a00; --amber-wash:#fff2d9; --on-amber:#1d1503; --on-amber-2:#4a3407;
+  --primary:#1c2333; --on-primary:#ffffff; --link:#7a4a00; --focus:#2a6df4; --danger:#a3352b;
+  --font:"Avenir Next","Segoe UI Variable Text","Segoe UI",Seravek,"Gill Sans Nova",Ubuntu,Calibri,"Helvetica Neue",system-ui,sans-serif;
+  --r:16px; --r-sm:12px; --tap:48px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f141e; --surface:#171e2c; --surface-2:#1e2738; --ink:#e8edf5; --muted:#a6b1c5; --line:#2c374b;
+    --amber:#ffc15e; --amber-ink:#ffd08a; --amber-wash:#2c2513; --on-amber:#1d1503; --on-amber-2:#4a3407;
+    --primary:#e8edf5; --on-primary:#141a27; --link:#ffd08a; --focus:#8fb4ff; --danger:#ff9d92;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f141e; --surface:#171e2c; --surface-2:#1e2738; --ink:#e8edf5; --muted:#a6b1c5; --line:#2c374b;
+  --amber:#ffc15e; --amber-ink:#ffd08a; --amber-wash:#2c2513; --on-amber:#1d1503; --on-amber-2:#4a3407;
+  --primary:#e8edf5; --on-primary:#141a27; --link:#ffd08a; --focus:#8fb4ff; --danger:#ff9d92;
+  color-scheme:dark;
+}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;min-height:100dvh;background:var(--bg);color:var(--ink);font:400 1rem/1.55 var(--font);-webkit-font-smoothing:antialiased}
+h1{font-size:clamp(1.55rem,5vw,2rem);line-height:1.15;font-weight:650;letter-spacing:-.015em;margin:.1em 0 .25em}
+h2{font-size:1.08rem;line-height:1.3;font-weight:650;margin:0 0 .45rem}
+h3{font-size:1rem;font-weight:650;margin:0 0 .2rem}
+p{margin:.4em 0}
+ul{margin:.3em 0;padding-left:1.2em}
+a{color:var(--link);text-underline-offset:.15em}
+[hidden]{display:none!important}
+.sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+h1:focus{outline:none}
+button,input,select,textarea{font:inherit;color:inherit}
+.skip{position:absolute;left:8px;top:-60px;z-index:50;background:var(--primary);color:var(--on-primary);padding:10px 14px;border-radius:10px}
+.skip:focus{top:8px}
+
+/* ---------- chrome ---------- */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px max(12px,env(safe-area-inset-left)) 8px max(12px,env(safe-area-inset-right));
+  background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:inline-flex;align-items:center;gap:8px;min-height:var(--tap);padding:0 8px 0 4px;border:0;background:none;cursor:pointer;
+  font-weight:700;font-size:1.12rem;letter-spacing:-.01em;border-radius:10px}
+.brand svg{width:26px;height:26px;flex:none}
+.tools{display:flex;align-items:center;gap:6px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.seg button{min-width:44px;min-height:44px;border:0;background:none;cursor:pointer;font-weight:600;font-size:.92rem;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
+.icon-btn{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}
+.icon-btn svg{width:20px;height:20px}
+#demo-banner{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;justify-content:center;padding:8px 14px;
+  background:var(--amber-wash);color:var(--ink);border-bottom:1px solid var(--line);font-size:.93rem}
+#demo-banner button{min-height:40px}
+main{max-width:680px;margin:0 auto;padding:14px 16px 110px}
+.lead{color:var(--muted);font-size:1.04rem;max-width:56ch;margin:0 0 .6em}
+.note{color:var(--muted);font-size:.93rem}
+.back{display:inline-flex;align-items:center;gap:2px;min-height:44px;padding:0 10px 0 2px;margin:0 0 2px -4px;border:0;background:none;cursor:pointer;color:var(--muted);font-weight:600;border-radius:10px}
+.back svg{width:20px;height:20px}
+
+/* ---------- controls ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--tap);padding:0 18px;border-radius:var(--r-sm);
+  border:1px solid transparent;background:var(--primary);color:var(--on-primary);font-weight:600;cursor:pointer;text-align:center;line-height:1.2}
+.btn.quiet{background:var(--surface-2);color:var(--ink);border-color:var(--line)}
+.btn.lit{background:var(--amber);color:var(--on-amber)}
+.btn.danger{background:none;color:var(--danger);border-color:currentColor}
+.btn.ghost{background:none;color:var(--muted);border-color:transparent;padding:0 10px;min-width:44px}
+.btn.mini{min-height:44px;padding:0 12px;font-size:.92rem}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn svg{width:18px;height:18px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.row.center{justify-content:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:550;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--amber-wash);border-color:var(--amber);color:var(--amber-ink);box-shadow:inset 0 0 0 1px var(--amber)}
+.field{margin:12px 0}
+.lbl{display:block;font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+input[type=text],input[type=time],input[type=date],input[type=number],input:not([type]),select,textarea{
+  width:100%;min-height:var(--tap);padding:10px 12px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+textarea{resize:vertical;line-height:1.45}
+::placeholder{color:var(--muted);opacity:.8}
+.check{display:flex;align-items:center;gap:10px;min-height:var(--tap);cursor:pointer}
+.check input{width:22px;height:22px;accent-color:var(--amber);flex:none}
+.grid3{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0}
+@media(min-width:520px){.grid3{grid-template-columns:1fr 1fr 1fr}}
+
+/* ---------- blocks ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:14px 0}
+.panel.calm{background:var(--amber-wash);border-color:transparent}
+.blk{border-top:1px solid var(--line);padding:16px 0 4px;margin-top:16px}
+details>summary{cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;gap:8px;font-weight:650;border-radius:10px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);flex:none;margin:0 4px 0 2px}
+details[open]>summary::before{transform:rotate(45deg)}
+.sum-v{font-weight:400;color:var(--muted);font-size:.95rem}
+details.why{margin-top:10px}
+details.why>summary{font-weight:600;font-size:.92rem;color:var(--muted)}
+details.why p{font-size:.93rem;color:var(--muted);max-width:62ch}
+details.why .src{font-size:.88rem}
+details.more>summary{font-weight:600;color:var(--muted);font-size:.95rem}
+.plain{list-style:none;padding:0;margin:0}
+.bullets{padding-left:1.2em;list-style:disc}
+.bullets li{margin:.35em 0;max-width:64ch}
+
+/* ---------- breathing ---------- */
+.breath{min-height:calc(100dvh - 150px);display:grid;justify-items:center;align-content:center;gap:6px;text-align:center}
+.b-intro{color:var(--muted);margin-bottom:14px}
+.orb-wrap{position:relative;width:min(62vw,250px);aspect-ratio:1;display:grid;place-items:center;margin:6px 0 14px}
+.orb-guide{position:absolute;inset:0;border-radius:50%;border:1.5px dashed var(--line)}
+.orb{width:100%;height:100%;border-radius:50%;transform:scale(.5);
+  background:radial-gradient(circle at 50% 40%,#ffe7b5 0%,var(--amber) 58%,#d98a14 100%);
+  box-shadow:0 0 70px -10px var(--amber);transition:transform var(--d,4s) cubic-bezier(.45,0,.35,1)}
+.orb[data-p="inhale"],.orb[data-p="hold"]{transform:scale(1)}
+.orb[data-p="exhale"],.orb[data-p="ready"]{transform:scale(.5)}
+.b-phase{font-size:clamp(1.9rem,8vw,2.6rem);font-weight:650;letter-spacing:-.02em;margin:0;line-height:1.1}
+.b-hint{color:var(--muted);margin:0;min-height:1.5em}
+.b-count{font-size:1.3rem;font-variant-numeric:tabular-nums;color:var(--amber-ink);font-weight:650;margin:2px 0 0}
+.b-cycle{color:var(--muted);font-size:.93rem;margin:0 0 8px}
+.breath .why{text-align:left;max-width:520px}
+html[data-motion="reduce"] .orb{transform:scale(.82)!important}
+html[data-motion="reduce"] .orb[data-p="exhale"],html[data-motion="reduce"] .orb[data-p="ready"]{opacity:.45}
+
+/* ---------- menu ---------- */
+.menu{display:grid;gap:10px;margin-top:14px}
+.m-item{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;width:100%;min-height:68px;padding:13px 14px 13px 16px;text-align:left;
+  border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.m-item b{font-weight:650;font-size:1.05rem}
+.m-item span{grid-column:1;color:var(--muted);font-size:.93rem;line-height:1.35}
+.m-item svg{grid-column:2;grid-row:1/3;width:20px;height:20px;color:var(--muted)}
+.m-item.lit{background:var(--amber);border-color:transparent;color:var(--on-amber);min-height:92px}
+.m-item.lit b{font-size:1.3rem}
+.m-item.lit span,.m-item.lit svg{color:var(--on-amber-2)}
+@media(min-width:600px){.menu{grid-template-columns:1fr 1fr}.m-item.lit{grid-column:1/-1}}
+.lights{margin-top:18px}
+
+/* ---------- stage (always dusk, in both themes, so the bulbs can glow) ---------- */
+.stage{position:relative;height:clamp(220px,34vh,330px);border-radius:20px;overflow:hidden;margin:6px 0 4px;scroll-margin-top:72px;
+  background:radial-gradient(120% 95% at 50% 0%,#28324f 0%,#161c30 55%,#0c101b 100%);color:#dfe6f5}
+#stage-gl{position:absolute;inset:0}
+#stage-gl canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+#stage-labels{position:absolute;inset:0;pointer-events:none}
+.lab{position:absolute;transform:translate(-50%,0);max-width:120px;padding:2px 7px;border-radius:7px;font-size:.74rem;line-height:1.25;text-align:center;
+  background:rgba(10,14,25,.6);color:#cfd8ea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.lab.sel{color:#ffd08a;background:rgba(10,14,25,.82);font-weight:650;max-width:160px;z-index:2}
+.lab.done{opacity:.6}
+.stage-count{position:absolute;left:12px;top:8px;margin:0;font-size:.82rem;color:#b9c4dc}
+.stage-note{position:absolute;right:12px;bottom:8px;left:12px;margin:0;font-size:.78rem;color:#9daac6;text-align:right}
+#stage-2d{display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:6px 4px;padding:36px 8px 4px}
+.stage.flat{height:auto;min-height:200px}
+.stage.flat .stage-note{position:static;padding:4px 14px 12px;text-align:center}
+.stage.flat #stage-gl,.stage.flat #stage-labels{display:none}
+.b2{width:84px;min-height:104px;padding:6px 4px;border:0;border-radius:12px;background:none;color:#cfd8ea;cursor:pointer;display:grid;justify-items:center;gap:3px;font-size:.74rem;line-height:1.2}
+.b2.sel{background:rgba(255,255,255,.07);color:#ffd08a}
+.b2-bulb{position:relative;width:38px;height:44px;border-radius:50% 50% 46% 46%;background:#59627b;margin-bottom:9px}
+.b2-bulb::after{content:"";position:absolute;left:11px;right:11px;bottom:-9px;height:10px;border-radius:2px 2px 4px 4px;background:#8d96ab}
+.b2.st-idle .b2-bulb,.b2.st-warm .b2-bulb{background:#b99a62}
+.b2.st-paused .b2-bulb,.b2.st-rest .b2-bulb{background:#c9a258;box-shadow:0 0 10px 0 rgba(255,193,94,.35)}
+.b2.st-focus .b2-bulb{background:#ffd27a;box-shadow:0 0 26px 6px rgba(255,193,94,.7)}
+.b2.st-done .b2-bulb{background:#454d63}
+.b2-n{max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* wide screens: the room stays in view on the left while the day scrolls on the right */
+@media(min-width:980px){
+  main.wide{max-width:1160px}
+  #v-day:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:0 32px;align-items:start}
+  .day-left{position:sticky;top:74px}
+  .day-left .stage:not(.flat){height:min(62vh,560px)}
+  #day-body>.blk:first-child{margin-top:0;border-top:0;padding-top:0}
+}
+
+/* ---------- now panel ---------- */
+.now{border-left:5px solid var(--line)}
+.now.run{border-color:var(--amber);border-left-color:var(--amber);box-shadow:0 14px 40px -22px var(--amber)}
+.now-l{margin:0;font-size:.9rem;font-weight:650;color:var(--amber-ink)}
+.now-t{margin:.1em 0 .25em;font-size:clamp(1.3rem,4.6vw,1.6rem);font-weight:650;line-height:1.2;letter-spacing:-.01em;overflow-wrap:anywhere}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.tagm{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:.86rem;color:var(--muted)}
+.pips{display:inline-flex;gap:2px;align-items:flex-end}
+.pips i{width:4px;height:9px;border-radius:1px;background:var(--line)}
+.pips i:nth-child(2){height:12px}.pips i:nth-child(3){height:15px}
+.pips i.on{background:var(--amber-ink)}
+.hint{margin:8px 0;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:.95rem}
+.hint.warm{background:var(--amber-wash)}
+.timer{display:flex;align-items:center;gap:16px;margin:12px 0 4px}
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .trk{stroke:var(--line)}
+.ring .prg{stroke:var(--amber);stroke-linecap:round;transition:stroke-dashoffset .9s linear}
+.ring .num{position:absolute;inset:0;display:grid;place-items:center;font-size:1.75rem;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.t-side{min-width:0}
+.t-side p{margin:.15em 0}
+.t-mode{font-weight:650}
+.steps{list-style:none;padding:0;margin:8px 0 0}
+.steps .check{min-height:44px}
+.steps input:checked+span{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.boost{margin-top:12px;border-top:1px solid var(--line);padding-top:6px}
+.bo{padding:10px 0;border-top:1px dashed var(--line)}
+.bo:first-of-type{border-top:0}
+.bo h3{display:flex;align-items:center;gap:8px}
+.ltr{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--amber-wash);color:var(--amber-ink);font-size:.9rem;font-weight:700}
+.bo p{margin:.2em 0 .5em;color:var(--muted);font-size:.95rem}
+.card-twist{display:inline-block;padding:10px 14px;border-radius:12px;border:1px dashed var(--amber);background:var(--amber-wash);color:var(--ink)!important;font-weight:600}
+.swatch{width:14px;height:14px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.15)}
+
+/* ---------- plan ---------- */
+.tlist{list-style:none;padding:0;margin:6px 0}
+.trow{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;min-height:60px;padding:8px 0 8px 10px;border-bottom:1px solid var(--line);border-left:4px solid transparent}
+.trow.sel{border-left-color:var(--amber);background:linear-gradient(90deg,var(--amber-wash),transparent 70%)}
+.t-time{font-variant-numeric:tabular-nums;font-weight:600}
+.t-title svg{width:18px;height:18px;vertical-align:-3px;margin-right:6px}
+.t-main{min-width:0;display:grid;gap:2px}
+.t-title{font-weight:600;overflow-wrap:anywhere;line-height:1.3}
+.t-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:.86rem;color:var(--muted)}
+.trow.done .t-title{color:var(--muted);font-weight:500}
+.t-act{display:flex;align-items:center;gap:2px}
+.nowmark{font-size:.84rem;font-weight:650;color:var(--amber-ink);padding:0 8px}
+.add{margin-top:14px}
+.sub{font-size:.95rem;font-weight:650;color:var(--muted);margin:14px 0 2px}
+
+/* ---------- rhythm, goals ---------- */
+.rh-bar{position:relative;display:flex;height:16px;border-radius:999px;overflow:hidden;margin:26px 0 4px;border:1px solid var(--line)}
+.rh-bar span{display:block;height:100%}
+.rh-bar .b1{flex:5;background:var(--amber-wash)}
+.rh-bar .b2x{flex:6;background:var(--surface-2);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.rh-bar .b3{flex:5;background:var(--surface)}
+.rh-wrap{position:relative}
+.rh-now{position:absolute;top:-22px;transform:translateX(-50%);font-size:.8rem;font-weight:650;color:var(--amber-ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rh-now::after{content:"";position:absolute;left:50%;top:20px;width:3px;height:22px;margin-left:-1.5px;border-radius:2px;background:var(--amber-ink)}
+.rh-leg{display:flex;font-size:.82rem;color:var(--muted)}
+.rh-leg span:nth-child(1){flex:5}.rh-leg span:nth-child(2){flex:6}.rh-leg span:nth-child(3){flex:5}
+.goal{padding:10px 0;border-bottom:1px solid var(--line)}
+.stones{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.stones i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:var(--surface)}
+.stones i.on{background:var(--amber);border-color:var(--amber)}
+.stones i.next{border-color:var(--amber-ink);border-style:dashed}
+
+/* ---------- dump, together, demo ---------- */
+.dump{list-style:none;padding:0;margin:8px 0}
+.d-item{border-bottom:1px solid var(--line);padding:6px 0}
+.d-item.sel{background:var(--amber-wash);border-radius:12px;padding:8px 12px;border-bottom-color:transparent;margin:6px 0}
+.d-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px}
+.d-t{overflow-wrap:anywhere;font-weight:550}
+.d-step{padding:6px 0 4px}
+.co-line{display:flex;align-items:center;gap:10px;margin:10px 0 4px;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
+.co-dot{width:12px;height:12px;border-radius:50%;background:#7fb8ee;flex:none;box-shadow:0 0 0 4px rgba(127,184,238,.25)}
+.personas{list-style:none;padding:0;margin:10px 0;display:grid;gap:12px}
+.persona{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.persona.sel{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}
+.persona p{max-width:60ch}
+.srcs{list-style:none;padding:0}
+.srcs li{margin:.6em 0;max-width:66ch}
+.srcs span{display:block;color:var(--muted);font-size:.93rem}
+
+/* ---------- toast ---------- */
+#toast{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:40;max-width:min(92vw,520px);
+  padding:12px 16px;border-radius:14px;background:var(--primary);color:var(--on-primary);font-weight:550;text-align:center;
+  opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 10px 30px -12px rgba(0,0,0,.5)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- reduced motion: system setting or the in-app switch ---------- */
+html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-motion="reduce"] *::after{
+  animation:none!important;transition:none!important;scroll-behavior:auto!important}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip_link">Saltar para o conteúdo</a>
+
+<header class="top">
+  <button type="button" class="brand" data-act="nav" data-v="menu" id="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="13" r="8.5" fill="var(--amber)"/><rect x="12" y="21.5" width="8" height="6" rx="2" fill="var(--muted)"/><path d="M13 13.5c1-2.2 5-2.2 6 0" fill="none" stroke="var(--on-amber)" stroke-width="1.4" stroke-linecap="round"/></svg>
+    <span>EnFoco</span>
+  </button>
+  <div class="tools">
+    <div class="seg" role="group" id="lang-seg">
+      <button type="button" data-act="lang" data-v="pt" lang="pt">PT</button>
+      <button type="button" data-act="lang" data-v="en" lang="en">EN</button>
+    </div>
+    <button type="button" class="icon-btn" data-act="theme" id="btn-theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3L17 7M7 17l-1.7 1.7"/></svg>
+    </button>
+    <button type="button" class="icon-btn" data-act="motion" id="btn-motion">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 9c2.5-3 4.5-3 7 0s4.5 3 7 0 3-2 4-1M3 16c2.5-3 4.5-3 7 0s4.5 3 7 0 3-2 4-1"/></svg>
+    </button>
+  </div>
+</header>
+<div id="demo-banner" hidden></div>
+
+<main id="main" tabindex="-1">
+  <section id="v-breath" class="view" hidden></section>
+  <section id="v-menu" class="view" hidden></section>
+  <section id="v-day" class="view" hidden>
+    <div class="day-left">
+    <button type="button" class="back" data-act="nav" data-v="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span data-i18n="back_menu">Menu</span></button>
+    <h1 tabindex="-1" data-i18n="day_title">O meu dia</h1>
+    <div class="stage" id="stage">
+      <div id="stage-gl" aria-hidden="true"></div>
+      <div id="stage-labels" aria-hidden="true"></div>
+      <div id="stage-2d" hidden></div>
+      <p class="stage-count" id="stage-count"></p>
+      <p class="stage-note" id="stage-note"></p>
+    </div>
+    <p class="sr" id="stage-desc" role="status"></p>
+    </div>
+    <div id="day-body"></div>
+  </section>
+  <section id="v-dump" class="view" hidden></section>
+  <section id="v-together" class="view" hidden></section>
+  <section id="v-demo" class="view" hidden></section>
+  <section id="v-privacy" class="view" hidden></section>
+  <section id="v-vision" class="view" hidden></section>
 </main>
-<script>
-let S=JSON.parse(localStorage.foco||'{"tasks":[],"streak":0}');let left=0,iv=null;
-const save=()=>localStorage.foco=JSON.stringify(S);
-function add(){let t=t_.value.trim();if(!t)return;let m=+m_.value,e=+e_.value,h=h_.value;
- let steps=m>25?["Preparar lo necesario (5 min)","Primera parte","Pausa de 5 min","Segunda parte","Cerrar y celebrar"]:["Empezar con lo más fácil","Terminar"];
- S.tasks.push({t,m,e,h,steps,done:false});t_.value='';save();render();}
-const [t_,m_,e_,h_]=['t','m','e','h'].map(i=>document.getElementById(i));
-function cur(){return S.tasks.filter(x=>!x.done).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'))[0]}
-function render(){let c=cur();now.textContent=c?c.t:'Nada pendiente 🎉';steps.innerHTML=c?'<ol>'+c.steps.map(s=>'<li>'+s+'</li>').join('')+'</ol>':'';
- if(!iv){left=c?c.m*60:0;show();}
- list.innerHTML=S.tasks.map((x,i)=>`<div class="task"><span class="${x.done?'done':''}">${x.h||'—'} · ${x.t}<span class="tag e${x.e}">${['','baja','media','alta'][x.e]}</span></span><span>${x.m} min <button class="alt" onclick="del(${i})">✕</button></span></div>`).join('')||'<i>Agregá tu primera tarea</i>';
- streak.textContent='🔥 Racha: '+S.streak+' tareas';}
-function show(){timer.textContent=left?String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0'):'--:--'}
-function start(){if(iv||!cur())return;iv=setInterval(()=>{left--;show();if(left==Math.floor(cur().m*30))notify('Vas por la mitad, ¡seguí así!');if(left<=0){clearInterval(iv);iv=null;notify('Tiempo. ¿Terminaste o seguimos 5 min más?')}},1000)}
-function pause(){clearInterval(iv);iv=null}
-function doneNow(){let c=cur();if(!c)return;c.done=true;S.streak++;pause();save();notify('¡Bien! Una menos 🎉');render()}
-function skip(){let c=cur();if(!c)return;S.tasks.splice(S.tasks.indexOf(c),1);S.tasks.push(c);c.h='';pause();save();render()}
-function del(i){S.tasks.splice(i,1);save();render()}
-function energy(n){let p=S.tasks.filter(x=>!x.done&&x.e<=n);sug.textContent=p.length?'Te sugiero: '+p[0].t+' ('+p[0].m+' min)':'No hay tareas para esta energía. Tomá agua y descansá 5 min 💧'}
-function notify(msg){if(window.Notification&&Notification.permission=='granted')new Notification('EnFoco',{body:msg});else alert(msg)}
-if(window.Notification)Notification.requestPermission();
-setInterval(()=>{let d=new Date(),hm=d.toTimeString().slice(0,5);S.tasks.forEach(x=>{if(!x.done&&x.h==hm&&!x.n){x.n=1;notify('En 0 min: '+x.t+'. Respirá y empezá por el primer paso.');save()}})},20000);
-if(!S.tasks.length){S.tasks=[{t:'Tomar la medicación',m:10,e:1,h:'08:00',steps:['Agua','Tomarla','Marcar listo'],done:false},{t:'Responder mails importantes',m:25,e:2,h:'10:00',steps:['Abrir solo 3 mails','Responder','Cerrar'],done:false},{t:'Ordenar el escritorio',m:40,e:3,h:'17:00',steps:['Preparar lo necesario (5 min)','Primera parte','Pausa de 5 min','Segunda parte','Cerrar y celebrar'],done:false}];save()}
-render();
-</script></body></html>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<noscript><p style="padding:20px;max-width:60ch;margin:auto">O EnFoco precisa de JavaScript para funcionar. / EnFoco needs JavaScript to run.</p></noscript>
+
+<script type="module">
+/* =====================================================================
+   EnFoco — single-file prototype. Portugal Tech Week, Hackathon for a Cause (Brainstorm).
+   Not a medical tool. All data stays in localStorage. Demo data is made up.
+   ===================================================================== */
+
+/* ---------- configuration ---------- */
+const MODEL_PATH = './models/bulb.glb';   // optional GLB; if it is missing the bulbs are drawn in code
+const CDN_TIMEOUT = 9000;                 // ms to wait for Three.js before using the simple 2D view
+const KEY = 'enfoco.v2';                  // localStorage key
+const OLD_KEY = 'foco';                   // key used by the first prototype (migrated once)
+const GAP_DAYS = 3;                       // days away before the gentle return screen appears
+
+/* ---------- sources for the "why" notes ---------- */
+const SRC = {
+  additude_proc: 'https://www.additudemag.com/stop-adhd-procrastination/',
+  additude_time: 'https://www.additudemag.com/does-anyone-know-what-time-it-is/',
+  adhdeu: 'https://adhdireland.ie/wp-content/uploads/2024/09/Erasmus-Shared-Practices-1.pdf',
+  stanford: 'https://ctl.stanford.edu/sustaining-motivation',
+  howtoadhd_wall: 'https://www.youtube.com/watch?v=Uo08uS904Rg',
+  howtoadhd_mot: 'https://www.youtube.com/watch?v=OM0Xv0eVGtY',
+  ibns: 'https://neurodivergentinsights.com/blog/interest-based-nervous-system',
+  chen: 'https://arxiv.org/abs/2603.17258'
+};
+
+/* ---------- every UI string, in European Portuguese (default) and English ---------- */
+const I18N = {
+pt: {
+  skip_link: "Saltar para o conteúdo",
+  app_title: "EnFoco — um foquito de cada vez",
+  brand_aria: "EnFoco, ir para o menu",
+  lang_aria: "Língua",
+  theme_auto: "Tema: automático", theme_light: "Tema: claro", theme_dark: "Tema: escuro",
+  motion_auto: "Movimento: automático", motion_reduce: "Movimento: reduzido", motion_full: "Movimento: completo",
+  back_menu: "Menu",
+  why: "Porquê?",
+  sources: "Fontes",
+  demo_banner: "Modo demonstração: {name}. Dados inventados.",
+  demo_exit: "Sair e repor os meus dados",
+  copied: "Copiado.",
+  copy_manual: "Seleciona o texto e copia à mão.",
+  remove: "Largar",
+  pick: "Escolher",
+  when_free: "quando der",
+
+  b_title: "Respirar antes de começar",
+  b_intro: "Três respirações para chegar. Sem pressa.",
+  b_inhale: "Inspira", b_hold: "Sustém", b_exhale: "Expira",
+  b_inhale_h: "pelo nariz, devagar", b_hold_h: "só um momento", b_exhale_h: "pela boca, até ao fim",
+  b_cycle: "Respiração {n} de {total}",
+  b_skip: "Saltar",
+  b_never: "Não mostrar ao abrir",
+  why_breath: "É só uma pausa curta para mudar de registo antes de olhar para o dia. Não é tratamento nem exercício clínico, e podes sempre saltar. O guia ADHD-EU refere abordagens de atenção plena entre os apoios possíveis para adultos com PHDA.",
+
+  greet_m: "Bom dia.", greet_a: "Boa tarde.", greet_e: "Boa noite.",
+  menu_lead: "Por onde queres começar?",
+  menu_lead_soft: "Hoje pode ser pouco. Escolhe só uma porta.",
+  menu_lead_spark: "Há energia a mexer. Escolhe uma coisa e vamos.",
+  menu_aria: "Menu principal",
+  m_day: "O meu dia",
+  m_day_sub: "{n} foquitos por acender. A seguir: {next}",
+  m_day_sub_1: "1 foquito por acender: {next}",
+  m_day_none: "Nada por acender. Podes acrescentar ou só espreitar.",
+  m_two: "Só 2 minutos",
+  m_two_d: "Começar pequeno na tarefa que mais custa.",
+  m_dump: "Despejar ideias",
+  m_dump_d: "{n} ideias guardadas, sem ordem nem obrigação.",
+  m_dump_d_1: "1 ideia guardada, sem obrigação.",
+  m_dump_d_0: "Tira tudo da cabeça. Organizar fica para depois.",
+  m_tog: "Foco acompanhado",
+  m_tog_d: "Um temporizador com companhia, convites e pedidos de ajuda.",
+  m_demo: "Cenários de demonstração",
+  m_demo_d: "Marta, Tiago, Joana, Sofia e Pedro, com dados inventados.",
+  m_priv: "Privacidade e dados",
+  m_priv_d: "Fica tudo neste dispositivo. Exportar ou apagar.",
+  m_vis: "Visão e limites",
+  m_vis_d: "O que funciona hoje, o que é ideia e as fontes.",
+  m_breath: "Respirar de novo",
+  m_breath_d: "Três respirações, cerca de 35 segundos.",
+  lights: "Luzes acesas até hoje: {n}. Esta contagem nunca volta a zero.",
+
+  ret_title: "Que bom ver-te de volta.",
+  ret_body: "Passaram {days} dias. Não há nada para pôr em dia: escolhi até três coisas pequenas e guardei o resto, sem marcas de atraso.",
+  ret_shelved: "{n} coisas ficaram guardadas para depois. Trazes de volta quando quiseres.",
+  ret_shelved_1: "1 coisa ficou guardada para depois. Trazes de volta quando quiseres.",
+  ret_shelved_0: "Não ficou mais nada guardado.",
+  ret_keep: "Ficar com estas",
+  ret_swap: "Sugerir outras",
+  ret_rest: "Hoje só descanso",
+  ret_kept: "Fica assim. Uma de cada vez.",
+  why_return: "No estudo de Chen, Meng e Nie (2026), os adultos com PHDA entrevistados descrevem vergonha e autoculpa quando um plano falha, e valorizam marcas de progresso que sobrevivem aos dias em falta. Por isso o regresso mostra pouco e não conta atrasos.",
+
+  day_title: "O meu dia",
+  stage_count: "Luzes acesas: {n}",
+  stage_desc: "Cena com {n} foquitos. {focus}",
+  stage_focus: "Em foco: {t}.",
+  stage_nofocus: "Nenhum em foco.",
+  stage_pending: "A preparar a cena…",
+  stage_2d: "Vista simples (sem WebGL ou sem ligação à biblioteca 3D).",
+
+  ci_title: "Como estás agora?",
+  ci_sum: "Energia {energy}, {weather}",
+  ci_energy: "Energia",
+  en_1: "baixa", en_2: "média", en_3: "alta",
+  en_full: "energia {e}",
+  ci_weather: "Tempo interior",
+  w_sun: "Céu limpo", w_cloud: "Nublado", w_storm: "Tempestade", w_fog: "Nevoeiro", w_wind: "Vento",
+  wd_sun: "Cabeça leve. Bom momento para o que pede mais.",
+  wd_cloud: "Assim-assim. Um passo de cada vez.",
+  wd_storm: "Muita coisa ao mesmo tempo. Hoje, menos é melhor.",
+  wd_fog: "Custa arrancar. Começamos minúsculo.",
+  wd_wind: "Inquietação. Tarefas curtas e variadas costumam correr melhor.",
+  ci_plan: "Plano",
+  plan_auto: "Automático", plan_base: "Plano base", plan_ideal: "Plano ideal",
+  ci_read_base: "Com energia {energy} e {weather}, proponho o plano base: duas coisas, dez minutos no máximo cada uma. Mudas quando quiseres.",
+  ci_read_ideal: "Com energia {energy} e {weather}, mostro o plano inteiro. Se pesar, passa para o plano base.",
+  ci_pause: "Hoje é dia de pausa",
+  ci_unpause: "Retomar o dia",
+  pause_t: "Dia de pausa",
+  pause_b: "As luzes ficam em repouso. Descansar também conta, e amanhã nada aparece em atraso.",
+  why_checkin: "Chen, Meng e Nie (2026) propõem tratar o tempo como ritmo: planos «ideal» e «base», ajustados ao estado que a própria pessoa indica, em vez de emoções adivinhadas pela máquina. A ADDitude sugere dar ao dia blocos com princípio, meio e fim.",
+
+  now_label: "Agora",
+  now_none_t: "Nada por acender",
+  now_none: "A lista de hoje está vazia. Acrescenta um foquito ou despeja ideias primeiro.",
+  now_add: "Acrescentar um foquito",
+  lead_idle: "Uma coisa de cada vez. Quando quiseres.",
+  lead_idle_soft: "Só isto. O resto pode esperar.",
+  lead_idle_spark: "Vamos a esta? Curta e direta.",
+  btn_start: "Começar", btn_start_soft: "Começar devagar",
+  btn_resume: "Retomar", btn_pause: "Pausa", btn_done: "Feito", btn_later: "Mais tarde", btn_two: "Só 2 minutos",
+  btn_more: "Mais {n} min", btn_stop: "Chega por agora",
+  mode_focus: "Foco", mode_two: "Só 2 minutos", mode_sprint: "Mini-prazo", mode_chal: "Desafio, alvo {time}", mode_tog: "Com {name}",
+  ends_at: "Termina às {h}.",
+  ends_if: "Se começares agora, acaba às {h}.",
+  paused_at: "Em pausa. Restam {time}.",
+  time_left_aria: "Tempo restante",
+  ended_t: "O tempo acabou. Como ficou?",
+  ended_two: "Dois minutos feitos. Isto já conta. Paras aqui ou continuas?",
+  base_note: "Plano base: proponho {n} min em vez de {m}.",
+  delay_note: "Esta já ficou para depois {n} vezes. Acontece. Costuma ser sinal de que o primeiro passo está grande demais: experimenta só 2 minutos.",
+  why_line: "Porque importa: {w}",
+  spice_line: "Com {s}",
+  twist_line: "Carta de hoje: {c}",
+  ugly_lbl: "Versão feia permitida",
+  ugly_note: "O objetivo é existir, não ficar bom.",
+  steps_t: "Passos",
+  st_prep: "Preparar o que é preciso (5 min)", st_part1: "Primeira parte", st_break: "Pausa de 5 min", st_part2: "Segunda parte",
+  st_close: "Fechar e reparar no que ficou feito", st_easy: "Começar pelo mais fácil", st_finish: "Terminar", st_more: "Continuar, se apetecer",
+  toast_done: "Feito. Uma luz a mais.",
+  toast_done_soft: "Feito. Num dia destes, vale a dobrar.",
+  toast_later: "Fica para mais tarde. Sem culpa.",
+  toast_half: "Vais a meio.",
+  toast_half_soft: "Vais a meio. Devagar também é andar.",
+  toast_back: "Bom regresso. Retomamos de onde ficaste.",
+  toast_stop: "Chega por agora. O que fizeste conta.",
+  toast_end: "O tempo acabou. Como ficou?",
+  toast_replan: "Reorganizei o dia à volta de agora.",
+  toast_best: "Feito em {time}. É o teu melhor tempo nesta tarefa.",
+  toast_chal_win: "Feito em {time}, dentro do alvo.",
+  toast_chal_ok: "Feito. Fora do alvo também conta.",
+  toast_added: "Acrescentado ao dia.",
+  toast_steps: "Todos os passos feitos. Quando quiseres, marca como feito.",
+  remind: "Está na hora de: {t}. Respira e começa pelo primeiro passo.",
+  why_focus: "A ADDitude descreve a dificuldade em sentir o tempo a passar e recomenda temporizadores visuais e comparar o tempo previsto com o real. O guia ADHD-EU aconselha limites de tempo claros, pausas marcadas e lembretes.",
+  why_two: "A ADDitude sugere começar por um primeiro passo «desleixado» e olhar só para o passo seguinte. O How to ADHD explica, com a «Wall of Awful», porque é que uma tarefa fácil pode pesar por razões emocionais e não por preguiça.",
+
+  bo_title: "Dar gosto a esta tarefa (INCUP)",
+  bo_lead: "Cinco maneiras de tornar a tarefa mais apelativa. Usa só as que te servirem.",
+  bo_i: "Interesse", bo_i_d: "Junta-lhe algo de que gostas.",
+  sp_music: "música", sp_drink: "café ou chá", sp_light: "um sítio com luz", sp_podcast: "um podcast baixinho", sp_snack: "algo para trincar",
+  bo_n: "Novidade", bo_n_d: "Muda uma coisa na forma de fazer.", bo_n_btn: "Tirar uma carta",
+  tw_0: "Faz de pé.", tw_1: "Muda de sítio antes de começar.", tw_2: "Começa pelo fim.", tw_3: "Usa papel e caneta em vez do ecrã.",
+  tw_4: "Fala em voz alta enquanto fazes.", tw_5: "Faz a versão mais pequena possível.", tw_6: "Põe uma música só e acaba antes dela.", tw_7: "Troca a ordem dos passos.",
+  bo_glow: "Cor da luz",
+  glow_auto: "Muda todos os dias", glow_amber: "Âmbar", glow_peach: "Pêssego", glow_mint: "Menta", glow_lilac: "Lilás",
+  bo_c: "Desafio", bo_c_d: "Um alvo amigável: acabar em {time}.", bo_c_best: "O teu melhor tempo nesta tarefa é {time}.", bo_c_btn: "Tentar em {time}",
+  bo_u: "Urgência", bo_u_d: "Um mini-prazo escolhido por ti cria pressão que chegue, sem crise.", bo_u_btn: "{n} min",
+  bo_p: "Pessoas e paixão",
+  bo_p_d: "A Stanford chama a este P «pessoas»; outras versões dizem «paixão». Aqui cabem as duas.",
+  bo_p_lbl: "Para quem é, ou porque te importa?",
+  bo_p_ph: "Ex.: para a minha irmã não ter de voltar a pedir",
+  bo_p_btn: "Fazer com companhia",
+  why_incup: "O folheto «Sustaining Motivation», do Stanford CTL, propõe o INCUP (interessante, novo, desafiante, urgente, orientado para pessoas) para ajudar a arrancar. A ideia vem do «sistema nervoso baseado no interesse», de William Dodson, que o Neurodivergent Insights apresenta como modelo clínico e não como teoria testada em estudos. O vídeo «ADHD and Motivation», do How to ADHD, segue a mesma lógica.",
+
+  plan_t: "Hoje",
+  plan_base_t: "Hoje basta isto",
+  plan_wait: "Pode esperar ({n})",
+  plan_done: "Feito hoje ({n})",
+  replan_note: "Reorganizei o dia à volta de agora. Nada ficou em atraso.",
+  add_h: "Acrescentar um foquito",
+  add_title: "O que é?", add_ph: "Ex.: arrumar a secretária",
+  add_min: "Duração", add_energy: "Energia que pede", add_time: "Hora (opcional)",
+  add_more: "Mais opções", add_tag: "Interesse", add_src: "De onde veio",
+  add_tip: "Tarefas com mais de 25 min dividem-se sozinhas em passos pequenos.",
+  add_btn: "Acrescentar ao dia",
+  tag_none: "Sem etiqueta", tag_home: "casa", tag_work: "trabalho", tag_people: "pessoas", tag_creative: "criativo", tag_body: "corpo", tag_curious: "curiosidade",
+  from_none: "Não interessa", from_email: "e-mail", from_chat: "mensagens", from_paper: "papel", from_head: "cabeça",
+  from_line: "veio de: {s}",
+
+  rh_title: "Ritmo do dia",
+  rh_morning: "manhã", rh_afternoon: "tarde", rh_evening: "noite",
+  rh_now: "São {time}. Restam cerca de {left} de {block}.",
+  rh_off: "Fora do horário habitual. Descansar também faz parte do ritmo.",
+  rh_fits: "O plano à vista soma {min} min de foco e cabe com folga.",
+  rh_tight: "O plano à vista soma {min} min. Cabe, mas justo: deixa espaço para pausas.",
+  rh_over: "O plano à vista soma {min} min, mais do que resta do dia. O plano base ajuda a escolher.",
+  rh_none: "Não há foco planeado para o resto do dia.",
+  rh_est_t: "Previsto e real",
+  rh_est: "{t}: previsto {plan} min, real {real} min.",
+  why_rhythm: "A ADDitude recomenda tornar o tempo visível (relógios, blocos do dia) e treinar a estimativa comparando previsto e real. Chen, Meng e Nie (2026) notam que os planos costumam ser feitos para dias raros de hiperfoco, e não para um dia normal.",
+
+  go_title: "Prazos distantes",
+  go_aria: "{done} de {parts} partes feitas",
+  go_days: "Faltam {days} dias e {rem} partes. Uma parte a cada {pace} dias chega.",
+  go_daily: "Faltam {days} dias e {rem} partes. Uma parte pequena por dia chega.",
+  go_tight: "Há mais partes do que dias. Que parte podes encolher, ou pedir a alguém?",
+  go_past: "A data passou. Podes escolher outra, sem dramas.",
+  go_all: "Todas as partes feitas.",
+  go_today: "É hoje. Qual é a parte mais pequena que ainda faz diferença?",
+  go_bring: "Trazer a próxima parte para hoje",
+  go_part: "parte {n}",
+  go_add: "Acrescentar um prazo distante",
+  go_f_t: "O que é?", go_f_d: "Data", go_f_p: "Em quantas partes?", go_f_btn: "Guardar prazo",
+  go_none: "Sem prazos distantes por agora.",
+  why_goals: "Um prazo longe custa a sentir. O guia ADHD-EU aconselha a definir prazos e a tornar as tarefas concretas; o Stanford CTL sugere prazos intermédios para criar urgência sem crise.",
+
+  sh_title: "Guardado para depois ({n})",
+  sh_note: "Nada aqui está em atraso. Está só guardado.",
+  sh_back: "Trazer para hoje",
+
+  du_title: "Despejar ideias",
+  du_lead: "Escreve tudo o que tens na cabeça, uma ideia por linha. Não é preciso ordenar nem decidir.",
+  du_in: "Ideia nova", du_ph: "Ex.: podcast sobre o bairro",
+  du_add: "Guardar", du_random: "Escolher uma por mim",
+  du_count: "{n} ideias guardadas. Não é uma lista de dívidas.",
+  du_count_1: "1 ideia guardada. Não é uma lista de dívidas.",
+  du_count_0: "Ainda nada. A primeira ideia não precisa de ser boa.",
+  du_first: "Primeiro passo",
+  du_step_lbl: "O primeiro passo minúsculo",
+  du_rule: "Sugestão feita por regras simples, não por IA. Edita à vontade.",
+  du_go2: "Começar 2 minutos já", du_today: "Levar para hoje",
+  du_moved: "Levado para hoje. O resto fica guardado.",
+  fs_mail: "Abre a mensagem e escreve só a primeira frase. Pode ficar feia.",
+  fs_call: "Encontra o número e deixa-o aberto no ecrã. Só isso.",
+  fs_tidy: "Pega em três coisas e põe-nas no sítio.",
+  fs_write: "Abre o documento e escreve um título provisório e três tópicos soltos.",
+  fs_pay: "Abre o site ou a app e encontra o documento certo. Sem pagar ainda.",
+  fs_read: "Abre na página certa e lê um parágrafo.",
+  fs_buy: "Escreve três itens da lista.",
+  fs_idea: "Escreve numa frase como seria a versão mais pequena disto.",
+  fs_default: "Junta o que precisas num só sítio e olha para isso durante dois minutos.",
+  why_dump: "O guia ADHD-EU aconselha notas e listas para tirar pensamentos e prioridades da cabeça. A ADDitude sugere olhar só para o passo seguinte que dá para fazer e deixá-lo à vista.",
+
+  tg_title: "Foco acompanhado",
+  tg_lead: "Há quem ache mais fácil começar com alguém ao lado. Aqui tens uma companhia simulada e mensagens prontas para convidar uma pessoa a sério.",
+  tg_setup: "Preparar a sessão",
+  tg_comp: "Companhia",
+  co_lia: "Lia", co_rui: "Rui", co_mar: "Mar",
+  co_lia_act: "a escrever", co_rui_act: "a arrumar papéis", co_mar_act: "a estudar",
+  tg_comp_d: "{name} vai estar {act} ao teu lado.",
+  tg_min: "Duração", tg_min_v: "{n} min",
+  tg_what: "O que vais fazer?",
+  tg_what_ph: "Ex.: responder a dois e-mails",
+  tg_what_cur: "Se deixares em branco, a sessão usa: {t}",
+  tg_sim: "A companhia é simulada: não há ninguém do outro lado, e nada do que fazes é enviado.",
+  tg_start: "Começar sessão",
+  tg_need: "Escreve o que vais fazer nesta sessão.",
+  tg_with: "Sessão com {name}",
+  tg_end: "Terminar sessão",
+  tg_room: "Ver na sala",
+  co_s0: "{name} acabou de se sentar e está {act}.",
+  co_s1: "{name} está em silêncio, {act}.",
+  co_s2: "{name} parou um instante para beber água e voltou.",
+  co_s3: "{name} continua, sem pressa.",
+  co_s4: "{name} está quase a fechar a parte que tinha.",
+  co_wait: "{name} espera por ti, sem pressa.",
+  tg_half: "A meio da sessão. Como vai? Devagar também é andar.",
+  tg_wrap: "O que conseguiste?",
+  tg_wrap_ph: "Uma frase chega. Pouco também conta.",
+  tg_save_done: "Guardar e marcar feito",
+  tg_save_keep: "Guardar, ainda não acabei",
+  tg_saved: "Sessão guardada.",
+  tg_log: "Sessões recentes",
+  tg_log_i: "{min} min com {name}",
+  tg_log_0: "Ainda sem sessões.",
+  inv_title: "Convidar uma pessoa a sério",
+  inv_lead: "Escolhe o que a mensagem diz. Só sai daqui se a copiares.",
+  inv_m_invite: "Convite", inv_m_summary: "Resumo da sessão",
+  sh_task: "Incluir o nome da tarefa", sh_time: "Incluir a hora",
+  inv_msg: "Olá! Vou fazer {min} min de foco{task}{at}. Fazes-me companhia? Não precisas de fazer nada: basta estares aí, cada um na sua coisa. No fim digo-te como correu.",
+  inv_task: " em «{t}»", inv_at: ", às {h}",
+  sum_none: "Ainda não há nenhuma sessão para resumir.",
+  sum_msg: "Fiz {min} min de foco{task}.{note} Agradeço a companhia!",
+  sum_note: " Ficou feito: {n}.",
+  inv_out: "Mensagem", copy_msg: "Copiar mensagem",
+  ho_title: "Pedir ajuda ou passar a pasta",
+  ho_lead: "Quando um projeto encalha, uma nota clara facilita pedir uma mão. Parte do estado da tarefa, e tu escolhes o que fica.",
+  ho_task: "Tarefa", ho_need: "O que pedes",
+  ho_need_review: "Rever comigo", ho_need_continue: "Continuar daqui", ho_need_decide: "Decidir comigo", ho_need_listen: "Só ouvir",
+  ho_need_review_msg: "que vejas o que está feito e me digas o que falta de essencial",
+  ho_need_continue_msg: "que pegues nisto a partir daqui; fico disponível para dúvidas",
+  ho_need_decide_msg: "que me ajudes a decidir o próximo passo",
+  ho_need_listen_msg: "dez minutos para te explicar onde encalhei",
+  ho_where: "Onde estão as coisas", ho_where_ph: "Ex.: pasta partilhada «Site»",
+  ho_by: "Até quando", ho_by_ph: "Ex.: sexta-feira",
+  ho_l1: "Preciso de uma mão com «{t}».",
+  ho_l2: "Ponto de situação: {d} de {n} passos feitos.",
+  ho_l3: "Feito: {list}.", ho_l4: "Falta: {list}.",
+  ho_l5: "Onde está tudo: {w}.",
+  ho_l6: "O que te peço: {need}.",
+  ho_l7: "Até quando: {by}.",
+  ho_l8: "Não precisas de resolver tudo. Qualquer avanço ajuda.",
+  ho_none: "Acrescenta uma tarefa ao dia para gerar a nota.",
+  ho_out: "Nota", copy_note: "Copiar nota",
+  why_together: "O Stanford CTL inclui o trabalho ao lado de outra pessoa (body doubling) e a responsabilização entre pares no P de INCUP, e a ADDitude recomenda um «body double» para tarefas aborrecidas. No estudo de Chen, Meng e Nie (2026), a presença social por IA esteve entre os conceitos mais bem recebidos, com a ressalva de não substituir laços humanos.",
+
+  de_title: "Cenários de demonstração",
+  de_lead: "Cinco situações do desafio da Brainstorm, com dados inventados. Carregar um cenário guarda os teus dados à parte e repõe-nos quando saíres.",
+  de_shows: "O EnFoco mostra:",
+  de_load: "Carregar o cenário de {name}",
+  de_note: "As personas são fictícias. Não foi usado nenhum dado real de saúde.",
+  de_loaded: "Cenário de {name} carregado.",
+  de_restored: "Os teus dados voltaram.",
+  p_marta: "Marta", p_tiago: "Tiago", p_joana: "Joana", p_sofia: "Sofia", p_pedro: "Pedro",
+  p_marta_s: "Tem ideias a mais e nenhum primeiro passo. Cada lista nova fica por abrir.",
+  p_marta_f: "despejo rápido de ideias, escolha de uma só e o primeiro passo minúsculo.",
+  p_tiago_s: "Há semanas que evita uma tarefa de cinco minutos. Quanto mais adia, mais vergonha sente.",
+  p_tiago_f: "arranque de 2 minutos, versão feia permitida e uma nota sem culpa sobre os adiamentos.",
+  p_joana_s: "Faz o plano perfeito ao domingo. À quarta-feira já ruiu, e ela desiste da semana.",
+  p_joana_f: "plano base para dias difíceis, reorganização sem marcas de atraso e um prazo distante em partes.",
+  p_sofia_s: "Tem compromissos espalhados por e-mail, mensagens e papéis. As ferramentas esmorecem e, quando volta, encontra dezenas de itens em atraso.",
+  p_sofia_f: "regresso sem penalização: até três coisas pequenas à vista e o resto guardado.",
+  p_pedro_s: "Um projeto encalhou a meio. Não sabe como pedir ajuda nem como o passar a alguém.",
+  p_pedro_f: "sessão acompanhada e uma nota de passagem gerada a partir do estado da tarefa.",
+
+  pr_title: "Privacidade e dados",
+  pr_lead: "Tu decides o que a ferramenta faz e o que sai daqui.",
+  pr_where: "Onde ficam os dados",
+  pr_1: "Tudo o que escreves fica guardado só neste navegador, em localStorage. Não há conta, servidor nem análises.",
+  pr_2: "A página vai buscar a biblioteca Three.js ao unpkg.com para desenhar a cena 3D. Esse pedido não leva os teus dados. Sem rede, a app usa a vista simples.",
+  pr_3: "As mensagens para outra pessoa só saem daqui se as copiares tu.",
+  pr_4: "Não pedimos nem guardamos dados de saúde. A energia e o «tempo interior» são notas tuas: ficam neste dispositivo e podes apagá-las.",
+  pr_5: "Os lembretes só funcionam com esta página aberta.",
+  pr_6: "Limpar os dados do navegador apaga tudo. Exporta o que quiseres guardar.",
+  pr_size: "Guardado neste navegador: {kb} KB, na chave «{key}».",
+  pr_nostore: "Este navegador não deixa guardar: os dados perdem-se ao fechar a página.",
+  pr_controls: "Os teus controlos",
+  pr_notif: "Lembretes à hora marcada (pede autorização ao navegador)",
+  pr_notif_no: "Este navegador não permite notificações. Os lembretes aparecem dentro da página.",
+  pr_notif_denied: "O navegador recusou as notificações. Os lembretes aparecem só dentro da página.",
+  pr_notif_on: "Lembretes ativados.",
+  pr_breath: "Abrir com a respiração",
+  pr_export: "Exportar os meus dados",
+  pr_import: "Importar um ficheiro",
+  pr_wipe: "Apagar tudo",
+  pr_wipe2: "Confirmar: apagar tudo",
+  pr_wiped: "Tudo apagado. Começamos de novo.",
+  pr_imported: "Dados importados.",
+  pr_bad: "Esse ficheiro não é uma exportação do EnFoco.",
+  pr_exported: "Ficheiro exportado.",
+  why_privacy: "No estudo de Chen, Meng e Nie (2026), os participantes rejeitam a vigilância e querem ver, ajustar e contrariar o que a ferramenta sugere. Por isso nada é inferido às escondidas e nada é partilhado sem ti.",
+
+  vi_title: "Visão e limites",
+  vi_lead: "Um protótipo de hackathon. Aqui fica o que é real e o que ainda é intenção.",
+  vi_works: "Funciona hoje",
+  vi_w1: "Respiração guiada à entrada, com opção de saltar.",
+  vi_w2: "O dia em foquitos: uma tarefa de cada vez, temporizador visual, passos automáticos e «mais tarde» sem culpa.",
+  vi_w3: "Despejo de ideias com primeiro passo minúsculo e arranque de 2 minutos.",
+  vi_w4: "Energia e tempo interior indicados por ti, com plano base e plano ideal.",
+  vi_w5: "Reorganização do dia sem marcas de atraso e regresso suave depois de uma ausência.",
+  vi_w6: "Sessão acompanhada, convite para copiar e nota de passagem.",
+  vi_w7: "Reforços INCUP, prazos distantes em partes e uma contagem de luzes que nunca volta a zero.",
+  vi_w8: "Dados só neste navegador, com exportação, importação e apagamento.",
+  vi_sim: "Simulado ou simplificado",
+  vi_s1: "A companhia do foco acompanhado é simulada. Não há ninguém do outro lado.",
+  vi_s2: "O primeiro passo vem de regras por palavras-chave, não de IA.",
+  vi_s3: "Os cenários usam personas e dados inventados.",
+  vi_s4: "Os lembretes só aparecem com a página aberta.",
+  vi_future: "Ideias futuras, ainda não implementadas",
+  vi_f1: "Recolher compromissos de e-mail e mensagens, com consentimento explícito e revisão pela própria pessoa.",
+  vi_f2: "Divisão de tarefas com IA, sempre editável e nunca obrigatória.",
+  vi_f3: "Salas de foco com pessoas reais, por exemplo com a comunidade da Brainstorm.",
+  vi_f4: "Sincronização cifrada entre dispositivos e ligação ao calendário.",
+  vi_f5: "Uma ligação de progresso partilhável, controlada pela pessoa.",
+  vi_f6: "Testes com adultos com PHDA, em conjunto com a Brainstorm, antes de qualquer afirmação de utilidade.",
+  vi_limits: "Limites",
+  vi_l1: "O EnFoco não é um dispositivo médico. Não diagnostica, não trata e não substitui acompanhamento profissional.",
+  vi_l2: "Ainda não foi testado com pessoas com PHDA. As escolhas de desenho vêm da leitura das fontes, não de resultados próprios.",
+  vi_l3: "As fontes são de natureza diferente: um estudo de interação pessoa-computador, um guia europeu, um folheto universitário e divulgação feita pela comunidade. Nenhuma avalia esta app.",
+  vi_l4: "O armazenamento local pode ser apagado pelo navegador. Exporta o que quiseres guardar.",
+  vi_l5: "A cena 3D precisa de WebGL e de rede para carregar a biblioteca. Sem isso, a app passa para a vista simples.",
+  vi_scene: "Estado da cena 3D",
+  scene_glb: "Cena 3D com o modelo {path}.",
+  scene_proc: "Cena 3D com lâmpadas desenhadas por código, porque {path} não foi encontrado.",
+  scene_load: "Cena 3D ativa; à procura do modelo {path}.",
+  scene_2d: "Vista simples ativa: o WebGL ou a biblioteca Three.js não estão disponíveis.",
+  scene_pending: "A cena ainda está a carregar.",
+  vi_sources: "Fontes",
+  src_additude_proc: "ADDitude, «Take the First Sloppy Step»",
+  src_additude_time: "ADDitude, «We Don't See Time; We Feel It»",
+  src_adhdeu: "ADHD-EU, «Adult ADHD: A Practical Guide» (2024)",
+  src_stanford: "Stanford CTL, «Sustaining Motivation» (INCUP)",
+  src_howtoadhd_wall: "How to ADHD, «Wall of Awful»",
+  src_howtoadhd_mot: "How to ADHD, «ADHD and Motivation»",
+  src_ibns: "Neurodivergent Insights, «Interest-Based Nervous System»",
+  src_chen: "Chen, Meng e Nie (2026), «Not Just Me and My To-Do List»",
+  srcd_additude_proc: "Michele Novotni: começar de forma imperfeita, dividir em passos pequenos, prazos próprios e «body double».",
+  srcd_additude_time: "Sandy Maynard: o tempo sentido em vez de visto; estimar e medir, blocos do dia, temporizadores visuais.",
+  srcd_adhdeu: "Guia de boas práticas do projeto Erasmus+ ADHD-EU (ADHD Ireland, Epioni, Universidade de Chipre): limites de tempo, pausas, lembretes, listas, rotinas.",
+  srcd_stanford: "Folheto para estudantes neurodivergentes: interessante, novo, desafiante, urgente e orientado para pessoas.",
+  srcd_howtoadhd_wall: "Jessica McCabe com Brendan Mahan: a barreira emocional diante de tarefas que «deviam ser fáceis».",
+  srcd_howtoadhd_mot: "Jessica McCabe: a «ponte da motivação» e como a encurtar com urgência, novidade e interesse.",
+  srcd_ibns: "Megan Anna Neff sobre o modelo clínico de William Dodson; interesse, desafio, novidade e urgência em vez de importância.",
+  srcd_chen: "Pré-publicação aceite na CSCW 2026: 22 entrevistas e 13 conceitos avaliados por 20 participantes; apoios relacionais, temporais e afetivos.",
+  vi_team: "Equipa EnFoco: Leonardo Cagliero e Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, com a Brainstorm."
+},
+
+en: {
+  skip_link: "Skip to content",
+  app_title: "EnFoco — one little light at a time",
+  brand_aria: "EnFoco, go to the menu",
+  lang_aria: "Language",
+  theme_auto: "Theme: automatic", theme_light: "Theme: light", theme_dark: "Theme: dark",
+  motion_auto: "Motion: automatic", motion_reduce: "Motion: reduced", motion_full: "Motion: full",
+  back_menu: "Menu",
+  why: "Why?",
+  sources: "Sources",
+  demo_banner: "Demo mode: {name}. Made-up data.",
+  demo_exit: "Leave and restore my data",
+  copied: "Copied.",
+  copy_manual: "Select the text and copy it by hand.",
+  remove: "Let go",
+  pick: "Choose",
+  when_free: "whenever",
+
+  b_title: "Breathe before you start",
+  b_intro: "Three breaths to arrive. No rush.",
+  b_inhale: "Breathe in", b_hold: "Hold", b_exhale: "Breathe out",
+  b_inhale_h: "through the nose, slowly", b_hold_h: "just a moment", b_exhale_h: "through the mouth, all the way",
+  b_cycle: "Breath {n} of {total}",
+  b_skip: "Skip",
+  b_never: "Don't show this on opening",
+  why_breath: "It is only a short pause to change gear before looking at the day. It is not treatment or a clinical exercise, and you can always skip it. The ADHD-EU guide lists mindfulness-based approaches among the possible supports for adults with ADHD.",
+
+  greet_m: "Good morning.", greet_a: "Good afternoon.", greet_e: "Good evening.",
+  menu_lead: "Where would you like to start?",
+  menu_lead_soft: "Today can be small. Pick just one door.",
+  menu_lead_spark: "There's energy moving. Pick one thing and go.",
+  menu_aria: "Main menu",
+  m_day: "My day",
+  m_day_sub: "{n} lights to turn on. Next: {next}",
+  m_day_sub_1: "1 light to turn on: {next}",
+  m_day_none: "Nothing to turn on. You can add something or just look around.",
+  m_two: "Just 2 minutes",
+  m_two_d: "Start small on the task that weighs the most.",
+  m_dump: "Brain dump",
+  m_dump_d: "{n} ideas kept, in no order and with no obligation.",
+  m_dump_d_1: "1 idea kept, with no obligation.",
+  m_dump_d_0: "Get it all out of your head. Organising comes later.",
+  m_tog: "Focus with company",
+  m_tog_d: "A timer with company, invitations and requests for help.",
+  m_demo: "Demo scenarios",
+  m_demo_d: "Marta, Tiago, Joana, Sofia and Pedro, with made-up data.",
+  m_priv: "Privacy and data",
+  m_priv_d: "Everything stays on this device. Export or delete.",
+  m_vis: "Vision and limits",
+  m_vis_d: "What works today, what is an idea, and the sources.",
+  m_breath: "Breathe again",
+  m_breath_d: "Three breaths, about 35 seconds.",
+  lights: "Lights turned on so far: {n}. This count never goes back to zero.",
+
+  ret_title: "Good to see you again.",
+  ret_body: "It has been {days} days. There is nothing to catch up on: I picked up to three small things and put the rest away, with no overdue marks.",
+  ret_shelved: "{n} things are put away for later. Bring them back whenever you like.",
+  ret_shelved_1: "1 thing is put away for later. Bring it back whenever you like.",
+  ret_shelved_0: "Nothing else was put away.",
+  ret_keep: "Keep these",
+  ret_swap: "Suggest others",
+  ret_rest: "Today I just rest",
+  ret_kept: "That's the plan. One at a time.",
+  why_return: "In the study by Chen, Meng and Nie (2026), the adults with ADHD who were interviewed describe shame and self-blame when a plan breaks, and value progress markers that survive missed days. So the return screen shows little and counts no delays.",
+
+  day_title: "My day",
+  stage_count: "Lights on: {n}",
+  stage_desc: "Scene with {n} lights. {focus}",
+  stage_focus: "In focus: {t}.",
+  stage_nofocus: "None in focus.",
+  stage_pending: "Preparing the scene…",
+  stage_2d: "Simple view (no WebGL, or the 3D library could not be reached).",
+
+  ci_title: "How are you right now?",
+  ci_sum: "{energy} energy, {weather}",
+  ci_energy: "Energy",
+  en_1: "low", en_2: "medium", en_3: "high",
+  en_full: "{e} energy",
+  ci_weather: "Inner weather",
+  w_sun: "Clear sky", w_cloud: "Cloudy", w_storm: "Storm", w_fog: "Fog", w_wind: "Wind",
+  wd_sun: "Light head. A good moment for what asks more of you.",
+  wd_cloud: "So-so. One step at a time.",
+  wd_storm: "A lot at once. Today, less is better.",
+  wd_fog: "Hard to get going. We start tiny.",
+  wd_wind: "Restless. Short, varied tasks tend to go better.",
+  ci_plan: "Plan",
+  plan_auto: "Automatic", plan_base: "Baseline plan", plan_ideal: "Ideal plan",
+  ci_read_base: "With {energy} energy and {weather}, I suggest the baseline plan: two things, ten minutes each at most. Change it whenever you like.",
+  ci_read_ideal: "With {energy} energy and {weather}, I'm showing the whole plan. If it feels heavy, switch to the baseline plan.",
+  ci_pause: "Today is a pause day",
+  ci_unpause: "Resume the day",
+  pause_t: "Pause day",
+  pause_b: "The lights are resting. Rest counts too, and nothing will show up as overdue tomorrow.",
+  why_checkin: "Chen, Meng and Nie (2026) propose treating time as rhythm: “ideal” and “baseline” plans, adjusted to the state the person reports themselves, not to emotions guessed by the machine. ADDitude suggests giving the day blocks with a beginning, a middle and an end.",
+
+  now_label: "Now",
+  now_none_t: "Nothing to turn on",
+  now_none: "Today's list is empty. Add a light or dump some ideas first.",
+  now_add: "Add a light",
+  lead_idle: "One thing at a time. Whenever you're ready.",
+  lead_idle_soft: "Just this. The rest can wait.",
+  lead_idle_spark: "Shall we do this one? Short and direct.",
+  btn_start: "Start", btn_start_soft: "Start gently",
+  btn_resume: "Resume", btn_pause: "Pause", btn_done: "Done", btn_later: "Later", btn_two: "Just 2 minutes",
+  btn_more: "{n} more min", btn_stop: "That's enough for now",
+  mode_focus: "Focus", mode_two: "Just 2 minutes", mode_sprint: "Mini deadline", mode_chal: "Challenge, target {time}", mode_tog: "With {name}",
+  ends_at: "Ends at {h}.",
+  ends_if: "If you start now, it ends at {h}.",
+  paused_at: "Paused. {time} left.",
+  time_left_aria: "Time left",
+  ended_t: "Time is up. How did it go?",
+  ended_two: "Two minutes done. That already counts. Stop here or keep going?",
+  base_note: "Baseline plan: I suggest {n} min instead of {m}.",
+  delay_note: "This one has been put off {n} times. It happens. It usually means the first step is too big: try just 2 minutes.",
+  why_line: "Why it matters: {w}",
+  spice_line: "With {s}",
+  twist_line: "Today's card: {c}",
+  ugly_lbl: "Ugly version allowed",
+  ugly_note: "The goal is for it to exist, not to be good.",
+  steps_t: "Steps",
+  st_prep: "Get what you need ready (5 min)", st_part1: "First part", st_break: "5-minute break", st_part2: "Second part",
+  st_close: "Wrap up and notice what got done", st_easy: "Start with the easiest bit", st_finish: "Finish", st_more: "Carry on, if you feel like it",
+  toast_done: "Done. One more light.",
+  toast_done_soft: "Done. On a day like this, it counts double.",
+  toast_later: "Saved for later. No guilt.",
+  toast_half: "You're halfway.",
+  toast_half_soft: "You're halfway. Slow is still moving.",
+  toast_back: "Welcome back. We pick up where you left off.",
+  toast_stop: "That's enough for now. What you did counts.",
+  toast_end: "Time is up. How did it go?",
+  toast_replan: "I rearranged the day around now.",
+  toast_best: "Done in {time}. That's your best time on this task.",
+  toast_chal_win: "Done in {time}, within the target.",
+  toast_chal_ok: "Done. Outside the target counts too.",
+  toast_added: "Added to the day.",
+  toast_steps: "All steps done. Mark it as done whenever you like.",
+  remind: "It's time for: {t}. Breathe and start with the first step.",
+  why_focus: "ADDitude describes the difficulty of feeling time pass and recommends visual timers and comparing estimated with actual time. The ADHD-EU guide advises clear time limits, scheduled breaks and reminders.",
+  why_two: "ADDitude suggests starting with a first “sloppy” step and looking only at the next one. How to ADHD uses the “Wall of Awful” to explain why an easy task can weigh on you for emotional reasons, not out of laziness.",
+
+  bo_title: "Make this task more appealing (INCUP)",
+  bo_lead: "Five ways to make the task more appealing. Use only the ones that work for you.",
+  bo_i: "Interest", bo_i_d: "Pair it with something you like.",
+  sp_music: "music", sp_drink: "coffee or tea", sp_light: "a bright spot", sp_podcast: "a quiet podcast", sp_snack: "something to nibble",
+  bo_n: "Novelty", bo_n_d: "Change one thing about how you do it.", bo_n_btn: "Draw a card",
+  tw_0: "Do it standing up.", tw_1: "Move somewhere else before you start.", tw_2: "Start from the end.", tw_3: "Use pen and paper instead of the screen.",
+  tw_4: "Talk out loud while you do it.", tw_5: "Do the smallest possible version.", tw_6: "Play one song and finish before it ends.", tw_7: "Swap the order of the steps.",
+  bo_glow: "Light colour",
+  glow_auto: "Changes every day", glow_amber: "Amber", glow_peach: "Peach", glow_mint: "Mint", glow_lilac: "Lilac",
+  bo_c: "Challenge", bo_c_d: "A friendly target: finish in {time}.", bo_c_best: "Your best time on this task is {time}.", bo_c_btn: "Try it in {time}",
+  bo_u: "Urgency", bo_u_d: "A mini deadline you set yourself gives enough pressure, without a crisis.", bo_u_btn: "{n} min",
+  bo_p: "People and passion",
+  bo_p_d: "Stanford calls this P “people”; other versions say “passion”. Both fit here.",
+  bo_p_lbl: "Who is it for, or why does it matter to you?",
+  bo_p_ph: "E.g. so my sister doesn't have to ask again",
+  bo_p_btn: "Do it with company",
+  why_incup: "The Stanford CTL handout “Sustaining Motivation” offers INCUP (interesting, novel, challenging, urgent, people-oriented) to help get started. The idea comes from William Dodson's “interest-based nervous system”, which Neurodivergent Insights presents as a clinical model, not a theory tested in studies. The How to ADHD video “ADHD and Motivation” follows the same logic.",
+
+  plan_t: "Today",
+  plan_base_t: "Today, this is enough",
+  plan_wait: "Can wait ({n})",
+  plan_done: "Done today ({n})",
+  replan_note: "I rearranged the day around now. Nothing is overdue.",
+  add_h: "Add a light",
+  add_title: "What is it?", add_ph: "E.g. tidy the desk",
+  add_min: "Length", add_energy: "Energy it asks for", add_time: "Time (optional)",
+  add_more: "More options", add_tag: "Interest", add_src: "Where it came from",
+  add_tip: "Tasks longer than 25 min split themselves into small steps.",
+  add_btn: "Add to the day",
+  tag_none: "No tag", tag_home: "home", tag_work: "work", tag_people: "people", tag_creative: "creative", tag_body: "body", tag_curious: "curiosity",
+  from_none: "Doesn't matter", from_email: "email", from_chat: "messages", from_paper: "paper", from_head: "my head",
+  from_line: "came from: {s}",
+
+  rh_title: "Rhythm of the day",
+  rh_morning: "the morning", rh_afternoon: "the afternoon", rh_evening: "the evening",
+  rh_now: "It's {time}. About {left} left of {block}.",
+  rh_off: "Outside the usual hours. Rest is part of the rhythm too.",
+  rh_fits: "The plan in view adds up to {min} min of focus and fits with room to spare.",
+  rh_tight: "The plan in view adds up to {min} min. It fits, but only just: leave room for breaks.",
+  rh_over: "The plan in view adds up to {min} min, more than what is left of the day. The baseline plan helps you choose.",
+  rh_none: "No focus is planned for the rest of the day.",
+  rh_est_t: "Estimated and actual",
+  rh_est: "{t}: estimated {plan} min, actual {real} min.",
+  why_rhythm: "ADDitude recommends making time visible (clocks, blocks of the day) and practising estimation by comparing estimated with actual time. Chen, Meng and Nie (2026) note that plans tend to be made for rare hyperfocus days, not for an ordinary day.",
+
+  go_title: "Distant deadlines",
+  go_aria: "{done} of {parts} parts done",
+  go_days: "{days} days and {rem} parts to go. One part every {pace} days is enough.",
+  go_daily: "{days} days and {rem} parts to go. One small part a day is enough.",
+  go_tight: "There are more parts than days. Which part can you shrink, or ask someone for?",
+  go_past: "The date has passed. You can pick another one, no drama.",
+  go_all: "All parts done.",
+  go_today: "It's today. What is the smallest part that still makes a difference?",
+  go_bring: "Bring the next part into today",
+  go_part: "part {n}",
+  go_add: "Add a distant deadline",
+  go_f_t: "What is it?", go_f_d: "Date", go_f_p: "In how many parts?", go_f_btn: "Save deadline",
+  go_none: "No distant deadlines for now.",
+  why_goals: "A far-off deadline is hard to feel. The ADHD-EU guide advises setting deadlines and making tasks concrete; Stanford CTL suggests interim deadlines to create urgency without a crisis.",
+
+  sh_title: "Put away for later ({n})",
+  sh_note: "Nothing here is overdue. It is just put away.",
+  sh_back: "Bring into today",
+
+  du_title: "Brain dump",
+  du_lead: "Write down everything in your head, one idea per line. No need to sort or decide.",
+  du_in: "New idea", du_ph: "E.g. a podcast about the neighbourhood",
+  du_add: "Keep it", du_random: "Pick one for me",
+  du_count: "{n} ideas kept. This is not a list of debts.",
+  du_count_1: "1 idea kept. This is not a list of debts.",
+  du_count_0: "Nothing yet. The first idea doesn't have to be good.",
+  du_first: "First step",
+  du_step_lbl: "The tiny first step",
+  du_rule: "Suggested by simple rules, not by AI. Edit it freely.",
+  du_go2: "Start 2 minutes now", du_today: "Take it into today",
+  du_moved: "Taken into today. The rest stays kept.",
+  fs_mail: "Open the message and write only the first sentence. It can be ugly.",
+  fs_call: "Find the number and leave it open on the screen. That's all.",
+  fs_tidy: "Pick up three things and put them where they belong.",
+  fs_write: "Open the document and write a working title and three loose bullet points.",
+  fs_pay: "Open the site or app and find the right document. No paying yet.",
+  fs_read: "Open it at the right page and read one paragraph.",
+  fs_buy: "Write down three items for the list.",
+  fs_idea: "Write in one sentence what the smallest version of this would look like.",
+  fs_default: "Gather what you need in one place and look at it for two minutes.",
+  why_dump: "The ADHD-EU guide advises notes and lists to get thoughts and priorities out of your head. ADDitude suggests looking only at the next doable step and keeping it in sight.",
+
+  tg_title: "Focus with company",
+  tg_lead: "Some people find it easier to start with someone alongside. Here you get simulated company and ready-made messages to invite a real person.",
+  tg_setup: "Set up the session",
+  tg_comp: "Company",
+  co_lia: "Lia", co_rui: "Rui", co_mar: "Mar",
+  co_lia_act: "writing", co_rui_act: "sorting papers", co_mar_act: "studying",
+  tg_comp_d: "{name} will be {act} next to you.",
+  tg_min: "Length", tg_min_v: "{n} min",
+  tg_what: "What are you going to do?",
+  tg_what_ph: "E.g. reply to two emails",
+  tg_what_cur: "If you leave this blank, the session uses: {t}",
+  tg_sim: "The company is simulated: nobody is on the other side, and nothing you do is sent anywhere.",
+  tg_start: "Start session",
+  tg_need: "Write what you are going to do in this session.",
+  tg_with: "Session with {name}",
+  tg_end: "End session",
+  tg_room: "See it in the room",
+  co_s0: "{name} has just sat down and is {act}.",
+  co_s1: "{name} is quiet, {act}.",
+  co_s2: "{name} stopped for a sip of water and came back.",
+  co_s3: "{name} keeps going, no rush.",
+  co_s4: "{name} is nearly done with their part.",
+  co_wait: "{name} is waiting for you, no rush.",
+  tg_half: "Halfway through the session. How is it going? Slow is still moving.",
+  tg_wrap: "What did you manage?",
+  tg_wrap_ph: "One sentence is enough. A little counts too.",
+  tg_save_done: "Save and mark as done",
+  tg_save_keep: "Save, I'm not finished yet",
+  tg_saved: "Session saved.",
+  tg_log: "Recent sessions",
+  tg_log_i: "{min} min with {name}",
+  tg_log_0: "No sessions yet.",
+  inv_title: "Invite a real person",
+  inv_lead: "Choose what the message says. It only leaves this page if you copy it.",
+  inv_m_invite: "Invitation", inv_m_summary: "Session summary",
+  sh_task: "Include the task name", sh_time: "Include the time",
+  inv_msg: "Hi! I'm going to do {min} min of focus{task}{at}. Will you keep me company? You don't need to do anything: just be there, each of us on our own thing. I'll tell you how it went afterwards.",
+  inv_task: " on “{t}”", inv_at: ", at {h}",
+  sum_none: "There is no session to summarise yet.",
+  sum_msg: "I did {min} min of focus{task}.{note} Thanks for the company!",
+  sum_note: " What got done: {n}.",
+  inv_out: "Message", copy_msg: "Copy message",
+  ho_title: "Ask for help or hand it over",
+  ho_lead: "When a project stalls, a clear note makes it easier to ask for a hand. It starts from the task's status, and you choose what stays in.",
+  ho_task: "Task", ho_need: "What you are asking for",
+  ho_need_review: "Review with me", ho_need_continue: "Continue from here", ho_need_decide: "Decide with me", ho_need_listen: "Just listen",
+  ho_need_review_msg: "that you look at what is done and tell me what essential bits are missing",
+  ho_need_continue_msg: "that you pick this up from here; I'll be around for questions",
+  ho_need_decide_msg: "that you help me decide the next step",
+  ho_need_listen_msg: "ten minutes to explain where I got stuck",
+  ho_where: "Where things are", ho_where_ph: "E.g. shared folder “Site”",
+  ho_by: "By when", ho_by_ph: "E.g. Friday",
+  ho_l1: "I need a hand with “{t}”.",
+  ho_l2: "Where it stands: {d} of {n} steps done.",
+  ho_l3: "Done: {list}.", ho_l4: "Still to do: {list}.",
+  ho_l5: "Where everything is: {w}.",
+  ho_l6: "What I'm asking: {need}.",
+  ho_l7: "By when: {by}.",
+  ho_l8: "You don't need to solve everything. Any progress helps.",
+  ho_none: "Add a task to the day to generate the note.",
+  ho_out: "Note", copy_note: "Copy note",
+  why_together: "Stanford CTL places working alongside another person (body doubling) and peer accountability under the P of INCUP, and ADDitude recommends a body double for boring tasks. In the study by Chen, Meng and Nie (2026), AI social presence was among the best-received concepts, with the caveat that it should not replace human ties.",
+
+  de_title: "Demo scenarios",
+  de_lead: "Five situations from the Brainstorm challenge, with made-up data. Loading a scenario sets your own data aside and restores it when you leave.",
+  de_shows: "EnFoco shows:",
+  de_load: "Load {name}'s scenario",
+  de_note: "The personas are fictional. No real health data was used.",
+  de_loaded: "{name}'s scenario loaded.",
+  de_restored: "Your data is back.",
+  p_marta: "Marta", p_tiago: "Tiago", p_joana: "Joana", p_sofia: "Sofia", p_pedro: "Pedro",
+  p_marta_s: "She has too many ideas and no first step. Every new list stays unopened.",
+  p_marta_f: "a quick brain dump, choosing just one idea, and the tiny first step.",
+  p_tiago_s: "He has avoided a five-minute task for weeks. The longer he puts it off, the more ashamed he feels.",
+  p_tiago_f: "the 2-minute starter, ugly version allowed, and a guilt-free note about the delays.",
+  p_joana_s: "She makes the perfect plan on Sunday. By Wednesday it has collapsed, and she gives up on the week.",
+  p_joana_f: "a baseline plan for hard days, rearranging with no overdue marks, and a distant deadline in parts.",
+  p_sofia_s: "Her commitments are scattered across email, messages and paper. Tools fade and, when she returns, she finds dozens of overdue items.",
+  p_sofia_f: "a return without penalty: up to three small things in view and the rest put away.",
+  p_pedro_s: "A project stalled halfway. He doesn't know how to ask for help or how to hand it over.",
+  p_pedro_f: "a session with company and a handoff note generated from the task's status.",
+
+  pr_title: "Privacy and data",
+  pr_lead: "You decide what the tool does and what leaves this page.",
+  pr_where: "Where the data lives",
+  pr_1: "Everything you write is stored only in this browser, in localStorage. There is no account, no server and no analytics.",
+  pr_2: "The page fetches the Three.js library from unpkg.com to draw the 3D scene. That request does not carry your data. Without a network, the app uses the simple view.",
+  pr_3: "Messages for another person only leave this page if you copy them yourself.",
+  pr_4: "We don't ask for or store health data. Energy and “inner weather” are your own notes: they stay on this device and you can delete them.",
+  pr_5: "Reminders only work while this page is open.",
+  pr_6: "Clearing your browser data deletes everything. Export whatever you want to keep.",
+  pr_size: "Stored in this browser: {kb} KB, under the key “{key}”.",
+  pr_nostore: "This browser doesn't allow storage: the data is lost when you close the page.",
+  pr_controls: "Your controls",
+  pr_notif: "Reminders at the planned time (asks the browser for permission)",
+  pr_notif_no: "This browser doesn't support notifications. Reminders appear inside the page.",
+  pr_notif_denied: "The browser declined notifications. Reminders appear only inside the page.",
+  pr_notif_on: "Reminders turned on.",
+  pr_breath: "Open with the breathing screen",
+  pr_export: "Export my data",
+  pr_import: "Import a file",
+  pr_wipe: "Delete everything",
+  pr_wipe2: "Confirm: delete everything",
+  pr_wiped: "Everything deleted. We start fresh.",
+  pr_imported: "Data imported.",
+  pr_bad: "That file is not an EnFoco export.",
+  pr_exported: "File exported.",
+  why_privacy: "In the study by Chen, Meng and Nie (2026), participants reject surveillance and want to see, adjust and override what the tool suggests. So nothing is inferred behind your back and nothing is shared without you.",
+
+  vi_title: "Vision and limits",
+  vi_lead: "A hackathon prototype. Here is what is real and what is still an intention.",
+  vi_works: "Works today",
+  vi_w1: "Guided breathing on entry, with a skip option.",
+  vi_w2: "The day as little lights: one task at a time, a visual timer, automatic steps and a guilt-free “later”.",
+  vi_w3: "Brain dump with a tiny first step and a 2-minute starter.",
+  vi_w4: "Energy and inner weather reported by you, with a baseline plan and an ideal plan.",
+  vi_w5: "Rearranging the day with no overdue marks, and a gentle return after time away.",
+  vi_w6: "Session with company, an invitation to copy, and a handoff note.",
+  vi_w7: "INCUP boosters, distant deadlines in parts, and a count of lights that never goes back to zero.",
+  vi_w8: "Data only in this browser, with export, import and delete.",
+  vi_sim: "Simulated or simplified",
+  vi_s1: "The company in focus with company is simulated. Nobody is on the other side.",
+  vi_s2: "The first step comes from keyword rules, not from AI.",
+  vi_s3: "The scenarios use made-up personas and data.",
+  vi_s4: "Reminders only appear while the page is open.",
+  vi_future: "Future ideas, not implemented yet",
+  vi_f1: "Collecting commitments from email and messages, with explicit consent and review by the person.",
+  vi_f2: "AI task breakdown, always editable and never mandatory.",
+  vi_f3: "Focus rooms with real people, for example with the Brainstorm community.",
+  vi_f4: "Encrypted sync across devices and a calendar connection.",
+  vi_f5: "A shareable progress link, controlled by the person.",
+  vi_f6: "Testing with adults with ADHD, together with Brainstorm, before any claim of usefulness.",
+  vi_limits: "Limits",
+  vi_l1: "EnFoco is not a medical device. It does not diagnose, treat or replace professional support.",
+  vi_l2: "It has not yet been tested with people with ADHD. The design choices come from reading the sources, not from results of our own.",
+  vi_l3: "The sources differ in kind: a human-computer interaction study, a European guide, a university handout and community-made education. None of them evaluates this app.",
+  vi_l4: "Local storage can be cleared by the browser. Export whatever you want to keep.",
+  vi_l5: "The 3D scene needs WebGL and a network to load the library. Without them, the app falls back to the simple view.",
+  vi_scene: "3D scene status",
+  scene_glb: "3D scene using the model {path}.",
+  scene_proc: "3D scene with bulbs drawn in code, because {path} was not found.",
+  scene_load: "3D scene active; looking for the model {path}.",
+  scene_2d: "Simple view active: WebGL or the Three.js library is not available.",
+  scene_pending: "The scene is still loading.",
+  vi_sources: "Sources",
+  src_additude_proc: "ADDitude, “Take the First Sloppy Step”",
+  src_additude_time: "ADDitude, “We Don't See Time; We Feel It”",
+  src_adhdeu: "ADHD-EU, “Adult ADHD: A Practical Guide” (2024)",
+  src_stanford: "Stanford CTL, “Sustaining Motivation” (INCUP)",
+  src_howtoadhd_wall: "How to ADHD, “Wall of Awful”",
+  src_howtoadhd_mot: "How to ADHD, “ADHD and Motivation”",
+  src_ibns: "Neurodivergent Insights, “Interest-Based Nervous System”",
+  src_chen: "Chen, Meng and Nie (2026), “Not Just Me and My To-Do List”",
+  srcd_additude_proc: "Michele Novotni: start imperfectly, break work into small steps, set your own deadlines, use a body double.",
+  srcd_additude_time: "Sandy Maynard: time that is felt, not seen; estimate and measure, blocks of the day, visual timers.",
+  srcd_adhdeu: "Best-practice guide from the Erasmus+ ADHD-EU project (ADHD Ireland, Epioni, University of Cyprus): time limits, breaks, reminders, lists, routines.",
+  srcd_stanford: "Handout for neurodivergent students: interesting, novel, challenging, urgent and people-oriented.",
+  srcd_howtoadhd_wall: "Jessica McCabe with Brendan Mahan: the emotional barrier in front of tasks that “should be easy”.",
+  srcd_howtoadhd_mot: "Jessica McCabe: the “motivation bridge” and how to shorten it with urgency, novelty and interest.",
+  srcd_ibns: "Megan Anna Neff on William Dodson's clinical model; interest, challenge, novelty and urgency instead of importance.",
+  srcd_chen: "Preprint accepted to CSCW 2026: 22 interviews and 13 concepts assessed by 20 participants; relational, temporal and affective supports.",
+  vi_team: "Team EnFoco: Leonardo Cagliero and Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, with Brainstorm."
+}
+};
+
+/* ---------- small helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const pad = n => String(n).padStart(2, '0');
+const DAY = 864e5;
+const dayKey = (d = new Date()) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const hm = (d = new Date()) => pad(d.getHours()) + ':' + pad(d.getMinutes());
+const sod = ts => { const d = new Date(ts); d.setHours(0, 0, 0, 0); return d.getTime(); };
+const fmt = s => { s = Math.max(0, Math.round(s)); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); };
+const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+const L = (pt, en) => ({ pt, en });
+function dur(m) { m = Math.max(0, Math.round(m)); const h = Math.floor(m / 60), r = m % 60; return h ? (r ? h + ' h ' + pad(r) : h + ' h') : r + ' min'; }
+/* a clock time some minutes from now, rounded to the quarter hour; empty if it would fall on another day */
+function hmPlus(mins) { const d = new Date(Date.now() + mins * 60000); d.setMinutes(Math.round(d.getMinutes() / 15) * 15, 0, 0); return dayKey(d) === dayKey() ? hm(d) : ''; }
+
+const ICON = {
+  chevR: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
+  chevL: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+};
+
+/* ---------- state ---------- */
+let S = null;
+const ui = {
+  view: 'breath', open: {}, gap: 0, showReturn: false, ret: [], retOff: 0,
+  pick: null, fs: '', tg: { comp: 'lia', min: 25, what: '' }, msg: 'invite',
+  ho: { id: null, need: 'review', where: '', by: '' }, wipe: false, refocus: null
+};
+const store = {
+  ok: true, mem: {},
+  get(k) { try { return localStorage.getItem(k); } catch (e) { this.ok = false; return this.mem[k] || null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) { this.ok = false; this.mem[k] = v; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } delete this.mem[k]; }
+};
+function fresh() {
+  return {
+    v: 2, lang: 'pt', theme: 'auto', motion: 'auto', skipBreath: false,
+    energy: 2, mood: 'cloud', plan: 'auto', checkinDay: '', pauseDay: '', replanDay: '', ugly: false,
+    tasks: [], dump: [], goals: [], sessions: [], lights: 0, sel: null, glow: -1,
+    notif: false, share: { task: true, time: true }, lastSeen: 0, demo: null, backup: null
+  };
+}
+const save = () => store.set(KEY, JSON.stringify(S));
+
+function autoSteps(m) {
+  return (m > 25 ? ['st_prep', 'st_part1', 'st_break', 'st_part2', 'st_close'] : ['st_easy', 'st_finish']).map(k => ({ k, t: '', d: false }));
+}
+function mk(o) {
+  const x = Object.assign({
+    id: uid(), t: '', m: 15, e: 2, h: '', done: false, doneAt: 0, later: 0, laterAt: 0, created: Date.now(),
+    tag: '', from: '', why: '', spice: '', twist: -1, best: 0, last: 0, started: false, shelved: false, goalId: '', n: ''
+  }, o);
+  x.m = Math.max(1, +x.m || 15);
+  x.e = Math.min(3, Math.max(1, +x.e || 2));
+  x.steps = Array.isArray(o.steps) ? o.steps.filter(s => s && (s.k || s.t)).map(s => ({ k: s.k || '', t: s.t || '', d: !!s.d })) : [];
+  if (!x.steps.length) x.steps = autoSteps(x.m);
+  return x;
+}
+function normalise(o) {
+  const s = Object.assign(fresh(), o);
+  s.tasks = (Array.isArray(s.tasks) ? s.tasks : []).filter(x => x && typeof x === 'object').map(mk);
+  s.dump = (Array.isArray(s.dump) ? s.dump : []).filter(x => x && x.t).map(x => ({ id: x.id || uid(), t: x.t, created: x.created || Date.now() }));
+  s.goals = (Array.isArray(s.goals) ? s.goals : []).filter(g => g && g.t && g.due).map(g => ({ id: g.id || uid(), t: g.t, due: String(g.due), parts: Math.max(1, +g.parts || 1), done: Math.max(0, +g.done || 0) }));
+  s.sessions = Array.isArray(s.sessions) ? s.sessions.slice(0, 20) : [];
+  s.share = Object.assign({ task: true, time: true }, s.share);
+  if (!I18N[s.lang]) s.lang = 'pt';
+  return s;
+}
+
+/* first-run demo day: times are relative to "now" so the day always looks alive */
+function seedDefault() {
+  S.tasks = [
+    mk({ t: L('Regar as plantas da varanda', 'Water the balcony plants'), m: 10, e: 1, h: hmPlus(-120), done: true, doneAt: Date.now(), tag: 'home' }),
+    mk({ t: L('Responder a 3 e-mails importantes', 'Reply to 3 important emails'), m: 25, e: 2, h: hmPlus(20), tag: 'work', from: 'email',
+      steps: [{ t: L('Abrir só os 3 e-mails', 'Open only the 3 emails') }, { t: L('Responder ao mais curto', 'Reply to the shortest one') }, { t: L('Responder aos outros dois', 'Reply to the other two') }, { t: L('Fechar o e-mail', 'Close the inbox') }] }),
+    mk({ t: L('Preparar a apresentação de sexta', "Prepare Friday's presentation"), m: 40, e: 3, h: hmPlus(100), tag: 'work' }),
+    mk({ t: L('Arrumar a secretária', 'Tidy the desk'), m: 15, e: 1, tag: 'home' }),
+    mk({ t: L('Ligar à junta de freguesia por causa do estacionamento', 'Call the parish council about parking'), m: 10, e: 2, later: 3, from: 'paper' })
+  ];
+  S.dump = [
+    L('Oficina de cerâmica ao sábado', 'Saturday pottery workshop'),
+    L('Reorganizar as fotografias das férias', 'Sort the holiday photos'),
+    L('Escrever à Inês sobre o jantar', 'Write to Inês about the dinner')
+  ].map(t => ({ id: uid(), t, created: Date.now() }));
+  S.goals = [{ id: uid(), t: L('Candidatura à bolsa de formação', 'Training grant application'), due: dayKey(new Date(Date.now() + 12 * DAY)), parts: 6, done: 2 }];
+  S.lights = 7;
+}
+/* tasks from the first prototype (localStorage key "foco") are carried over once, minus its own sample tasks */
+function migrateOld() {
+  try {
+    const o = JSON.parse(store.get(OLD_KEY) || 'null');
+    if (!o || !Array.isArray(o.tasks)) return false;
+    const samples = ['Tomar la medicación', 'Responder mails importantes', 'Ordenar el escritorio'];
+    const mine = o.tasks.filter(x => x && x.t && !samples.includes(x.t));
+    if (!mine.length) return false;
+    S.tasks = mine.map(x => mk({ t: String(x.t), m: +x.m || 15, e: +x.e || 2, h: x.h || '', done: !!x.done, steps: (x.steps || []).map(s => ({ t: String(s), d: !!x.done })) }));
+    S.lights = +o.streak || 0;
+    return true;
+  } catch (e) { return false; }
+}
+function load() {
+  let s = null;
+  try { s = JSON.parse(store.get(KEY) || 'null'); } catch (e) { s = null; }
+  if (s && s.v === 2) { S = normalise(s); return; }
+  S = fresh();
+  if (!migrateOld()) seedDefault();
+  S.lastSeen = Date.now();
+  save();
+}
+
+/* ---------- i18n ---------- */
+function t(k, v) {
+  const D = I18N[S && S.lang] || I18N.pt;
+  let s = D[k];
+  if (s == null) s = I18N.pt[k];
+  if (s == null) return k;
+  return v ? s.replace(/\{(\w+)\}/g, (m, n) => (v[n] != null ? v[n] : m)) : s;
+}
+const tx = v => (v && typeof v === 'object') ? (v[S.lang] || v.pt || v.en || '') : (v || '');
+const heavy = () => S.energy === 1 || S.mood === 'storm' || S.mood === 'fog';
+const tone = () => heavy() ? 'soft' : (S.mood === 'wind' ? 'spark' : 'plain');
+/* tone-aware and count-aware variants: "key_soft", "key_1", falling back to "key" */
+function tt(k, v) { const kk = k + '_' + tone(); return I18N.pt[kk] != null ? t(kk, v) : t(k, v); }
+function tn(k, n, v) { const kk = k + '_' + n; return I18N.pt[kk] != null ? t(kk, v) : t(k, v); }
+const reduced = () => S.motion === 'reduce' || (S.motion === 'auto' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+/* ---------- selectors over the day ---------- */
+const byId = id => S.tasks.find(x => x.id === id);
+const todays = () => S.tasks.filter(x => !x.shelved);
+const openTasks = () => todays().filter(x => !x.done);
+const ordered = list => list.slice().sort((a, b) => (a.h || '99:99').localeCompare(b.h || '99:99'));
+const planMode = () => S.plan === 'auto' ? (heavy() ? 'base' : 'ideal') : S.plan;
+const effMin = x => planMode() === 'base' ? Math.min(x.m, 10) : x.m;
+const stepText = s => s.k ? t(s.k) : tx(s.t);
+const paused = () => S.pauseDay === dayKey();
+
+function suggest() {
+  let o = ordered(openTasks());
+  if (!o.length) return null;
+  const recent = o.filter(x => !(x.laterAt && Date.now() - x.laterAt < 30 * 60000));
+  if (recent.length) o = recent;
+  if (heavy()) return o.slice().sort((a, b) => (a.e - b.e) || (a.m - b.m))[0];
+  const fit = o.filter(x => x.e <= S.energy);
+  if (S.mood === 'wind') { const fun = fit.find(x => x.tag || x.spice); if (fun) return fun; }
+  return fit[0] || o.slice().sort((a, b) => a.m - b.m)[0];
+}
+function cur() {
+  if (T.id) { const x = byId(T.id); if (x && !x.done && !x.shelved) return x; }
+  const s = S.sel && S.tasks.find(x => x.id === S.sel && !x.done && !x.shelved);
+  return s || suggest();
+}
+function baseSet(c) {
+  const rest = openTasks().filter(x => !c || x.id !== c.id).sort((a, b) => (a.e - b.e) || (a.m - b.m));
+  return (c ? [c] : []).concat(rest.slice(0, c ? 1 : 2));
+}
+
+/* ---------- toast and notifications ---------- */
+let toastTimer = null;
+function toast(msg) {
+  const el = $('#toast'); if (!el) return;
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('on'), 4800);
+}
+function notify(msg) {
+  toast(msg);
+  try { if (S.notif && 'Notification' in window && Notification.permission === 'granted' && document.hidden) new Notification('EnFoco', { body: msg }); } catch (e) { /* in-page toast is enough */ }
+}
+
+/* ---------- timer (one for the whole app) ---------- */
+const T = { id: null, mode: '', total: 0, left: 0, endsAt: 0, running: false, ended: false, elapsed: 0, half: false, target: 0, pausedAt: 0, comp: '' };
+let tick = null;
+const stopTick = () => { clearInterval(tick); tick = null; };
+function startTimer(task, mode, secs, extra) {
+  stopTick();
+  Object.assign(T, { id: task.id, mode, total: secs, left: secs, endsAt: Date.now() + secs * 1000, running: true, ended: false, elapsed: 0, half: false, target: 0, pausedAt: 0, comp: '' }, extra || {});
+  S.sel = task.id; save();
+  tick = setInterval(onTick, 250);
+  render();
+}
+function onTick() {
+  if (!T.running) return;
+  const prev = T.left;
+  T.left = Math.max(0, Math.ceil((T.endsAt - Date.now()) / 1000));
+  if (T.left === prev) return;
+  T.elapsed += prev - T.left;
+  paintTimer();
+  if (!T.half && T.total >= 240 && T.left <= T.total / 2 && T.left > 0) { T.half = true; toast(T.mode === 'tog' ? t('tg_half') : tt('toast_half')); }
+  if (T.left <= 0) { T.running = false; T.ended = true; stopTick(); notify(t(T.mode === 'two' ? 'ended_two' : 'toast_end')); render(); }
+}
+function pauseTimer() { if (!T.running) return; T.running = false; T.pausedAt = Date.now(); stopTick(); render(); }
+function resumeTimer() {
+  if (T.running || !T.id || T.left <= 0) return;
+  const away = T.pausedAt ? Date.now() - T.pausedAt : 0;
+  T.endsAt = Date.now() + T.left * 1000; T.running = true; T.ended = false;
+  stopTick(); tick = setInterval(onTick, 250);
+  if (away > 5 * 60000) toast(t('toast_back'));
+  render();
+}
+function extendTimer(mins) {
+  if (!T.id) return;
+  T.left = mins * 60; T.total = mins * 60; T.endsAt = Date.now() + T.left * 1000; T.running = true; T.ended = false; T.half = true;
+  if (T.mode === 'two') T.mode = 'focus';
+  stopTick(); tick = setInterval(onTick, 250);
+  render();
+}
+function clearTimer() { stopTick(); Object.assign(T, { id: null, mode: '', total: 0, left: 0, endsAt: 0, running: false, ended: false, elapsed: 0, half: false, target: 0, pausedAt: 0, comp: '' }); }
+const RING_C = 2 * Math.PI * 56;
+function paintTimer() {
+  const v = $('#v-' + ui.view); if (!v) return;
+  const el = $('.js-time', v), ring = $('.js-ring', v);
+  if (T.id && el) el.textContent = fmt(T.left);
+  if (T.id && ring && T.total) ring.style.strokeDashoffset = (RING_C * (1 - T.left / T.total)).toFixed(2);
+  const co = $('.js-co', v); if (co) { const txt = companionLine(); if (co.textContent !== txt) co.textContent = txt; }
+}
+function modeLabel() {
+  if (T.mode === 'two') return t('mode_two');
+  if (T.mode === 'sprint') return t('mode_sprint');
+  if (T.mode === 'chal') return t('mode_chal', { time: fmt(T.target) });
+  if (T.mode === 'tog') return t('mode_tog', { name: t('co_' + T.comp) });
+  return t('mode_focus');
+}
+
+/* ---------- things the day does on its own ---------- */
+/* anything planned for a time that has gone by simply becomes "whenever": no overdue state exists */
+function replan(silent) {
+  const edge = new Date(Date.now() - 15 * 60000);
+  if (dayKey(edge) !== dayKey()) return 0;
+  const lim = hm(edge); let moved = 0;
+  openTasks().forEach(x => { if (x.h && x.h < lim) { x.h = ''; moved++; } });
+  if (moved) { S.replanDay = dayKey(); save(); if (!silent) toast(t('toast_replan')); }
+  return moved;
+}
+/* called on load: new day housekeeping and the gentle return after a gap */
+function arrive() {
+  const last = S.lastSeen || Date.now();
+  const gap = Math.max(0, Math.round((sod(Date.now()) - sod(last)) / DAY));
+  if (gap >= 1) {
+    S.tasks = S.tasks.filter(x => !x.done);
+    S.tasks.forEach(x => { x.h = ''; x.n = ''; x.laterAt = 0; });
+    S.sel = null; S.replanDay = '';
+  }
+  ui.gap = gap;
+  ui.showReturn = gap >= GAP_DAYS && S.tasks.some(x => !x.done);
+  if (ui.showReturn) { ui.retOff = 0; prepareReturn(); }
+  S.lastSeen = Date.now(); save();
+}
+function prepareReturn() {
+  const all = S.tasks.filter(x => !x.done).sort((a, b) => (a.e - b.e) || (a.m - b.m));
+  const n = all.length, picks = [];
+  for (let i = 0; i < Math.min(3, n); i++) picks.push(all[(ui.retOff + i) % n]);
+  all.forEach(x => { x.shelved = !picks.includes(x); x.h = ''; });
+  ui.ret = picks.map(x => x.id); S.sel = null; save();
+}
+
+/* ---------- small render helpers ---------- */
+const pips = e => `<span class="pips" aria-hidden="true">${[1, 2, 3].map(i => `<i class="${i <= e ? 'on' : ''}"></i>`).join('')}</span>`;
+const chip = (act, val, label, on, extra) => `<button type="button" class="chip" data-act="${act}" data-v="${val}" aria-pressed="${on ? 'true' : 'false'}"${extra || ''}>${label}</button>`;
+const keep = k => `data-keep="${k}"${ui.open[k] ? ' open' : ''}`;
+const back = () => `<button type="button" class="back" data-act="nav" data-v="menu">${ICON.chevL}<span>${t('back_menu')}</span></button>`;
+const btn = (act, label, cls, data) => `<button type="button" class="btn ${cls || ''}" data-act="${act}"${data || ''}>${label}</button>`;
+/* research note: one or more short paragraphs, each with linked sources */
+function why(id, items) {
+  return `<details class="why" ${keep('why_' + id)}><summary>${t('why')}</summary>${items.map(([k, srcs]) =>
+    `<p>${t('why_' + k)}</p><p class="src">${t('sources')}: ${srcs.map(s => `<a href="${SRC[s]}" target="_blank" rel="noopener noreferrer">${t('src_' + s)}</a>`).join('; ')}</p>`).join('')}</details>`;
+}
+
+/* ---------- breathing entry ---------- */
+const BREATH = [['inhale', 4], ['hold', 2], ['exhale', 6]], CYCLES = 3;
+const B = { on: false, cycle: 0, phase: 0, left: 0, iv: null, shown: false };
+function startBreath() {
+  stopBreath();
+  Object.assign(B, { on: true, cycle: 0, phase: 0, left: BREATH[0][1], shown: false });
+  B.iv = setInterval(breathTick, 1000);
+  requestAnimationFrame(() => requestAnimationFrame(() => { B.shown = true; paintBreath(); }));
+}
+function stopBreath() { clearInterval(B.iv); B.iv = null; B.on = false; }
+function breathTick() {
+  B.left--;
+  if (B.left <= 0) {
+    B.phase++;
+    if (B.phase >= BREATH.length) { B.phase = 0; B.cycle++; if (B.cycle >= CYCLES) { stopBreath(); nav('menu'); return; } }
+    B.left = BREATH[B.phase][1];
+  }
+  paintBreath();
+}
+function paintBreath() {
+  const orb = $('#orb'); if (!orb) return;
+  const [p, secs] = BREATH[B.phase];
+  orb.style.setProperty('--d', secs + 's');
+  orb.dataset.p = B.shown ? p : 'ready';
+  const ph = $('#b-phase'); if (ph.textContent !== t('b_' + p)) ph.textContent = t('b_' + p);
+  $('#b-hint').textContent = t('b_' + p + '_h');
+  $('#b-count').textContent = String(B.left);
+  $('#b-cycle').textContent = t('b_cycle', { n: B.cycle + 1, total: CYCLES });
+}
+function vBreath() {
+  const [p] = BREATH[B.phase];
+  return `<div class="breath">
+    <h1 tabindex="-1" class="sr">${t('b_title')}</h1>
+    <p class="b-intro">${t('b_intro')}</p>
+    <div class="orb-wrap" aria-hidden="true"><div class="orb-guide"></div><div class="orb" id="orb" data-p="${B.shown ? p : 'ready'}"></div></div>
+    <p class="b-phase" id="b-phase" aria-live="polite">${t('b_' + p)}</p>
+    <p class="b-hint" id="b-hint">${t('b_' + p + '_h')}</p>
+    <p class="b-count" id="b-count" aria-hidden="true">${B.left}</p>
+    <p class="b-cycle" id="b-cycle">${t('b_cycle', { n: B.cycle + 1, total: CYCLES })}</p>
+    <div class="row center">${btn('skipBreath', t('b_skip'), 'quiet')}</div>
+    <label class="check"><input type="checkbox" data-chg="skipAlways"${S.skipBreath ? ' checked' : ''}><span>${t('b_never')}</span></label>
+    ${why('breath', [['breath', ['adhdeu']]])}
+  </div>`;
+}
+
+/* ---------- launch menu ---------- */
+function mItem(act, v, title, sub, lit) {
+  return `<button type="button" class="m-item${lit ? ' lit' : ''}" data-act="${act}" data-v="${v}"><b>${title}</b><span>${sub}</span>${ICON.chevR}</button>`;
+}
+function returnPanel() {
+  const picks = ui.ret.map(byId).filter(Boolean), n = S.tasks.filter(x => x.shelved && !x.done).length;
+  return `<section class="panel calm" aria-labelledby="ret-h">
+    <h2 id="ret-h">${t('ret_title')}</h2>
+    <p>${t('ret_body', { days: ui.gap })}</p>
+    <ul class="tlist">${picks.map(x => `<li class="trow"><span class="t-main"><span class="t-title">${esc(tx(x.t))}</span><span class="t-meta"><span>${effMin(x)} min</span><span>${pips(x.e)} ${t('en_' + x.e)}</span></span></span><span></span></li>`).join('')}</ul>
+    <p class="note">${tn('ret_shelved', n, { n })}</p>
+    <div class="row">${btn('retKeep', t('ret_keep'))}${btn('retSwap', t('ret_swap'), 'quiet')}${btn('retRest', t('ret_rest'), 'quiet')}</div>
+    ${why('return', [['return', ['chen']]])}
+  </section>`;
+}
+function vMenu() {
+  const c = cur(), n = openTasks().length, hr = new Date().getHours(), d = S.dump.length;
+  return `<h1 tabindex="-1">${t(hr < 12 ? 'greet_m' : hr < 19 ? 'greet_a' : 'greet_e')}</h1>
+    <p class="lead">${tt('menu_lead')}</p>
+    ${ui.showReturn ? returnPanel() : ''}
+    <nav class="menu" aria-label="${t('menu_aria')}">
+      ${mItem('nav', 'day', t('m_day'), n ? tn('m_day_sub', n, { n, next: c ? esc(tx(c.t)) : '' }) : t('m_day_none'), true)}
+      ${mItem('twoMenu', '', t('m_two'), t('m_two_d'))}
+      ${mItem('nav', 'dump', t('m_dump'), tn('m_dump_d', d, { n: d }))}
+      ${mItem('nav', 'together', t('m_tog'), t('m_tog_d'))}
+      ${mItem('nav', 'demo', t('m_demo'), t('m_demo_d'))}
+      ${mItem('nav', 'privacy', t('m_priv'), t('m_priv_d'))}
+      ${mItem('nav', 'vision', t('m_vis'), t('m_vis_d'))}
+      ${mItem('nav', 'breath', t('m_breath'), t('m_breath_d'))}
+    </nav>
+    <p class="note lights">${t('lights', { n: S.lights })}</p>`;
+}
+
+/* ---------- day view ---------- */
+const MOODS = [['sun', '☀️'], ['cloud', '⛅'], ['storm', '⛈️'], ['fog', '🌫️'], ['wind', '💨']];
+const SPICES = ['music', 'drink', 'light', 'podcast', 'snack'];
+const TAGS = ['home', 'work', 'people', 'creative', 'body', 'curious'];
+const FROMS = ['email', 'chat', 'paper', 'head'];
+const GLOWS = [['amber', '#ffb347'], ['peach', '#ff9a7a'], ['mint', '#7fe0b8'], ['lilac', '#b9a2ff']];
+const TWISTS = 8;
+const glowIndex = () => S.glow >= 0 && S.glow < GLOWS.length ? S.glow : Math.floor(sod(Date.now()) / DAY) % GLOWS.length;
+
+function checkin() {
+  const v = { energy: t('en_' + S.energy), weather: t('w_' + S.mood).toLowerCase() };
+  return `<details class="blk" ${keep('checkin')}>
+    <summary><span>${t('ci_title')}</span><span class="sum-v">${cap(t('ci_sum', v))}</span></summary>
+    <div class="field"><span class="lbl" id="l-en">${t('ci_energy')}</span><div class="chips" role="group" aria-labelledby="l-en">
+      ${[1, 2, 3].map(e => chip('energy', e, pips(e) + cap(t('en_' + e)), S.energy === e)).join('')}</div></div>
+    <div class="field"><span class="lbl" id="l-we">${t('ci_weather')}</span><div class="chips" role="group" aria-labelledby="l-we">
+      ${MOODS.map(([m, ic]) => chip('mood', m, `<span aria-hidden="true">${ic}</span>${t('w_' + m)}`, S.mood === m)).join('')}</div>
+      <p class="note">${t('wd_' + S.mood)}</p></div>
+    <div class="field"><span class="lbl" id="l-pl">${t('ci_plan')}</span><div class="chips" role="group" aria-labelledby="l-pl">
+      ${['auto', 'base', 'ideal'].map(p => chip('plan', p, t('plan_' + p), S.plan === p)).join('')}</div></div>
+    <p class="hint">${t('ci_read_' + planMode(), v)}</p>
+    <div class="row">${btn('pauseDay', paused() ? t('ci_unpause') : t('ci_pause'), 'quiet')}</div>
+    ${why('checkin', [['checkin', ['chen', 'additude_time']]])}
+  </details>`;
+}
+function timerBlock(c) {
+  const mine = !!c && T.id === c.id;
+  const total = mine ? T.total : (c ? effMin(c) * 60 : 0), left = mine ? T.left : total;
+  const off = total ? RING_C * (1 - left / total) : RING_C;
+  let side = '';
+  if (mine) {
+    side += `<p class="t-mode">${modeLabel()}</p>`;
+    if (T.running) side += `<p class="note">${t('ends_at', { h: hm(new Date(T.endsAt)) })}</p>`;
+    else if (!T.ended) side += `<p class="note">${t('paused_at', { time: fmt(T.left) })}</p>`;
+  } else if (c) side += `<p class="note">${t('ends_if', { h: hm(new Date(Date.now() + total * 1000)) })}</p>`;
+  return `<div class="timer"><div class="ring" role="timer" aria-label="${t('time_left_aria')}">
+    <svg viewBox="0 0 132 132" aria-hidden="true"><circle class="trk" cx="66" cy="66" r="56"/><circle class="prg js-ring" cx="66" cy="66" r="56" stroke-dasharray="${RING_C.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}"/></svg>
+    <span class="num js-time">${fmt(left)}</span></div><div class="t-side">${side}</div></div>`;
+}
+function boosters(c) {
+  const target = c.best ? c.best : Math.round(effMin(c) * 60 * 0.8), gi = S.glow;
+  return `<details class="boost" ${keep('boost')}>
+    <summary>${t('bo_title')}</summary>
+    <p class="note">${t('bo_lead')}</p>
+    <div class="bo"><h3><span class="ltr" aria-hidden="true">I</span>${t('bo_i')}</h3><p>${t('bo_i_d')}</p>
+      <div class="chips">${SPICES.map(s => chip('spice', s, t('sp_' + s), c.spice === s)).join('')}</div></div>
+    <div class="bo"><h3><span class="ltr" aria-hidden="true">N</span>${t('bo_n')}</h3><p>${t('bo_n_d')}</p>
+      ${c.twist >= 0 ? `<p class="card-twist">${t('tw_' + c.twist)}</p>` : ''}
+      <div class="row">${btn('twist', t('bo_n_btn'), 'quiet')}</div>
+      <div class="field"><span class="lbl" id="l-gl">${t('bo_glow')}</span><div class="chips" role="group" aria-labelledby="l-gl">
+        ${chip('glow', -1, t('glow_auto'), gi < 0)}${GLOWS.map(([k, col], i) => chip('glow', i, `<span class="swatch" style="background:${col}"></span>${t('glow_' + k)}`, gi === i)).join('')}</div></div></div>
+    <div class="bo"><h3><span class="ltr" aria-hidden="true">C</span>${t('bo_c')}</h3><p>${c.best ? t('bo_c_best', { time: fmt(c.best) }) : t('bo_c_d', { time: fmt(target) })}</p>
+      <div class="row">${btn('challenge', t('bo_c_btn', { time: fmt(target) }), 'quiet')}</div></div>
+    <div class="bo"><h3><span class="ltr" aria-hidden="true">U</span>${t('bo_u')}</h3><p>${t('bo_u_d')}</p>
+      <div class="chips">${[5, 10, 15].map(n => chip('sprint', n, t('bo_u_btn', { n }), false)).join('')}</div></div>
+    <div class="bo"><h3><span class="ltr" aria-hidden="true">P</span>${t('bo_p')}</h3><p>${t('bo_p_d')}</p>
+      <label class="lbl" for="why-in">${t('bo_p_lbl')}</label>
+      <input id="why-in" type="text" maxlength="120" data-bind="why" value="${esc(c.why)}" placeholder="${t('bo_p_ph')}" autocomplete="off">
+      <div class="row">${btn('nav', t('bo_p_btn'), 'quiet', ' data-v="together"')}</div></div>
+    ${why('incup', [['incup', ['stanford', 'ibns', 'howtoadhd_mot']]])}
+  </details>`;
+}
+function nowPanel(c) {
+  if (paused()) return `<section class="panel now"><h2>${t('pause_t')}</h2><p>${t('pause_b')}</p><div class="row">${btn('pauseDay', t('ci_unpause'), 'quiet')}</div></section>`;
+  if (!c) return `<section class="panel now"><h2>${t('now_none_t')}</h2><p>${t('now_none')}</p>
+    <div class="row">${btn('focusAdd', t('now_add'))}${btn('nav', t('m_dump'), 'quiet', ' data-v="dump"')}</div></section>`;
+  const mine = T.id === c.id, run = mine && T.running, ended = mine && T.ended, held = mine && !T.running && !T.ended;
+  const id = ` data-id="${c.id}"`;
+  let hints = '', acts = '';
+  if (!mine) hints += `<p class="note">${tt('lead_idle')}</p>`;
+  if (c.m > effMin(c)) hints += `<p class="hint">${t('base_note', { n: effMin(c), m: c.m })}</p>`;
+  if (!mine && c.later >= 2) hints += `<p class="hint warm">${t('delay_note', { n: c.later })}</p>`;
+  if (c.why) hints += `<p class="hint">${t('why_line', { w: esc(c.why) })}</p>`;
+  if (c.twist >= 0) hints += `<p class="hint">${t('twist_line', { c: t('tw_' + c.twist) })}</p>`;
+  if (S.ugly) hints += `<p class="hint warm">${t('ugly_note')}</p>`;
+  if (ended) {
+    hints += `<p class="hint warm" role="status">${t(T.mode === 'two' ? 'ended_two' : 'ended_t')}</p>`;
+    acts = btn('done', t('btn_done'), 'lit', id) + btn('more', t('btn_more', { n: 5 }), 'quiet', ' data-v="5"') + btn('more', t('btn_more', { n: 10 }), 'quiet', ' data-v="10"') + btn('stopHere', t('btn_stop'), 'quiet');
+  } else if (run) {
+    acts = btn('pause', t('btn_pause'), 'lit') + btn('done', t('btn_done'), 'quiet', id) + btn('later', t('btn_later'), 'quiet', id);
+  } else if (held) {
+    acts = btn('resume', t('btn_resume'), 'lit') + btn('done', t('btn_done'), 'quiet', id) + btn('later', t('btn_later'), 'quiet', id);
+  } else {
+    acts = btn('start', tt('btn_start'), 'lit', id) + btn('two', t('btn_two'), '', id) + btn('done', t('btn_done'), 'quiet', id) + btn('later', t('btn_later'), 'quiet', id);
+  }
+  const tags = `<span class="tagm">${effMin(c)} min</span><span class="tagm">${pips(c.e)}${t('en_full', { e: t('en_' + c.e) })}</span>`
+    + (c.tag ? `<span class="tagm">${t('tag_' + c.tag)}</span>` : '')
+    + (c.spice ? `<span class="tagm">${t('spice_line', { s: t('sp_' + c.spice) })}</span>` : '')
+    + (c.from ? `<span class="tagm">${t('from_line', { s: t('from_' + c.from) })}</span>` : '');
+  return `<section class="panel now${run ? ' run' : ''}" aria-labelledby="now-t">
+    <p class="now-l">${t('now_label')}</p>
+    <h2 class="now-t" id="now-t">${esc(tx(c.t))}</h2>
+    <div class="tags">${tags}</div>
+    ${hints}
+    ${timerBlock(c)}
+    <div class="row">${acts}</div>
+    ${!mine ? `<label class="check"><input type="checkbox" data-chg="ugly"${S.ugly ? ' checked' : ''}><span>${t('ugly_lbl')}</span></label>` : ''}
+    <h3 class="sub">${t('steps_t')}</h3>
+    <ul class="steps">${c.steps.map((s, i) => `<li><label class="check"><input type="checkbox" data-chg="step" data-id="${c.id}" data-i="${i}"${s.d ? ' checked' : ''}><span>${esc(stepText(s))}</span></label></li>`).join('')}</ul>
+    ${boosters(c)}
+    ${why('now', [['focus', ['additude_time', 'adhdeu']], ['two', ['additude_proc', 'howtoadhd_wall']]])}
+  </section>`;
+}
+function taskRow(x, c) {
+  const sel = !!c && x.id === c.id && !paused();
+  const title = esc(tx(x.t));
+  return `<li class="trow${sel ? ' sel' : ''}${x.done ? ' done' : ''}">
+    <span class="t-main"><span class="t-title">${x.done ? ICON.check : ''}${title}</span>
+      <span class="t-meta">${x.done ? '' : `<span class="t-time">${x.h || t('when_free')}</span>`}<span>${effMin(x)} min</span><span>${pips(x.e)} ${t('en_' + x.e)}</span>${x.tag ? `<span>${t('tag_' + x.tag)}</span>` : ''}${x.from ? `<span>${t('from_line', { s: t('from_' + x.from) })}</span>` : ''}</span></span>
+    <span class="t-act">${x.done ? '' : (sel ? `<span class="nowmark">${t('now_label')}</span>` : `<button type="button" class="btn mini quiet" data-act="select" data-id="${x.id}" aria-label="${t('pick')}: ${title}">${t('pick')}</button>`)}
+      <button type="button" class="btn mini ghost" data-act="del" data-id="${x.id}" aria-label="${t('remove')}: ${title}">${ICON.x}</button></span></li>`;
+}
+function planBlock(c) {
+  const list = ordered(todays()), open = list.filter(x => !x.done), done = list.filter(x => x.done);
+  const base = planMode() === 'base';
+  let body = '';
+  if (base) {
+    const enough = baseSet(c), wait = open.filter(x => !enough.includes(x));
+    body = `<ul class="tlist">${enough.map(x => taskRow(x, c)).join('')}</ul>`
+      + (wait.length ? `<details class="more" ${keep('wait')}><summary>${t('plan_wait', { n: wait.length })}</summary><ul class="tlist">${wait.map(x => taskRow(x, c)).join('')}</ul></details>` : '');
+  } else body = `<ul class="tlist">${open.map(x => taskRow(x, c)).join('')}</ul>`;
+  const sel = (name, opts) => `<select name="${name}">${opts.map(([v, l, s]) => `<option value="${v}"${s ? ' selected' : ''}>${l}</option>`).join('')}</select>`;
+  return `<section class="blk" aria-labelledby="plan-h">
+    <h2 id="plan-h">${base ? t('plan_base_t') : t('plan_t')}</h2>
+    ${S.replanDay === dayKey() ? `<p class="note">${t('replan_note')}</p>` : ''}
+    ${body}
+    ${done.length ? `<details class="more" ${keep('done')}><summary>${t('plan_done', { n: done.length })}</summary><ul class="tlist">${done.map(x => taskRow(x, c)).join('')}</ul></details>` : ''}
+    <form class="add" data-form="add" autocomplete="off">
+      <h3 class="sub">${t('add_h')}</h3>
+      <label class="lbl" for="a-t">${t('add_title')}</label>
+      <input id="a-t" name="t" type="text" required maxlength="90" placeholder="${t('add_ph')}">
+      <div class="grid3">
+        <label><span class="lbl">${t('add_min')}</span>${sel('m', [5, 10, 15, 25, 40, 60].map(m => [m, m + ' min', m === 15]))}</label>
+        <label><span class="lbl">${t('add_energy')}</span>${sel('e', [1, 2, 3].map(e => [e, cap(t('en_' + e)), e === 2]))}</label>
+        <label><span class="lbl">${t('add_time')}</span><input type="time" name="h"></label>
+      </div>
+      <details class="more" ${keep('addmore')}><summary>${t('add_more')}</summary><div class="grid3">
+        <label><span class="lbl">${t('add_tag')}</span>${sel('tag', [['', t('tag_none'), true]].concat(TAGS.map(k => [k, cap(t('tag_' + k))])))}</label>
+        <label><span class="lbl">${t('add_src')}</span>${sel('from', [['', t('from_none'), true]].concat(FROMS.map(k => [k, cap(t('from_' + k))])))}</label>
+      </div></details>
+      <p class="note">${t('add_tip')}</p>
+      <button type="submit" class="btn">${t('add_btn')}</button>
+    </form>
+  </section>`;
+}
+function rhythmBlock(c) {
+  const d = new Date(), mins = d.getHours() * 60 + d.getMinutes(), a = 7 * 60, b = 23 * 60;
+  const inDay = mins >= a && mins < b, pct = Math.min(100, Math.max(0, (mins - a) / (b - a) * 100));
+  const blk = mins < 12 * 60 ? 'morning' : mins < 18 * 60 ? 'afternoon' : 'evening', end = mins < 12 * 60 ? 12 * 60 : mins < 18 * 60 ? 18 * 60 : b;
+  const set = paused() ? [] : (planMode() === 'base' ? baseSet(c) : openTasks());
+  const planned = set.reduce((n, x) => n + effMin(x), 0), room = Math.max(0, b - mins);
+  const fit = !planned ? t('rh_none') : planned <= room * 0.6 ? t('rh_fits', { min: planned }) : planned <= room ? t('rh_tight', { min: planned }) : t('rh_over', { min: planned });
+  const est = S.tasks.filter(x => x.last >= 30).slice(-3);
+  return `<section class="blk" aria-labelledby="rh-h">
+    <h2 id="rh-h">${t('rh_title')}</h2>
+    <div class="rh-wrap" aria-hidden="true">
+      <div class="rh-bar"><span class="b1"></span><span class="b2x"></span><span class="b3"></span></div>
+      ${inDay ? `<span class="rh-now" style="left:${pct.toFixed(1)}%">${hm(d)}</span>` : ''}
+      <div class="rh-leg"><span>07:00</span><span>12:00</span><span>18:00</span></div>
+    </div>
+    <p>${inDay ? t('rh_now', { time: hm(d), left: dur(end - mins), block: t('rh_' + blk) }) : t('rh_off')}</p>
+    <p class="note">${fit}</p>
+    ${est.length ? `<h3 class="sub">${t('rh_est_t')}</h3><ul class="plain">${est.map(x => `<li class="note">${t('rh_est', { t: esc(tx(x.t)), plan: x.m, real: Math.max(1, Math.round(x.last / 60)) })}</li>`).join('')}</ul>` : ''}
+    ${why('rhythm', [['rhythm', ['additude_time', 'chen']]])}
+  </section>`;
+}
+function goalLine(g) {
+  const days = Math.round((sod(new Date(g.due + 'T12:00:00').getTime()) - sod(Date.now())) / DAY), rem = Math.max(0, g.parts - g.done);
+  if (!rem) return t('go_all');
+  if (days < 0) return t('go_past');
+  if (days === 0) return t('go_today');
+  const pace = Math.floor(days / rem);
+  return pace >= 2 ? t('go_days', { days, rem, pace }) : pace >= 1 ? t('go_daily', { days, rem }) : t('go_tight');
+}
+function goalsBlock() {
+  return `<section class="blk" aria-labelledby="go-h">
+    <h2 id="go-h">${t('go_title')}</h2>
+    ${S.goals.length ? S.goals.map(g => `<div class="goal">
+      <p><b>${esc(tx(g.t))}</b></p>
+      <div class="stones" role="img" aria-label="${t('go_aria', { done: g.done, parts: g.parts })}">${Array.from({ length: g.parts }, (_, i) => `<i class="${i < g.done ? 'on' : i === g.done ? 'next' : ''}"></i>`).join('')}</div>
+      <p class="note">${goalLine(g)}</p>
+      <div class="row">${g.done < g.parts ? btn('goalStep', t('go_bring'), 'quiet', ` data-id="${g.id}"`) : ''}<button type="button" class="btn ghost" data-act="goalDel" data-id="${g.id}" aria-label="${t('remove')}: ${esc(tx(g.t))}">${ICON.x}</button></div>
+    </div>`).join('') : `<p class="note">${t('go_none')}</p>`}
+    <details class="more" ${keep('goaladd')}><summary>${t('go_add')}</summary>
+      <form data-form="goal" autocomplete="off"><div class="grid3">
+        <label><span class="lbl">${t('go_f_t')}</span><input name="t" type="text" required maxlength="80"></label>
+        <label><span class="lbl">${t('go_f_d')}</span><input name="due" type="date" required min="${dayKey()}"></label>
+        <label><span class="lbl">${t('go_f_p')}</span><input name="parts" type="number" min="1" max="20" value="5" required></label>
+      </div><button type="submit" class="btn quiet">${t('go_f_btn')}</button></form>
+    </details>
+    ${why('goals', [['goals', ['adhdeu', 'stanford']]])}
+  </section>`;
+}
+function shelfBlock() {
+  const sh = S.tasks.filter(x => x.shelved && !x.done);
+  if (!sh.length) return '';
+  return `<section class="blk"><details ${keep('shelf')}><summary>${t('sh_title', { n: sh.length })}</summary>
+    <p class="note">${t('sh_note')}</p>
+    <ul class="tlist">${sh.map(x => `<li class="trow">
+      <span class="t-main"><span class="t-title">${esc(tx(x.t))}</span><span class="t-meta"><span>${x.m} min</span>${x.from ? `<span>${t('from_line', { s: t('from_' + x.from) })}</span>` : ''}</span></span>
+      <span class="t-act"><button type="button" class="btn mini quiet" data-act="shelfBack" data-id="${x.id}">${t('sh_back')}</button>
+      <button type="button" class="btn mini ghost" data-act="del" data-id="${x.id}" aria-label="${t('remove')}: ${esc(tx(x.t))}">${ICON.x}</button></span></li>`).join('')}</ul>
+  </details></section>`;
+}
+function vDay() {
+  const c = cur();
+  return checkin() + nowPanel(c) + planBlock(c) + rhythmBlock(c) + goalsBlock() + shelfBlock();
+}
+
+/* ---------- brain dump ---------- */
+const FIRST = [
+  [/e-?mail|responder|reply|mensagem|message|escrever [aà]|write to/i, 'fs_mail'],
+  [/ligar|telefonar|call|phone|marcar|book|appointment|reuni[aã]o|meeting/i, 'fs_call'],
+  [/arrumar|limpar|organizar|reorganizar|tidy|clean|sort|declutter|lavar|wash|roupa|laundry/i, 'fs_tidy'],
+  [/escrever|write|relat[óo]rio|report|texto|artigo|essay|apresenta|slides|curr[ií]culo|candidatura|application|newsletter|livro|book/i, 'fs_write'],
+  [/pagar|pay|fatura|invoice|banco|bank|imposto|tax|seguro|insurance|operadora/i, 'fs_pay'],
+  [/estudar|ler|read|study|curso|course|aprender|learn/i, 'fs_read'],
+  [/comprar|buy|compras|shopping|encomendar|order/i, 'fs_buy'],
+  [/projeto|project|ideia|idea|app|site|neg[óo]cio|business|plano|plan|podcast|oficina|workshop|banca|horta/i, 'fs_idea']
+];
+const firstStep = text => t((FIRST.find(([re]) => re.test(text)) || [0, 'fs_default'])[1]);
+function vDump() {
+  const n = S.dump.length;
+  return `${back()}<h1 tabindex="-1">${t('du_title')}</h1><p class="lead">${t('du_lead')}</p>
+    <form data-form="dump" autocomplete="off">
+      <label class="sr" for="d-in">${t('du_in')}</label>
+      <textarea id="d-in" name="t" rows="2" maxlength="600" placeholder="${t('du_ph')}" data-enter="submit"></textarea>
+      <div class="row"><button type="submit" class="btn">${t('du_add')}</button><button type="button" class="btn quiet" data-act="dumpRandom"${n ? '' : ' disabled'}>${t('du_random')}</button></div>
+    </form>
+    <p class="note">${tn('du_count', n, { n })}</p>
+    <ul class="dump">${S.dump.map(d => {
+      const on = ui.pick === d.id, title = esc(tx(d.t));
+      return `<li class="d-item${on ? ' sel' : ''}"><div class="d-row"><span class="d-t">${title}</span><span class="t-act">
+        <button type="button" class="btn mini quiet" data-act="dumpPick" data-id="${d.id}" aria-expanded="${on}" aria-label="${t('du_first')}: ${title}">${t('du_first')}</button>
+        <button type="button" class="btn mini ghost" data-act="dumpDel" data-id="${d.id}" aria-label="${t('remove')}: ${title}">${ICON.x}</button></span></div>
+        ${on ? `<div class="d-step"><label class="lbl" for="fs-in">${t('du_step_lbl')}</label>
+          <input id="fs-in" type="text" maxlength="140" data-bind="fs" value="${esc(ui.fs)}">
+          <p class="note">${t('du_rule')}</p>
+          <div class="row">${btn('dumpGo', t('du_go2'), 'lit', ` data-id="${d.id}"`)}${btn('dumpToday', t('du_today'), 'quiet', ` data-id="${d.id}"`)}</div></div>` : ''}</li>`;
+    }).join('')}</ul>
+    ${why('dump', [['dump', ['adhdeu', 'additude_proc']]])}`;
+}
+function dumpToTask(id) {
+  const d = S.dump.find(x => x.id === id); if (!d) return null;
+  const step = (ui.fs || '').trim() || firstStep(tx(d.t));
+  const task = mk({ t: d.t, m: 10, e: 1, steps: [{ t: step }, { k: 'st_more' }] });
+  S.tasks.push(task); S.dump = S.dump.filter(x => x.id !== id); ui.pick = null; ui.fs = '';
+  return task;
+}
+
+/* ---------- focus with company, invitations, handoff note ---------- */
+const COMPS = ['lia', 'rui', 'mar'];
+function companionLine() {
+  const v = { name: t('co_' + (T.comp || ui.tg.comp)), act: t('co_' + (T.comp || ui.tg.comp) + '_act') };
+  if (T.mode !== 'tog' || !T.id) return t('tg_comp_d', v);
+  if (!T.running) return t('co_wait', v);
+  return t('co_s' + Math.min(4, Math.floor(5 * (1 - T.left / Math.max(1, T.total)))), v);
+}
+function inviteText() {
+  const c = cur(), what = ui.tg.what.trim() || (c ? tx(c.t) : '');
+  return t('inv_msg', {
+    min: ui.tg.min,
+    task: S.share.task && what ? t('inv_task', { t: what }) : '',
+    at: S.share.time ? t('inv_at', { h: hm(new Date(Date.now() + 5 * 60000)) }) : ''
+  });
+}
+function summaryText() {
+  const s = S.sessions[0]; if (!s) return t('sum_none');
+  return t('sum_msg', { min: s.min, task: S.share.task && s.what ? t('inv_task', { t: tx(s.what) }) : '', note: s.note ? t('sum_note', { n: s.note }) : '' });
+}
+function handoffTask() { return (ui.ho.id && byId(ui.ho.id)) || cur() || S.tasks.find(x => !x.done) || null; }
+function handoffText() {
+  const x = handoffTask(); if (!x) return t('ho_none');
+  const done = x.steps.filter(s => s.d).map(stepText), todo = x.steps.filter(s => !s.d).map(stepText);
+  return [
+    t('ho_l1', { t: tx(x.t) }),
+    t('ho_l2', { d: done.length, n: x.steps.length }),
+    done.length ? t('ho_l3', { list: done.join('; ') }) : '',
+    todo.length ? t('ho_l4', { list: todo.join('; ') }) : '',
+    ui.ho.where.trim() ? t('ho_l5', { w: ui.ho.where.trim() }) : '',
+    t('ho_l6', { need: t('ho_need_' + ui.ho.need + '_msg') }),
+    ui.ho.by.trim() ? t('ho_l7', { by: ui.ho.by.trim() }) : '',
+    t('ho_l8')
+  ].filter(Boolean).join('\n');
+}
+function refreshOut() {
+  const a = $('#inv-out'); if (a) a.value = ui.msg === 'summary' ? summaryText() : inviteText();
+  const b = $('#ho-out'); if (b) b.value = handoffText();
+}
+function vTogether() {
+  const c = cur(), live = T.mode === 'tog' && T.id, x = live ? byId(T.id) : null, hx = handoffTask();
+  let top;
+  if (live && x) {
+    const name = t('co_' + T.comp);
+    let acts;
+    if (T.ended) acts = `<form data-form="wrap" autocomplete="off"><label class="lbl" for="wrap-in">${t('tg_wrap')}</label>
+        <textarea id="wrap-in" name="note" rows="2" maxlength="200" placeholder="${t('tg_wrap_ph')}"></textarea>
+        <div class="row"><button type="submit" class="btn lit" name="how" value="done">${t('tg_save_done')}</button><button type="submit" class="btn quiet" name="how" value="keep">${t('tg_save_keep')}</button></div></form>`;
+    else acts = `<div class="row">${T.running ? btn('pause', t('btn_pause'), 'lit') : btn('resume', t('btn_resume'), 'lit')}${btn('tgEnd', t('tg_end'), 'quiet')}${btn('nav', t('tg_room'), 'quiet', ' data-v="day"')}</div>`;
+    top = `<section class="panel now${T.running ? ' run' : ''}" aria-labelledby="tg-now">
+      <p class="now-l">${t('tg_with', { name })}</p><h2 class="now-t" id="tg-now">${esc(tx(x.t))}</h2>
+      ${timerBlock(x)}
+      <p class="co-line"><span class="co-dot" aria-hidden="true"></span><span class="js-co" aria-live="polite">${companionLine()}</span></p>
+      ${acts}</section>`;
+  } else {
+    top = `<section class="panel" aria-labelledby="tg-set"><h2 id="tg-set">${t('tg_setup')}</h2>
+      <div class="field"><span class="lbl" id="l-co">${t('tg_comp')}</span><div class="chips" role="group" aria-labelledby="l-co">${COMPS.map(k => chip('tgComp', k, t('co_' + k), ui.tg.comp === k)).join('')}</div>
+        <p class="note">${t('tg_comp_d', { name: t('co_' + ui.tg.comp), act: t('co_' + ui.tg.comp + '_act') })}</p></div>
+      <div class="field"><span class="lbl" id="l-mi">${t('tg_min')}</span><div class="chips" role="group" aria-labelledby="l-mi">${[15, 25, 45].map(n => chip('tgMin', n, t('tg_min_v', { n }), ui.tg.min === n)).join('')}</div></div>
+      <div class="field"><label class="lbl" for="tg-what">${t('tg_what')}</label>
+        <input id="tg-what" type="text" maxlength="90" data-bind="tg.what" value="${esc(ui.tg.what)}" placeholder="${t('tg_what_ph')}" autocomplete="off">
+        ${c ? `<p class="note">${t('tg_what_cur', { t: esc(tx(c.t)) })}</p>` : ''}</div>
+      <p class="hint">${t('tg_sim')}</p>
+      <div class="row">${btn('tgStart', t('tg_start'), 'lit')}</div></section>`;
+  }
+  const log = S.sessions.slice(0, 3);
+  return `${back()}<h1 tabindex="-1">${t('tg_title')}</h1><p class="lead">${t('tg_lead')}</p>
+    ${top}
+    ${why('together', [['together', ['stanford', 'additude_proc', 'chen']]])}
+    <section class="blk" aria-labelledby="log-h"><h2 id="log-h">${t('tg_log')}</h2>
+      ${log.length ? `<ul class="plain">${log.map(s => `<li class="note">${t('tg_log_i', { min: s.min, name: t('co_' + s.comp) })}${s.note ? ': ' + esc(s.note) : ''}</li>`).join('')}</ul>` : `<p class="note">${t('tg_log_0')}</p>`}
+    </section>
+    <section class="blk" aria-labelledby="inv-h"><h2 id="inv-h">${t('inv_title')}</h2><p class="note">${t('inv_lead')}</p>
+      <div class="chips" role="group" aria-labelledby="inv-h">${chip('msg', 'invite', t('inv_m_invite'), ui.msg === 'invite')}${chip('msg', 'summary', t('inv_m_summary'), ui.msg === 'summary')}</div>
+      <label class="check"><input type="checkbox" data-chg="share" data-k="task"${S.share.task ? ' checked' : ''}><span>${t('sh_task')}</span></label>
+      <label class="check"><input type="checkbox" data-chg="share" data-k="time"${S.share.time ? ' checked' : ''}><span>${t('sh_time')}</span></label>
+      <label class="lbl" for="inv-out">${t('inv_out')}</label><textarea id="inv-out" rows="5"></textarea>
+      <div class="row">${btn('copy', t('copy_msg'), '', ' data-v="inv-out"')}</div>
+    </section>
+    <section class="blk" id="handoff" aria-labelledby="ho-h"><h2 id="ho-h">${t('ho_title')}</h2><p class="note">${t('ho_lead')}</p>
+      <div class="field"><label class="lbl" for="ho-task">${t('ho_task')}</label>
+        <select id="ho-task" data-chg="hoTask">${S.tasks.filter(k => !k.done).map(k => `<option value="${k.id}"${hx && hx.id === k.id ? ' selected' : ''}>${esc(tx(k.t))}</option>`).join('')}</select></div>
+      <div class="field"><span class="lbl" id="l-need">${t('ho_need')}</span><div class="chips" role="group" aria-labelledby="l-need">${['review', 'continue', 'decide', 'listen'].map(k => chip('need', k, t('ho_need_' + k), ui.ho.need === k)).join('')}</div></div>
+      <div class="grid3">
+        <label><span class="lbl">${t('ho_where')}</span><input type="text" maxlength="100" data-bind="ho.where" value="${esc(ui.ho.where)}" placeholder="${t('ho_where_ph')}" autocomplete="off"></label>
+        <label><span class="lbl">${t('ho_by')}</span><input type="text" maxlength="60" data-bind="ho.by" value="${esc(ui.ho.by)}" placeholder="${t('ho_by_ph')}" autocomplete="off"></label>
+      </div>
+      <label class="lbl" for="ho-out">${t('ho_out')}</label><textarea id="ho-out" rows="9"></textarea>
+      <div class="row">${btn('copy', t('copy_note'), '', ' data-v="ho-out"')}</div>
+    </section>`;
+}
+
+/* ---------- demo scenarios (all made up) ---------- */
+const PERSONAS = ['marta', 'tiago', 'joana', 'sofia', 'pedro'];
+const DEMOS = {
+  marta() {
+    return {
+      energy: 3, mood: 'wind', lights: 4,
+      tasks: [mk({ t: L('Abrir a janela e beber água', 'Open the window and drink water'), m: 5, e: 1, done: true, doneAt: Date.now() }),
+        mk({ t: L('Arrumar a mesa de trabalho', 'Clear the work table'), m: 10, e: 1, tag: 'home' })],
+      dump: [L('Podcast sobre os bairros de Lisboa', 'Podcast about Lisbon neighbourhoods'), L('Curso de cerâmica', 'Pottery course'), L('Reorganizar o portefólio', 'Reorganise the portfolio'),
+        L('Newsletter mensal para clientes', 'Monthly newsletter for clients'), L('Horta na varanda', 'Balcony vegetable garden'), L('Aprender a editar vídeo', 'Learn video editing'),
+        L('Banca na feira de artesanato', 'Stall at the craft fair'), L('Livro de receitas da avó', "Grandma's recipe book"), L('Trocar de operadora de telemóvel', 'Switch mobile operator')]
+        .map(t => ({ id: uid(), t, created: Date.now() }))
+    };
+  },
+  tiago() {
+    const a = mk({ t: L('Enviar o comprovativo de morada à senhoria', 'Send the proof of address to the landlady'), m: 5, e: 1, later: 7, created: Date.now() - 23 * DAY, from: 'email',
+      steps: [{ t: L('Encontrar o ficheiro', 'Find the file') }, { t: L('Anexar e enviar, sem rever três vezes', 'Attach and send, without re-reading three times') }] });
+    return {
+      energy: 2, mood: 'fog', ugly: true, lights: 11, sel: a.id,
+      tasks: [a, mk({ t: L('Levar o vidro ao ecoponto', 'Take the glass to the recycling bank'), m: 10, e: 1, h: hmPlus(60), tag: 'home' }),
+        mk({ t: L('Rever o orçamento do mês', "Review this month's budget"), m: 25, e: 3, h: hmPlus(150) })]
+    };
+  },
+  joana() {
+    return {
+      energy: 1, mood: 'cloud', lights: 19,
+      tasks: [mk({ t: L('Rever o capítulo 2', 'Revise chapter 2'), m: 40, e: 3, h: hmPlus(-180), tag: 'work' }),
+        mk({ t: L('Enviar a ata da reunião', 'Send the meeting minutes'), m: 15, e: 2, h: hmPlus(-105), from: 'email' }),
+        mk({ t: L('Preparar a aula de quinta', "Prepare Thursday's class"), m: 40, e: 3, h: hmPlus(-45), tag: 'work' }),
+        mk({ t: L('Responder à orientadora', 'Reply to the supervisor'), m: 10, e: 1, h: hmPlus(75), from: 'email' }),
+        mk({ t: L('Caminhada curta', 'Short walk'), m: 15, e: 1, tag: 'body' })],
+      goals: [{ id: uid(), t: L('Relatório final do estágio', 'Final internship report'), due: dayKey(new Date(Date.now() + 9 * DAY)), parts: 8, done: 3 }]
+    };
+  },
+  sofia() {
+    const rows = [
+      ['Confirmar presença no jantar de sábado', 'Confirm Saturday dinner', 5, 1, 'chat'], ['Devolver o livro à biblioteca', 'Return the library book', 15, 1, 'paper'],
+      ['Responder ao orçamento do canalizador', "Reply to the plumber's quote", 10, 2, 'email'], ['Renovar o passe', 'Renew the travel pass', 10, 1, 'head'],
+      ['Enviar as fotografias à tia', 'Send the photos to my aunt', 10, 1, 'chat'], ['Marcar a revisão do carro', 'Book the car service', 10, 2, 'paper'],
+      ['Preencher o inquérito da escola', 'Fill in the school survey', 15, 2, 'email'], ['Comprar a prenda do Miguel', "Buy Miguel's present", 25, 2, 'head'],
+      ['Rever o contrato do ginásio', 'Review the gym contract', 25, 3, 'email'], ['Responder ao grupo do condomínio', 'Reply to the building group chat', 5, 1, 'chat'],
+      ['Entregar a declaração no trabalho', 'Hand in the form at work', 15, 2, 'paper'], ['Organizar as faturas do trimestre', "Sort this quarter's invoices", 40, 3, 'paper'],
+      ['Ligar à avó', 'Call grandma', 10, 1, 'head'], ['Atualizar o currículo', 'Update the CV', 40, 3, 'head']
+    ];
+    return {
+      energy: 2, mood: 'cloud', lights: 31, lastSeen: Date.now() - 12 * DAY,
+      tasks: rows.map(([pt, en, m, e, from], i) => mk({ t: L(pt, en), m, e, from, created: Date.now() - (14 + i) * DAY, h: i < 5 ? pad(9 + i) + ':00' : '' }))
+    };
+  },
+  pedro() {
+    const a = mk({ t: L('Site da associação de moradores', "Residents' association website"), m: 40, e: 3, later: 4, created: Date.now() - 21 * DAY, tag: 'people',
+      steps: [{ t: L('Escolher o modelo de site', 'Choose the site template'), d: true }, { t: L('Juntar fotografias das atividades', 'Collect photos of the activities'), d: true },
+        { t: L('Escrever a página «Quem somos»', 'Write the “About us” page'), d: true }, { t: L('Montar a página de contactos', 'Build the contact page') },
+        { t: L('Pedir o domínio', 'Request the domain') }, { t: L('Publicar e avisar os vizinhos', 'Publish and tell the neighbours') }] });
+    return {
+      energy: 2, mood: 'fog', lights: 9, sel: a.id,
+      tasks: [a, mk({ t: L('Pagar a quota da associação', 'Pay the association fee'), m: 5, e: 1 }),
+        mk({ t: L('Marcar a reunião de direção', 'Schedule the board meeting'), m: 10, e: 2, from: 'chat' })]
+    };
+  }
+};
+function loadDemo(name) {
+  if (!DEMOS[name]) return;
+  clearTimer();
+  const backup = S.demo ? S.backup : JSON.parse(JSON.stringify(Object.assign({}, S, { backup: null })));
+  const keepPrefs = { lang: S.lang, theme: S.theme, motion: S.motion, skipBreath: S.skipBreath, share: S.share, glow: S.glow };
+  S = Object.assign(fresh(), keepPrefs, { lastSeen: Date.now() }, DEMOS[name](), { demo: name, backup });
+  Object.assign(ui, { showReturn: false, pick: null, fs: '', msg: 'invite', tg: { comp: 'lia', min: 25, what: '' }, ho: { id: null, need: 'review', where: '', by: '' } });
+  ui.open = { checkin: false, boost: false };
+  save();
+  toast(t('de_loaded', { name: t('p_' + name) }));
+  if (name === 'marta') nav('dump');
+  else if (name === 'tiago') nav('day');
+  else if (name === 'joana') { replan(true); ui.open.checkin = true; nav('day'); }
+  else if (name === 'sofia') { arrive(); nav('menu'); }
+  else if (name === 'pedro') {
+    ui.ho = { id: S.sel, need: 'continue', where: S.lang === 'pt' ? 'pasta partilhada «Site da associação»' : 'shared folder “Association site”', by: S.lang === 'pt' ? 'sexta-feira' : 'Friday' };
+    nav('together');
+    const h = $('#handoff'); if (h) h.scrollIntoView({ block: 'start' });
+  }
+}
+function exitDemo() {
+  clearTimer();
+  const prefs = { lang: S.lang, theme: S.theme, motion: S.motion };
+  S = normalise(Object.assign({}, S.backup || {}, prefs, { demo: null, backup: null, lastSeen: Date.now() }));
+  if (!S.tasks.length && !S.dump.length && !S.goals.length) seedDefault();
+  ui.showReturn = false; ui.pick = null;
+  save(); toast(t('de_restored')); nav('demo');
+}
+function vDemo() {
+  return `${back()}<h1 tabindex="-1">${t('de_title')}</h1><p class="lead">${t('de_lead')}</p>
+    <ul class="personas">${PERSONAS.map(p => `<li class="persona${S.demo === p ? ' sel' : ''}">
+      <h2>${t('p_' + p)}</h2><p>${t('p_' + p + '_s')}</p>
+      <p class="note"><b>${t('de_shows')}</b> ${t('p_' + p + '_f')}</p>
+      <div class="row">${btn('demo', t('de_load', { name: t('p_' + p) }), S.demo === p ? 'quiet' : '', ` data-v="${p}"`)}</div></li>`).join('')}</ul>
+    ${S.demo ? `<div class="row">${btn('exitDemo', t('demo_exit'), 'quiet')}</div>` : ''}
+    <p class="note">${t('de_note')}</p>`;
+}
+
+/* ---------- privacy and control ---------- */
+function vPrivacy() {
+  const kb = (new Blob([JSON.stringify(S)]).size / 1024).toFixed(1);
+  const chk = (k, on, label, chg) => `<label class="check"><input type="checkbox" data-chg="${chg}" data-k="${k}"${on ? ' checked' : ''}><span>${label}</span></label>`;
+  return `${back()}<h1 tabindex="-1">${t('pr_title')}</h1><p class="lead">${t('pr_lead')}</p>
+    <section class="blk" aria-labelledby="pr-w"><h2 id="pr-w">${t('pr_where')}</h2>
+      <ul class="bullets">${[1, 2, 3, 4, 5, 6].map(i => `<li>${t('pr_' + i)}</li>`).join('')}</ul>
+      <p class="note">${t('pr_size', { kb, key: KEY })}${store.ok ? '' : ' ' + t('pr_nostore')}</p></section>
+    <section class="blk" aria-labelledby="pr-c"><h2 id="pr-c">${t('pr_controls')}</h2>
+      ${chk('notif', S.notif, t('pr_notif'), 'notif')}
+      ${chk('breath', !S.skipBreath, t('pr_breath'), 'breathOn')}
+      ${chk('task', S.share.task, t('sh_task'), 'share')}
+      ${chk('time', S.share.time, t('sh_time'), 'share')}
+      <div class="row">${btn('export', t('pr_export'))}
+        <label class="btn quiet">${t('pr_import')}<input type="file" class="sr" accept="application/json,.json" data-chg="import"></label>
+        ${btn('wipe', ui.wipe ? t('pr_wipe2') : t('pr_wipe'), 'danger')}</div></section>
+    ${why('privacy', [['privacy', ['chen']]])}`;
+}
+function exportData() {
+  const blob = new Blob([JSON.stringify(Object.assign({}, S, { backup: null, demo: null }), null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'enfoco-' + dayKey() + '.json';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  toast(t('pr_exported'));
+}
+function importData(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const o = JSON.parse(String(r.result));
+      if (!o || o.v !== 2 || !Array.isArray(o.tasks)) throw new Error('shape');
+      clearTimer(); S = normalise(Object.assign(o, { demo: null, backup: null, lastSeen: Date.now() })); save();
+      toast(t('pr_imported')); render();
+    } catch (e) { toast(t('pr_bad')); }
+  };
+  r.onerror = () => toast(t('pr_bad'));
+  r.readAsText(file);
+}
+
+/* ---------- vision and limits ---------- */
+function sceneStatus() {
+  const v = { path: MODEL_PATH };
+  if (scene3.mode === '2d') return t('scene_2d');
+  if (scene3.mode !== '3d') return t('scene_pending');
+  return scene3.model === 'glb' ? t('scene_glb', v) : scene3.model === 'procedural' ? t('scene_proc', v) : t('scene_load', v);
+}
+function vVision() {
+  const list = (p, n) => `<ul class="bullets">${Array.from({ length: n }, (_, i) => `<li>${t(p + (i + 1))}</li>`).join('')}</ul>`;
+  return `${back()}<h1 tabindex="-1">${t('vi_title')}</h1><p class="lead">${t('vi_lead')}</p>
+    <section class="blk" aria-labelledby="vi-1"><h2 id="vi-1">${t('vi_works')}</h2>${list('vi_w', 8)}</section>
+    <section class="blk" aria-labelledby="vi-2"><h2 id="vi-2">${t('vi_sim')}</h2>${list('vi_s', 4)}</section>
+    <section class="blk" aria-labelledby="vi-3"><h2 id="vi-3">${t('vi_future')}</h2>${list('vi_f', 6)}</section>
+    <section class="blk" aria-labelledby="vi-4"><h2 id="vi-4">${t('vi_limits')}</h2>${list('vi_l', 5)}</section>
+    <section class="blk" aria-labelledby="vi-5"><h2 id="vi-5">${t('vi_scene')}</h2><p>${sceneStatus()}</p></section>
+    <section class="blk" aria-labelledby="vi-6"><h2 id="vi-6">${t('vi_sources')}</h2>
+      <ul class="srcs">${Object.keys(SRC).map(k => `<li><a href="${SRC[k]}" target="_blank" rel="noopener noreferrer">${t('src_' + k)}</a><span>${t('srcd_' + k)}</span></li>`).join('')}</ul></section>
+    <p class="note">${t('vi_team')}</p>`;
+}
+
+/* ---------- chrome, render, navigation ---------- */
+const VIEWS = { breath: vBreath, menu: vMenu, day: vDay, dump: vDump, together: vTogether, demo: vDemo, privacy: vPrivacy, vision: vVision };
+function paintChrome() {
+  const h = document.documentElement;
+  h.lang = S.lang === 'pt' ? 'pt-PT' : 'en';
+  h.dataset.theme = S.theme;
+  h.dataset.motion = reduced() ? 'reduce' : 'full';
+  document.title = t('app_title');
+  $$('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  $('#brand').setAttribute('aria-label', t('brand_aria'));
+  $('#lang-seg').setAttribute('aria-label', t('lang_aria'));
+  $$('#lang-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === S.lang)));
+  const bt = $('#btn-theme'); bt.setAttribute('aria-label', t('theme_' + S.theme)); bt.title = t('theme_' + S.theme);
+  const bm = $('#btn-motion'); bm.setAttribute('aria-label', t('motion_' + S.motion)); bm.title = t('motion_' + S.motion);
+  const db = $('#demo-banner');
+  if (S.demo) { db.hidden = false; db.innerHTML = `<span>${t('demo_banner', { name: t('p_' + S.demo) })}</span><button type="button" class="btn mini quiet" data-act="exitDemo">${t('demo_exit')}</button>`; }
+  else { db.hidden = true; db.innerHTML = ''; }
+}
+function focusKey() {
+  const a = document.activeElement;
+  if (!a || a === document.body || !a.dataset) return null;
+  if (a.id) return '#' + a.id;
+  if (a.dataset.act) return `[data-act="${a.dataset.act}"]` + (a.dataset.id ? `[data-id="${a.dataset.id}"]` : '') + (a.dataset.v != null ? `[data-v="${a.dataset.v}"]` : '');
+  if (a.dataset.chg) return `[data-chg="${a.dataset.chg}"]` + (a.dataset.k ? `[data-k="${a.dataset.k}"]` : '') + (a.dataset.i ? `[data-i="${a.dataset.i}"]` : '');
+  return null;
+}
+function render() {
+  paintChrome();
+  const v = ui.view;
+  $$('.view').forEach(s => { s.hidden = s.id !== 'v-' + v; });
+  $('#main').classList.toggle('wide', v === 'day');
+  const host = v === 'day' ? $('#day-body') : $('#v-' + v);
+  $$('.view').forEach(s => { if (s.hidden) { const body = s.id === 'v-day' ? $('#day-body') : s; if (body.firstChild) body.innerHTML = ''; } });
+  const fk = host.contains(document.activeElement) ? focusKey() : null;
+  host.innerHTML = VIEWS[v]();
+  if (ui.refocus) { const el = $(ui.refocus, host); if (el) el.focus({ preventScroll: true }); ui.refocus = null; }
+  else if (fk) { let el = null; try { el = $(fk, host); } catch (e) { el = null; } if (el) el.focus({ preventScroll: true }); }
+  refreshOut();
+  if (v === 'breath') paintBreath();
+  syncScene();
+}
+function nav(v) {
+  if (!VIEWS[v]) v = 'menu';
+  if (ui.view === 'breath' && v !== 'breath') stopBreath();
+  ui.view = v; ui.wipe = false;
+  if (v === 'breath') startBreath();
+  render();
+  window.scrollTo(0, 0);
+  const h = $('#v-' + v + ' h1'); if (h) h.focus({ preventScroll: true });
+  try { if (v !== 'breath' && location.hash.slice(1) !== v) location.hash = v; } catch (e) { /* hash is a convenience only */ }
+}
+async function copyFrom(id) {
+  const el = $('#' + id); if (!el) return;
+  try { await navigator.clipboard.writeText(el.value); toast(t('copied')); }
+  catch (e) { el.focus(); el.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (_) { ok = false; } toast(t(ok ? 'copied' : 'copy_manual')); }
+}
+
+/* ---------- task actions ---------- */
+function doneTask(id) {
+  const x = byId(id); if (!x || x.done) return;
+  x.done = true; x.doneAt = Date.now(); x.started = true; x.steps.forEach(s => { s.d = true; });
+  S.lights++;
+  let msg = tt('toast_done');
+  if (T.id === id) {
+    const el = T.elapsed;
+    if (T.mode === 'chal' && T.target) msg = el <= T.target ? t('toast_chal_win', { time: fmt(el) }) : t('toast_chal_ok');
+    else if (el >= 30 && x.best && el < x.best) msg = t('toast_best', { time: fmt(el) });
+    if (el >= 30) { x.last = el; if (!x.best || el < x.best) x.best = el; }
+    clearTimer();
+  }
+  if (x.goalId) { const g = S.goals.find(k => k.id === x.goalId); if (g) g.done = Math.min(g.parts, g.done + 1); }
+  if (S.sel === id) S.sel = null;
+  save(); toast(msg); render();
+}
+function laterTask(id) {
+  const x = byId(id); if (!x) return;
+  S.tasks.splice(S.tasks.indexOf(x), 1); S.tasks.push(x);
+  x.h = ''; x.later = (x.later || 0) + 1; x.laterAt = Date.now();
+  if (T.id === id) { if (T.elapsed >= 60) x.started = true; clearTimer(); }
+  if (S.sel === id) S.sel = null;
+  save(); toast(t('toast_later')); render();
+}
+/* make a task the current one; a timer left on another task is closed quietly */
+function choose(id) {
+  const x = byId(id); if (!x) return null;
+  if (T.id && T.id !== x.id) { const o = byId(T.id); if (o && T.elapsed >= 60) o.started = true; clearTimer(); }
+  S.sel = x.id; return x;
+}
+function startTwo(x) { if (!x) return; startTimer(x, 'two', 120); showRoom(); }
+/* on narrow screens, bring the room into view so the bulb can be seen lighting up */
+function showRoom() {
+  const st = $('#stage'); if (!st || ui.view !== 'day') return;
+  const r = st.getBoundingClientRect();
+  if (r.top < 60 || r.bottom > window.innerHeight) st.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' });
+}
+
+const ACT = {
+  nav: d => nav(d.v),
+  lang: d => { if (I18N[d.v]) { S.lang = d.v; save(); render(); } },
+  theme: () => { S.theme = { auto: 'light', light: 'dark', dark: 'auto' }[S.theme] || 'auto'; save(); paintChrome(); toast(t('theme_' + S.theme)); },
+  motion: () => { S.motion = { auto: 'reduce', reduce: 'full', full: 'auto' }[S.motion] || 'auto'; save(); paintChrome(); syncScene(); toast(t('motion_' + S.motion)); },
+  skipBreath: () => nav('menu'),
+  twoMenu: () => { const c = cur(); if (S.pauseDay) S.pauseDay = ''; if (c) { ui.view = 'day'; startTwo(c); nav('day'); } else nav('day'); },
+  select: d => { if (choose(d.id)) { save(); render(); } },
+  start: d => { const x = byId(d.id) || cur(); if (x) { startTimer(x, 'focus', effMin(x) * 60); showRoom(); } },
+  two: d => startTwo(byId(d.id) || cur()),
+  pause: () => pauseTimer(),
+  resume: () => { resumeTimer(); showRoom(); },
+  more: d => extendTimer(+d.v || 5),
+  stopHere: () => { const x = byId(T.id); if (x) x.started = true; clearTimer(); save(); toast(t('toast_stop')); render(); },
+  done: d => doneTask(d.id || (cur() || {}).id),
+  later: d => laterTask(d.id || (cur() || {}).id),
+  del: d => { if (T.id === d.id) clearTimer(); if (S.sel === d.id) S.sel = null; S.tasks = S.tasks.filter(x => x.id !== d.id); save(); render(); },
+  energy: d => { S.energy = +d.v; S.checkinDay = dayKey(); save(); render(); },
+  mood: d => { S.mood = d.v; S.checkinDay = dayKey(); save(); render(); },
+  plan: d => { S.plan = d.v; save(); render(); },
+  pauseDay: () => { if (paused()) S.pauseDay = ''; else { S.pauseDay = dayKey(); clearTimer(); } save(); render(); },
+  spice: d => { const c = cur(); if (!c) return; c.spice = c.spice === d.v ? '' : d.v; save(); render(); },
+  twist: () => { const c = cur(); if (!c) return; let n = Math.floor(Math.random() * TWISTS); if (n === c.twist) n = (n + 1) % TWISTS; c.twist = n; save(); render(); },
+  glow: d => { S.glow = +d.v; save(); render(); },
+  challenge: () => { const c = cur(); if (!c) return; const target = c.best ? c.best : Math.round(effMin(c) * 60 * 0.8); startTimer(c, 'chal', Math.max(effMin(c) * 60, target), { target }); showRoom(); },
+  sprint: d => { const c = cur(); if (c) { startTimer(c, 'sprint', (+d.v || 5) * 60); showRoom(); } },
+  focusAdd: () => { const el = $('#a-t'); if (el) { el.scrollIntoView({ block: 'center' }); el.focus({ preventScroll: true }); } },
+  shelfBack: d => { const x = byId(d.id); if (x) { x.shelved = false; save(); render(); } },
+  goalStep: d => {
+    const g = S.goals.find(k => k.id === d.id); if (!g) return;
+    let x = S.tasks.find(k => k.goalId === g.id && !k.done);
+    if (!x) {
+      const n = g.done + 1, name = typeof g.t === 'object' ? L(g.t.pt + ', ' + I18N.pt.go_part.replace('{n}', n), g.t.en + ', ' + I18N.en.go_part.replace('{n}', n)) : g.t + ', ' + t('go_part', { n });
+      x = mk({ t: name, m: 15, e: 2, goalId: g.id }); S.tasks.push(x);
+    }
+    x.shelved = false; choose(x.id); save(); toast(t('toast_added')); render();
+    const p = $('#now-t'); if (p) p.scrollIntoView({ block: 'center' });
+  },
+  goalDel: d => { S.goals = S.goals.filter(g => g.id !== d.id); save(); render(); },
+  dumpPick: d => { if (ui.pick === d.id) { ui.pick = null; ui.fs = ''; } else { const k = S.dump.find(x => x.id === d.id); ui.pick = d.id; ui.fs = k ? firstStep(tx(k.t)) : ''; ui.refocus = '#fs-in'; } render(); },
+  dumpRandom: () => { if (!S.dump.length) return; const k = S.dump[Math.floor(Math.random() * S.dump.length)]; ui.pick = k.id; ui.fs = firstStep(tx(k.t)); ui.refocus = '#fs-in'; render(); const el = $('#fs-in'); if (el) el.scrollIntoView({ block: 'center' }); },
+  dumpDel: d => { S.dump = S.dump.filter(x => x.id !== d.id); if (ui.pick === d.id) ui.pick = null; save(); render(); },
+  dumpToday: d => { const x = dumpToTask(d.id); if (x) { choose(x.id); save(); toast(t('du_moved')); render(); } },
+  dumpGo: d => { const x = dumpToTask(d.id); if (x) { S.pauseDay = ''; ui.view = 'day'; startTwo(x); nav('day'); } },
+  tgComp: d => { ui.tg.comp = d.v; render(); },
+  tgMin: d => { ui.tg.min = +d.v || 25; render(); },
+  tgStart: () => {
+    const what = ui.tg.what.trim(); let x;
+    if (what) { x = mk({ t: what, m: ui.tg.min, e: 2 }); S.tasks.push(x); } else x = cur();
+    if (!x) { toast(t('tg_need')); const el = $('#tg-what'); if (el) el.focus(); return; }
+    S.pauseDay = ''; ui.tg.what = '';
+    startTimer(x, 'tog', ui.tg.min * 60, { comp: ui.tg.comp });
+  },
+  tgEnd: () => { T.running = false; T.ended = true; stopTick(); ui.refocus = '#wrap-in'; render(); },
+  msg: d => { ui.msg = d.v; render(); },
+  need: d => { ui.ho.need = d.v; render(); },
+  copy: d => copyFrom(d.v),
+  demo: d => loadDemo(d.v),
+  exitDemo: () => exitDemo(),
+  export: () => exportData(),
+  wipe: () => {
+    if (!ui.wipe) { ui.wipe = true; render(); setTimeout(() => { if (ui.wipe) { ui.wipe = false; if (ui.view === 'privacy') render(); } }, 6000); return; }
+    clearTimer(); store.del(KEY); store.del(OLD_KEY);
+    const prefs = { lang: S.lang, theme: S.theme, motion: S.motion };
+    S = Object.assign(fresh(), prefs, { lastSeen: Date.now() }); ui.wipe = false; ui.showReturn = false; save();
+    toast(t('pr_wiped')); render();
+  },
+  retKeep: () => { ui.showReturn = false; if (ui.ret[0]) choose(ui.ret[0]); save(); toast(t('ret_kept')); nav('day'); },
+  retSwap: () => { ui.retOff += 3; prepareReturn(); render(); },
+  retRest: () => { S.tasks.forEach(x => { if (!x.done) x.shelved = true; }); S.pauseDay = dayKey(); ui.showReturn = false; save(); nav('day'); }
+};
+const CHG = {
+  skipAlways: el => { S.skipBreath = el.checked; save(); },
+  breathOn: el => { S.skipBreath = !el.checked; save(); },
+  ugly: el => { S.ugly = el.checked; save(); render(); },
+  step: el => {
+    const x = byId(el.dataset.id); if (!x || !x.steps[+el.dataset.i]) return;
+    x.steps[+el.dataset.i].d = el.checked; if (el.checked) x.started = true; save(); refreshOut();
+    if (x.steps.every(s => s.d)) toast(t('toast_steps'));
+  },
+  share: el => { S.share[el.dataset.k] = el.checked; save(); refreshOut(); },
+  hoTask: el => { ui.ho.id = el.value; refreshOut(); },
+  notif: el => {
+    if (!el.checked) { S.notif = false; save(); return; }
+    if (!('Notification' in window)) { el.checked = false; toast(t('pr_notif_no')); return; }
+    Promise.resolve(Notification.requestPermission()).then(p => {
+      S.notif = p === 'granted'; save(); toast(t(S.notif ? 'pr_notif_on' : 'pr_notif_denied')); if (ui.view === 'privacy') render();
+    }).catch(() => { S.notif = false; save(); toast(t('pr_notif_denied')); if (ui.view === 'privacy') render(); });
+  },
+  import: el => { if (el.files && el.files[0]) importData(el.files[0]); el.value = ''; }
+};
+const BIND = {
+  why: v => { const c = cur(); if (c) { c.why = v; save(); } },
+  fs: v => { ui.fs = v; },
+  'tg.what': v => { ui.tg.what = v; refreshOut(); },
+  'ho.where': v => { ui.ho.where = v; refreshOut(); },
+  'ho.by': v => { ui.ho.by = v; refreshOut(); }
+};
+const FORMS = {
+  add: f => {
+    const d = new FormData(f), title = String(d.get('t') || '').trim(); if (!title) return;
+    S.tasks.push(mk({ t: title, m: +d.get('m') || 15, e: +d.get('e') || 2, h: String(d.get('h') || ''), tag: String(d.get('tag') || ''), from: String(d.get('from') || '') }));
+    save(); toast(t('toast_added')); ui.refocus = '#a-t'; render();
+  },
+  dump: f => {
+    const lines = String(new FormData(f).get('t') || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
+    if (!lines.length) return;
+    lines.reverse().forEach(s => S.dump.unshift({ id: uid(), t: s.slice(0, 140), created: Date.now() }));
+    save(); ui.refocus = '#d-in'; render();
+  },
+  goal: f => {
+    const d = new FormData(f), title = String(d.get('t') || '').trim(), due = String(d.get('due') || '');
+    if (!title || !/^\d{4}-\d{2}-\d{2}$/.test(due)) return;
+    S.goals.push({ id: uid(), t: title, due, parts: Math.min(20, Math.max(1, +d.get('parts') || 1)), done: 0 });
+    ui.open.goaladd = false; save(); render();
+  },
+  wrap: (f, sub) => {
+    const x = byId(T.id), note = String(new FormData(f).get('note') || '').trim();
+    S.sessions.unshift({ at: Date.now(), min: Math.max(1, Math.round(T.elapsed / 60)), comp: T.comp || 'lia', what: x ? x.t : '', note });
+    S.sessions = S.sessions.slice(0, 20); ui.msg = 'summary';
+    if (x && sub && sub.value === 'done') { doneTask(x.id); return; }
+    if (x) x.started = true;
+    clearTimer(); save(); toast(t('tg_saved')); render();
+  }
+};
+
+/* =====================================================================
+   The room: an isometric Three.js scene where every task is a light bulb.
+   Order of fallbacks: GLB model -> bulbs drawn in code -> simple 2D view.
+   ===================================================================== */
+const scene3 = { mode: 'pending', model: 'pending', err: '', bulbs: new Map(), dirty: true };
+const STATE_GLOW = { idle: 0.3, warm: 0.55, paused: 0.7, rest: 0.14, focus: 2.2, done: 0.02 };
+
+function sceneItems() {
+  const c = cur(), rest = paused();
+  let list = ordered(todays());
+  if (list.length > 12) { list = list.slice(0, 12); if (c && !list.includes(c)) list[11] = c; }
+  return list.map(x => ({
+    id: x.id, time: x.h || '', title: tx(x.t), sel: !!c && c.id === x.id && !rest && !x.done,
+    state: x.done ? 'done' : rest ? 'rest' : T.id === x.id ? (T.running ? 'focus' : 'paused') : x.started ? 'warm' : 'idle'
+  }));
+}
+function syncScene() {
+  const items = sceneItems(), focus = items.find(i => i.state === 'focus');
+  $('#stage-count').textContent = t('stage_count', { n: S.lights });
+  const desc = t('stage_desc', { n: items.length, focus: focus ? t('stage_focus', { t: focus.title }) : t('stage_nofocus') });
+  const sd = $('#stage-desc'); if (sd.textContent !== desc) sd.textContent = desc;
+  $('#stage-note').textContent = scene3.mode === 'pending' ? t('stage_pending') : scene3.mode === '2d' ? t('stage_2d') : '';
+  $('#stage').classList.toggle('flat', scene3.mode === '2d');
+  if (scene3.mode === '3d') { $('#stage-2d').hidden = true; sync3D(items); }
+  else if (scene3.mode === '2d') render2D(items);
+}
+function render2D(items) {
+  const host = $('#stage-2d'); host.hidden = false; $('#stage-labels').innerHTML = '';
+  host.innerHTML = items.map(i => `<button type="button" class="b2 st-${i.state}${i.sel ? ' sel' : ''}" data-act="select" data-id="${i.id}"${i.state === 'done' ? ' disabled' : ''}>
+    <span class="b2-bulb"></span><span>${i.state === 'done' ? '✓' : (i.time || '&nbsp;')}</span><span class="b2-n">${esc(i.title)}</span></button>`).join('');
+}
+
+async function initScene() {
+  const host = $('#stage-gl');
+  try {
+    const probe = document.createElement('canvas');
+    if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) throw new Error('no-webgl');
+    const THREE = await Promise.race([
+      import('three'),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('three-timeout')), CDN_TIMEOUT))
+    ]);
+    build3D(THREE, host);
+    scene3.mode = '3d';
+    syncScene();
+    loadModel(THREE);
+  } catch (err) {
+    scene3.mode = '2d'; scene3.err = String((err && err.message) || err);
+    host.innerHTML = '';
+    syncScene();
+  }
+  if (ui.view === 'vision') render();
+}
+function to2D(reason) {
+  const R = scene3;
+  if (R.raf) cancelAnimationFrame(R.raf);
+  R.mode = '2d'; R.err = reason;
+  $('#stage-gl').innerHTML = '';
+  syncScene();
+}
+
+function build3D(THREE, host) {
+  const R = scene3; R.THREE = THREE; R.host = host;
+  R.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
+  R.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  R.renderer.setClearColor(0x000000, 0);
+  const cv = R.renderer.domElement; host.appendChild(cv);
+  R.scene = new THREE.Scene();
+  /* orthographic camera on the (1,1,1) diagonal = true isometric view */
+  R.cam = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 200);
+  R.cam.position.set(30, 30, 30); R.cam.lookAt(0, 0, 0);
+  R.scene.add(new THREE.HemisphereLight(0xc9d6ff, 0x141a2c, 1.7));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(4, 12, 9); R.scene.add(sun);
+  R.lamp = new THREE.PointLight(0xffb347, 0, 12, 1.8); R.scene.add(R.lamp);
+  R.root = new THREE.Group(); R.scene.add(R.root);
+  R.path = new THREE.Group(); R.scene.add(R.path);
+  R.glow = new THREE.Color(GLOWS[glowIndex()][1]);
+
+  /* shared geometry and materials */
+  const prof = [[0.19, 0.5], [0.21, 0.6], [0.3, 0.78], [0.43, 0.98], [0.5, 1.2], [0.47, 1.4], [0.36, 1.57], [0.19, 1.68], [0, 1.71]].map(p => new THREE.Vector2(p[0], p[1]));
+  R.geo = {
+    glass: new THREE.LatheGeometry(prof, 40),
+    cap: new THREE.CylinderGeometry(0.2, 0.17, 0.36, 24),
+    ring: new THREE.TorusGeometry(0.196, 0.026, 8, 24),
+    tip: new THREE.CylinderGeometry(0.085, 0.05, 0.1, 16),
+    fil: new THREE.TorusGeometry(0.11, 0.02, 8, 20, Math.PI),
+    post: new THREE.CylinderGeometry(0.012, 0.012, 0.5, 6),
+    disc: new THREE.CylinderGeometry(0.78, 0.84, 0.14, 40),
+    sel: new THREE.TorusGeometry(0.98, 0.035, 8, 56),
+    pick: new THREE.CylinderGeometry(0.85, 0.85, 2.1, 12)
+  };
+  R.mat = {
+    cap: new THREE.MeshStandardMaterial({ color: 0x9aa3b8, roughness: 0.45, metalness: 0.7 }),
+    tip: new THREE.MeshStandardMaterial({ color: 0x2b3145, roughness: 0.8 }),
+    post: new THREE.MeshBasicMaterial({ color: 0x6f7890 }),
+    disc: new THREE.MeshStandardMaterial({ color: 0x2c3654, roughness: 0.92 }),
+    discDone: new THREE.MeshStandardMaterial({ color: 0x222a40, roughness: 0.95 }),
+    sel: new THREE.MeshBasicMaterial({ color: 0xffc15e }),
+    path: new THREE.MeshStandardMaterial({ color: 0x232b45, roughness: 1 }),
+    pick: new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
+  };
+
+  /* soft halo for the bulb in focus */
+  const hc = document.createElement('canvas'); hc.width = hc.height = 128;
+  const g = hc.getContext('2d'), grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grad.addColorStop(0, 'rgba(255,255,255,0.95)'); grad.addColorStop(0.35, 'rgba(255,255,255,0.35)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = grad; g.fillRect(0, 0, 128, 128);
+  R.halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(hc), color: R.glow, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
+  R.halo.renderOrder = 5; R.halo.visible = false; R.scene.add(R.halo);
+
+  /* the companion's bulb, shown during a session with company */
+  R.comp = makeUnit(new THREE.Color(0x8fd3ff)); R.comp.group.scale.setScalar(0.7); R.comp.group.visible = false; R.scene.add(R.comp.group);
+
+  R.ray = new THREE.Raycaster(); R.ptr = new THREE.Vector2();
+  const hit = e => {
+    const r = cv.getBoundingClientRect();
+    R.ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    R.ray.setFromCamera(R.ptr, R.cam);
+    const h = R.ray.intersectObjects(Array.from(R.bulbs.values()).map(b => b.pick), false)[0];
+    return h ? h.object.userData.id : null;
+  };
+  cv.addEventListener('click', e => { const id = hit(e); const x = id && byId(id); if (x && !x.done) ACT.select({ id }); });
+  cv.addEventListener('pointermove', e => { const id = hit(e), x = id && byId(id); cv.style.cursor = x && !x.done ? 'pointer' : 'default'; });
+  cv.addEventListener('webglcontextlost', e => { e.preventDefault(); to2D('context-lost'); });
+
+  const resize = () => {
+    const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return;
+    R.renderer.setSize(w, h, false); fitCamera(); placeLabels(); R.dirty = true;
+  };
+  if ('ResizeObserver' in window) new ResizeObserver(resize).observe(host); else window.addEventListener('resize', resize);
+  R.resize = resize;
+  R.raf = requestAnimationFrame(loop);
+}
+
+/* one bulb: glass, screw cap, filament. Returns the materials that carry the glow. */
+function makeUnit(color) {
+  const R = scene3, THREE = R.THREE, group = new THREE.Group(), vis = new THREE.Group();
+  const glassMat = new THREE.MeshStandardMaterial({ color: 0xffe6bd, emissive: color.clone(), emissiveIntensity: 0.2, roughness: 0.28, metalness: 0, transparent: true, opacity: 0.92 });
+  const filMat = new THREE.MeshBasicMaterial({ color: color.clone() });
+  vis.add(new THREE.Mesh(R.geo.glass, glassMat));
+  const cap = new THREE.Mesh(R.geo.cap, R.mat.cap); cap.position.y = 0.34; vis.add(cap);
+  [0.24, 0.34, 0.44].forEach(y => { const r = new THREE.Mesh(R.geo.ring, R.mat.cap); r.rotation.x = Math.PI / 2; r.position.y = y; vis.add(r); });
+  const tip = new THREE.Mesh(R.geo.tip, R.mat.tip); tip.position.y = 0.12; vis.add(tip);
+  const fil = new THREE.Mesh(R.geo.fil, filMat); fil.position.y = 1.06; vis.add(fil);
+  [-0.11, 0.11].forEach(x => { const p = new THREE.Mesh(R.geo.post, R.mat.post); p.position.set(x, 0.81, 0); vis.add(p); });
+  vis.position.y = -0.07;
+  group.add(vis);
+  return { group, vis, mats: [glassMat], glass: glassMat, fil: filMat, proc: true };
+}
+function makeBulb(id) {
+  const R = scene3, THREE = R.THREE, group = new THREE.Group();
+  const disc = new THREE.Mesh(R.geo.disc, R.mat.disc); disc.position.y = -0.07; group.add(disc);
+  const ring = new THREE.Mesh(R.geo.sel, R.mat.sel); ring.rotation.x = Math.PI / 2; ring.position.y = 0.02; ring.visible = false; group.add(ring);
+  const unit = makeUnit(R.glow); group.add(unit.group);
+  const pick = new THREE.Mesh(R.geo.pick, R.mat.pick); pick.position.y = 0.95; pick.userData.id = id; group.add(pick);
+  const b = { id, group, disc, ring, unit, pick, cur: 0.2, target: 0.2, pos: [0, 0, 0], item: null };
+  if (R.template) useModel(b);
+  return b;
+}
+function dropBulb(b) {
+  scene3.root.remove(b.group);
+  b.unit.mats.forEach(m => m.dispose()); if (b.unit.fil) b.unit.fil.dispose();
+}
+/* a gentle zig-zag across the screen; a new row every five bulbs */
+function layout(n) {
+  const rows = Math.ceil(n / 5), per = Math.ceil(n / Math.max(1, rows)), out = [], k = Math.SQRT1_2;
+  for (let i = 0; i < n; i++) {
+    const row = Math.floor(i / per), col = i % per, inRow = Math.min(per, n - row * per);
+    const u = (col - (inRow - 1) / 2) * 1.75, w = row * 2.9 + (col % 2 ? 0.55 : -0.55);
+    out.push([(u + w) * k, 0, (-u + w) * k]);
+  }
+  return out;
+}
+function setLook(b) {
+  const done = b.item.state === 'done', u = b.unit;
+  b.disc.material = done ? scene3.mat.discDone : scene3.mat.disc;
+  if (u.proc) {
+    u.glass.color.set(done ? 0x717a93 : 0xffe6bd); u.glass.opacity = done ? 0.5 : 0.92;
+    u.fil.color.copy(done ? new scene3.THREE.Color(0x4a5268) : scene3.glow);
+  } else u.mats.forEach(m => { if (m.color && m.userData.base) m.color.copy(m.userData.base).multiplyScalar(done ? 0.3 : 1); });
+}
+function applyGlow(b, k) {
+  b.unit.mats.forEach(m => { m.emissive.copy(scene3.glow); m.emissiveIntensity = b.cur * (k || 1); });
+}
+function sync3D(items) {
+  const R = scene3, THREE = R.THREE, ids = new Set(items.map(i => i.id));
+  R.glow.set(GLOWS[glowIndex()][1]); R.halo.material.color.copy(R.glow); R.lamp.color.copy(R.glow);
+  R.bulbs.forEach((b, id) => { if (!ids.has(id)) { dropBulb(b); R.bulbs.delete(id); } });
+  const pos = layout(items.length), still = reduced();
+  items.forEach((it, i) => {
+    let b = R.bulbs.get(it.id), fresh = false;
+    if (!b) { b = makeBulb(it.id); R.bulbs.set(it.id, b); R.root.add(b.group); fresh = true; }
+    b.pos = pos[i]; b.group.position.set(pos[i][0], 0, pos[i][2]);
+    b.item = it; b.ring.visible = it.sel; b.target = STATE_GLOW[it.state];
+    if (fresh || still) b.cur = b.target;
+    setLook(b); applyGlow(b);
+  });
+  /* the path that joins the bulbs in day order */
+  while (R.path.children.length) { const m = R.path.children.pop(); m.geometry.dispose(); }
+  for (let i = 1; i < pos.length; i++) {
+    const a = pos[i - 1], c = pos[i], dx = c[0] - a[0], dz = c[2] - a[2], len = Math.hypot(dx, dz);
+    const seg = new THREE.Mesh(new THREE.BoxGeometry(len, 0.03, 0.2), R.mat.path);
+    seg.position.set((a[0] + c[0]) / 2, -0.13, (a[2] + c[2]) / 2); seg.rotation.y = -Math.atan2(dz, dx); R.path.add(seg);
+  }
+  const lit = items.find(i => i.state === 'focus' || i.state === 'paused');
+  R.focus = lit ? R.bulbs.get(lit.id) : null;
+  const withComp = R.focus && T.mode === 'tog';
+  R.comp.group.visible = !!withComp;
+  if (withComp) {
+    const p = R.focus.pos, k = Math.SQRT1_2;
+    R.comp.group.position.set(p[0] + 1.75 * k, 0, p[2] - 0.25 * k);
+    R.comp.glass.emissiveIntensity = T.running ? 1.5 : 0.4;
+  }
+  fitCamera(); placeLabels(); R.dirty = true;
+}
+function fitCamera() {
+  const R = scene3, THREE = R.THREE, w = R.host.clientWidth || 1, h = R.host.clientHeight || 1, aspect = w / h;
+  R.cam.updateMatrixWorld();
+  const inv = R.cam.matrixWorldInverse, v = new THREE.Vector3();
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  const pts = [];
+  R.bulbs.forEach(b => { pts.push([b.pos[0], 0, b.pos[2]], [b.pos[0], 1.85, b.pos[2]]); });
+  if (!pts.length) pts.push([0, 0, 0], [0, 1.85, 0]);
+  pts.forEach(p => {
+    v.set(p[0], p[1], p[2]).applyMatrix4(inv);
+    x0 = Math.min(x0, v.x - 1.15); x1 = Math.max(x1, v.x + 1.15); y0 = Math.min(y0, v.y - 1.35); y1 = Math.max(y1, v.y + 0.75);
+  });
+  let cw = Math.max(x1 - x0, 7.5), ch = y1 - y0;
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  if (cw / ch < aspect) cw = ch * aspect; else ch = cw / aspect;
+  R.cam.left = cx - cw / 2; R.cam.right = cx + cw / 2; R.cam.top = cy + ch / 2; R.cam.bottom = cy - ch / 2;
+  R.cam.updateProjectionMatrix();
+  R.unit = h / ch;
+}
+function placeLabels() {
+  const R = scene3, host = $('#stage-labels'), w = R.host.clientWidth, h = R.host.clientHeight, v = new R.THREE.Vector3();
+  let html = '';
+  R.bulbs.forEach(b => {
+    const it = b.item, text = it.sel ? it.title : it.state === 'done' ? '✓' : it.time;
+    if (!text) return;
+    v.set(b.pos[0], 0, b.pos[2]).project(R.cam);
+    const x = Math.min(w - 34, Math.max(34, (v.x + 1) / 2 * w)), y = (1 - v.y) / 2 * h + 0.5 * R.unit + 3;
+    html += `<span class="lab${it.sel ? ' sel' : ''}${it.state === 'done' ? ' done' : ''}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${esc(text)}</span>`;
+  });
+  host.innerHTML = html;
+}
+function loop(ts) {
+  const R = scene3;
+  R.raf = requestAnimationFrame(loop);
+  if (ui.view !== 'day' || document.hidden) return;
+  const anim = !reduced();
+  let moving = false;
+  R.bulbs.forEach(b => {
+    const d = b.target - b.cur;
+    if (Math.abs(d) > 0.004) { b.cur = anim ? b.cur + d * 0.07 : b.target; moving = true; applyGlow(b); }
+    else if (b.cur !== b.target) { b.cur = b.target; moving = true; applyGlow(b); }
+  });
+  const f = R.focus;
+  if (f) {
+    const on = f.item.state === 'focus', k = anim && on ? 1 + Math.sin(ts / 950) * 0.12 : 1;
+    if (anim && on) { applyGlow(f, k); moving = true; }
+    const lvl = Math.min(1, Math.max(0, (f.cur - 0.3) / 1.8));
+    R.halo.visible = true; R.halo.position.set(f.pos[0], 1.05, f.pos[2]);
+    R.halo.material.opacity = (0.25 + 0.6 * lvl) * (on ? k : 1); R.halo.scale.setScalar((3 + 1.6 * lvl) * (on ? k : 1));
+    R.lamp.position.set(f.pos[0], 1.5, f.pos[2]); R.lamp.intensity = 5 + 22 * lvl;
+  } else if (R.halo.visible) { R.halo.visible = false; R.lamp.intensity = 0; moving = true; }
+  if (moving || R.dirty) { R.renderer.render(R.scene, R.cam); R.dirty = false; }
+}
+
+/* optional GLB: try once; on any failure the bulbs drawn in code stay */
+async function loadModel(THREE) {
+  const R = scene3;
+  try {
+    const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+    const gltf = await new Promise((res, rej) => new GLTFLoader().load(MODEL_PATH, res, undefined, rej));
+    const src = gltf.scene, box = new THREE.Box3().setFromObject(src), size = box.getSize(new THREE.Vector3()), mid = box.getCenter(new THREE.Vector3());
+    if (!(size.y > 0)) throw new Error('empty-model');
+    let meshes = 0; src.traverse(o => { if (o.isMesh) meshes++; });
+    if (!meshes) throw new Error('no-mesh');
+    src.position.set(-mid.x, -box.min.y, -mid.z);
+    const holder = new THREE.Group(); holder.add(src); holder.scale.setScalar(1.66 / size.y);
+    R.template = holder; R.model = 'glb';
+    R.bulbs.forEach(b => { useModel(b); if (b.item) setLook(b); applyGlow(b); });
+    R.dirty = true;
+  } catch (err) { R.model = 'procedural'; R.modelErr = String((err && err.message) || err); }
+  if (ui.view === 'vision') render();
+}
+function useModel(b) {
+  const R = scene3, clone = R.template.clone(true), mats = [];
+  clone.traverse(o => {
+    if (!o.isMesh) return;
+    const many = Array.isArray(o.material);
+    const cloned = (many ? o.material : [o.material]).map(m => m.clone());
+    o.material = many ? cloned : cloned[0];
+    cloned.forEach(m => { if (m.emissive) { if (m.color) m.userData.base = m.color.clone(); mats.push(m); } });
+  });
+  if (!mats.length) return;
+  b.unit.group.remove(b.unit.vis); b.unit.glass.dispose(); b.unit.fil.dispose();
+  b.unit.group.add(clone);
+  b.unit = Object.assign(b.unit, { vis: clone, mats, proc: false });
+}
+
+/* ---------- wiring ---------- */
+function bindEvents() {
+  document.addEventListener('click', e => {
+    const el = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!el || el.disabled) return;
+    const f = ACT[el.dataset.act]; if (f) f(el.dataset, el);
+  });
+  document.addEventListener('change', e => { const el = e.target, f = el.dataset && CHG[el.dataset.chg]; if (f) f(el); });
+  document.addEventListener('input', e => { const el = e.target, f = el.dataset && BIND[el.dataset.bind]; if (f) f(el.value); });
+  document.addEventListener('submit', e => { const f = e.target.dataset && FORMS[e.target.dataset.form]; if (f) { e.preventDefault(); f(e.target, e.submitter); } });
+  document.addEventListener('keydown', e => {
+    const el = e.target;
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && el.dataset && el.dataset.enter === 'submit' && el.form) {
+      e.preventDefault();
+      if (el.form.requestSubmit) el.form.requestSubmit(); else el.form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }
+  });
+  document.addEventListener('toggle', e => { const k = e.target.dataset && e.target.dataset.keep; if (k) ui.open[k] = e.target.open; }, true);
+  window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (v && v !== ui.view && VIEWS[v] && v !== 'breath') nav(v); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { onTick(); scene3.dirty = true; } });
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)'), on = () => { paintChrome(); syncScene(); };
+    if (mq.addEventListener) mq.addEventListener('change', on); else if (mq.addListener) mq.addListener(on);
+  }
+}
+function heartbeat() {
+  const n = hm(); let changed = false;
+  if (!paused()) openTasks().forEach(x => { if (x.h === n && x.n !== dayKey()) { x.n = dayKey(); changed = true; notify(t('remind', { t: tx(x.t) })); } });
+  if (replan(true)) changed = true;
+  S.lastSeen = Date.now(); save();
+  const a = document.activeElement, typing = a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);
+  if (ui.view === 'day' && !typing && (changed || n !== heartbeat.last)) render();
+  heartbeat.last = n;
+}
+function boot() {
+  load();
+  arrive();
+  replan(true);
+  bindEvents();
+  const hash = (location.hash || '').slice(1);
+  nav(S.skipBreath ? (VIEWS[hash] && hash !== 'breath' ? hash : 'menu') : 'breath');
+  initScene();
+  heartbeat.last = hm();
+  setInterval(heartbeat, 20000);
+  window.__enfoco = { get state() { return S; }, timer: T, scene: scene3, ui };   // small debugging handle, read-only use
+}
+boot();
+</script>
+</body>
+</html>
