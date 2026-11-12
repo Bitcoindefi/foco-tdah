@@ -1,4 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Foco – calendario diario para TDAH</title>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EnFoco – calendario diario para TDAH</title>
 <style>
 body{font-family:system-ui,sans-serif;margin:0;background:#f6f4ff;color:#222}
 header{background:#5b4bdb;color:#fff;padding:16px 20px}h1{margin:0;font-size:22px}header p{margin:4px 0 0;opacity:.85}
@@ -10,7 +10,7 @@ button.alt{background:#e6e2ff;color:#3a2fa8}input,select{padding:10px;border-rad
 .tag{font-size:12px;padding:2px 8px;border-radius:8px;background:#ffe9b3;margin-left:6px}.e1{background:#c9f7d4}.e3{background:#ffc9c9}
 #streak{font-size:18px}
 </style></head><body>
-<header><h1>Foco</h1><p>Tu día, una cosa a la vez. Hecho para personas con TDAH.</p></header>
+<header><h1>EnFoco</h1><p>Tu día, una cosa a la vez. Hecho para personas con TDAH.</p></header>
 <main>
 <div class="card"><div>Ahora mismo:</div><div id="now">Nada pendiente 🎉</div><div class="big" id="timer">--:--</div>
 <button onclick="start()">Empezar</button><button class="alt" onclick="pause()">Pausa</button><button class="alt" onclick="doneNow()">Listo ✔</button><button class="alt" onclick="skip()">Más tarde</button>
@@ -43,7 +43,7 @@ function doneNow(){let c=cur();if(!c)return;c.done=true;S.streak++;pause();save(
 function skip(){let c=cur();if(!c)return;S.tasks.splice(S.tasks.indexOf(c),1);S.tasks.push(c);c.h='';pause();save();render()}
 function del(i){S.tasks.splice(i,1);save();render()}
 function energy(n){let p=S.tasks.filter(x=>!x.done&&x.e<=n);sug.textContent=p.length?'Te sugiero: '+p[0].t+' ('+p[0].m+' min)':'No hay tareas para esta energía. Tomá agua y descansá 5 min 💧'}
-function notify(msg){if(window.Notification&&Notification.permission=='granted')new Notification('Foco',{body:msg});else alert(msg)}
+function notify(msg){if(window.Notification&&Notification.permission=='granted')new Notification('EnFoco',{body:msg});else alert(msg)}
 if(window.Notification)Notification.requestPermission();
 setInterval(()=>{let d=new Date(),hm=d.toTimeString().slice(0,5);S.tasks.forEach(x=>{if(!x.done&&x.h==hm&&!x.n){x.n=1;notify('En 0 min: '+x.t+'. Respirá y empezá por el primer paso.');save()}})},20000);
 if(!S.tasks.length){S.tasks=[{t:'Tomar la medicación',m:10,e:1,h:'08:00',steps:['Agua','Tomarla','Marcar listo'],done:false},{t:'Responder mails importantes',m:25,e:2,h:'10:00',steps:['Abrir solo 3 mails','Responder','Cerrar'],done:false},{t:'Ordenar el escritorio',m:40,e:3,h:'17:00',steps:['Preparar lo necesario (5 min)','Primera parte','Pausa de 5 min','Segunda parte','Cerrar y celebrar'],done:false}];save()}
