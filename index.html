@@ -1,0 +1,51 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Foco – calendario diario para TDAH</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#f6f4ff;color:#222}
+header{background:#5b4bdb;color:#fff;padding:16px 20px}h1{margin:0;font-size:22px}header p{margin:4px 0 0;opacity:.85}
+main{max-width:720px;margin:auto;padding:16px}.card{background:#fff;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #0001}
+#now{font-size:26px;font-weight:700}.big{font-size:44px;font-weight:800;color:#5b4bdb}
+button{border:0;border-radius:10px;padding:10px 14px;margin:4px;font-size:15px;cursor:pointer;background:#5b4bdb;color:#fff}
+button.alt{background:#e6e2ff;color:#3a2fa8}input,select{padding:10px;border-radius:10px;border:1px solid #ccc;font-size:15px;margin:4px}
+.task{display:flex;align-items:center;justify-content:space-between;padding:8px;border-bottom:1px solid #eee}.done{text-decoration:line-through;opacity:.5}
+.tag{font-size:12px;padding:2px 8px;border-radius:8px;background:#ffe9b3;margin-left:6px}.e1{background:#c9f7d4}.e3{background:#ffc9c9}
+#streak{font-size:18px}
+</style></head><body>
+<header><h1>Foco</h1><p>Tu día, una cosa a la vez. Hecho para personas con TDAH.</p></header>
+<main>
+<div class="card"><div>Ahora mismo:</div><div id="now">Nada pendiente 🎉</div><div class="big" id="timer">--:--</div>
+<button onclick="start()">Empezar</button><button class="alt" onclick="pause()">Pausa</button><button class="alt" onclick="doneNow()">Listo ✔</button><button class="alt" onclick="skip()">Más tarde</button>
+<div id="steps"></div></div>
+<div class="card"><b>Agregar al día</b><br>
+<input id="t" placeholder="Ej: Ordenar la cocina" size="24"><select id="m"><option value="10">10 min</option><option value="15" selected>15 min</option><option value="25">25 min</option></select>
+<select id="e"><option value="1">Energía baja</option><option value="2" selected>Media</option><option value="3">Alta</option></select>
+<input id="h" type="time"><button onclick="add()">Agregar</button>
+<div style="font-size:13px;color:#666">Tip: las tareas de más de 25 min se parten solas en pasos chicos.</div></div>
+<div class="card"><b>Hoy</b> <span id="streak"></span><div id="list"></div></div>
+<div class="card"><b>¿Cómo está tu energía?</b><br><button class="alt" onclick="energy(1)">🔋 Baja</button><button class="alt" onclick="energy(2)">⚡ Media</button><button class="alt" onclick="energy(3)">🚀 Alta</button>
+<div id="sug" style="margin-top:6px"></div></div>
+</main>
+<script>
+let S=JSON.parse(localStorage.foco||'{"tasks":[],"streak":0}');let left=0,iv=null;
+const save=()=>localStorage.foco=JSON.stringify(S);
+function add(){let t=t_.value.trim();if(!t)return;let m=+m_.value,e=+e_.value,h=h_.value;
+ let steps=m>25?["Preparar lo necesario (5 min)","Primera parte","Pausa de 5 min","Segunda parte","Cerrar y celebrar"]:["Empezar con lo más fácil","Terminar"];
+ S.tasks.push({t,m,e,h,steps,done:false});t_.value='';save();render();}
+const [t_,m_,e_,h_]=['t','m','e','h'].map(i=>document.getElementById(i));
+function cur(){return S.tasks.filter(x=>!x.done).sort((a,b)=>(a.h||'99').localeCompare(b.h||'99'))[0]}
+function render(){let c=cur();now.textContent=c?c.t:'Nada pendiente 🎉';steps.innerHTML=c?'<ol>'+c.steps.map(s=>'<li>'+s+'</li>').join('')+'</ol>':'';
+ if(!iv){left=c?c.m*60:0;show();}
+ list.innerHTML=S.tasks.map((x,i)=>`<div class="task"><span class="${x.done?'done':''}">${x.h||'—'} · ${x.t}<span class="tag e${x.e}">${['','baja','media','alta'][x.e]}</span></span><span>${x.m} min <button class="alt" onclick="del(${i})">✕</button></span></div>`).join('')||'<i>Agregá tu primera tarea</i>';
+ streak.textContent='🔥 Racha: '+S.streak+' tareas';}
+function show(){timer.textContent=left?String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0'):'--:--'}
+function start(){if(iv||!cur())return;iv=setInterval(()=>{left--;show();if(left==Math.floor(cur().m*30))notify('Vas por la mitad, ¡seguí así!');if(left<=0){clearInterval(iv);iv=null;notify('Tiempo. ¿Terminaste o seguimos 5 min más?')}},1000)}
+function pause(){clearInterval(iv);iv=null}
+function doneNow(){let c=cur();if(!c)return;c.done=true;S.streak++;pause();save();notify('¡Bien! Una menos 🎉');render()}
+function skip(){let c=cur();if(!c)return;S.tasks.splice(S.tasks.indexOf(c),1);S.tasks.push(c);c.h='';pause();save();render()}
+function del(i){S.tasks.splice(i,1);save();render()}
+function energy(n){let p=S.tasks.filter(x=>!x.done&&x.e<=n);sug.textContent=p.length?'Te sugiero: '+p[0].t+' ('+p[0].m+' min)':'No hay tareas para esta energía. Tomá agua y descansá 5 min 💧'}
+function notify(msg){if(window.Notification&&Notification.permission=='granted')new Notification('Foco',{body:msg});else alert(msg)}
+if(window.Notification)Notification.requestPermission();
+setInterval(()=>{let d=new Date(),hm=d.toTimeString().slice(0,5);S.tasks.forEach(x=>{if(!x.done&&x.h==hm&&!x.n){x.n=1;notify('En 0 min: '+x.t+'. Respirá y empezá por el primer paso.');save()}})},20000);
+if(!S.tasks.length){S.tasks=[{t:'Tomar la medicación',m:10,e:1,h:'08:00',steps:['Agua','Tomarla','Marcar listo'],done:false},{t:'Responder mails importantes',m:25,e:2,h:'10:00',steps:['Abrir solo 3 mails','Responder','Cerrar'],done:false},{t:'Ordenar el escritorio',m:40,e:3,h:'17:00',steps:['Preparar lo necesario (5 min)','Primera parte','Pausa de 5 min','Segunda parte','Cerrar y celebrar'],done:false}];save()}
+render();
+</script></body></html>
