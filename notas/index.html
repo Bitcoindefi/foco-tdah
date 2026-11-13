@@ -283,7 +283,7 @@ el.scrollIntoView({behavior:'smooth',block:'start'});
 try{new BroadcastChannel('enfoco-deck').onmessage=function(e){show(e.data)}}catch(e){}
 try{var es=new EventSource('https://ntfy.sh/enfoco-deck-lc7q/sse');es.onmessage=function(e){try{show(JSON.parse(e.data).message)}catch(x){}}}catch(e){}
 addEventListener('storage',function(e){if(e.key==='enfoco-slide'&&e.newValue)show(e.newValue.split(':')[0])});
-function send(m){try{fetch('https://ntfy.sh/enfoco-ctl-lc7q',{method:'POST',body:m})}catch(e){}}
+function send(m){try{(window.__cb=window.__cb||new BroadcastChannel('enfoco-ctl')).postMessage(m)}catch(e){}try{localStorage.setItem('enfoco-ctl',m+':'+Date.now())}catch(e){}try{fetch('https://ntfy.sh/enfoco-ctl-lc7q',{method:'POST',body:m})}catch(e){}}
 var bar=document.createElement('div');bar.id='ctlbar';bar.innerHTML='<button type="button" id="cprev">&#9664; Prev</button><span id="cnum">Slide '+(last||1)+'</span><button type="button" id="cnext">Next &#9654;</button>';document.body.appendChild(bar);
 document.getElementById('cprev').onclick=function(){send('prev')};document.getElementById('cnext').onclick=function(){send('next')};
 setInterval(function(){document.getElementById('cnum').textContent='Slide '+(last||'?')},500);

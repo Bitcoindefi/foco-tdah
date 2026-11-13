@@ -640,6 +640,10 @@ function go(i,fromHash){
 }
 function fromHash(){var n=parseInt((location.hash||'').slice(1),10);go(isNaN(n)?0:n-1,true)}
 window.addEventListener('hashchange',fromHash);
+function ctlDo(m){var n=m==='next'?cur+1:m==='prev'?cur-1:parseInt(m,10)-1;if(!isNaN(n)&&n!==cur)go(n)}
+var lastCtl=0;function ctlOnce(m,t){if(t&&t===lastCtl)return;lastCtl=t;ctlDo(m)}
+try{new BroadcastChannel('enfoco-ctl').onmessage=function(e){ctlDo(e.data)}}catch(e){}
+addEventListener('storage',function(e){if(e.key==='enfoco-ctl'&&e.newValue){var p=e.newValue.split(':');ctlOnce(p[0],p[1])}});
 try{var ctl=new EventSource('https://ntfy.sh/enfoco-ctl-lc7q/sse');ctl.onmessage=function(e){try{var m=JSON.parse(e.data).message;var n=m==='next'?cur+1:m==='prev'?cur-1:parseInt(m,10)-1;if(!isNaN(n)&&n!==cur)go(n)}catch(x){}}}catch(e){}
 document.getElementById('prev').onclick=function(e){e.stopPropagation();go(cur-1)};
 document.getElementById('next').onclick=function(e){e.stopPropagation();go(cur+1)};
