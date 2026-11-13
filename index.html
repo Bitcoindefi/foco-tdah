@@ -643,7 +643,7 @@ pt: {
   ab_l2: "Ainda não foi testado com pessoas com PHDA.",
   ab_l3: "A cena 3D precisa de WebGL e de rede para carregar a biblioteca. Sem isso, aparece a vista simples.",
   ab_more: "Cada funcionalidade tem na app uma nota «Porquê?», com fontes. Há mais contexto no README do repositório.",
-  ab_repo: "Ver o repositório",
+  ab_deck: "Apresentação (EN)", ab_repo: "Ver o repositório",
   ab_cover: "Ecrã inicial",
   ab_team: "Equipa EnFoco: Leonardo Cagliero e Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, com a Brainstorm.",
   scene_code: "Cena 3D ativa. Todos os modelos são desenhados por código.",
@@ -807,7 +807,7 @@ en: {
   ab_l2: "It has not yet been tested with people with ADHD.",
   ab_l3: "The 3D scene needs WebGL and a network to load the library. Without them, the simple view appears.",
   ab_more: "Each feature has a “Why?” note in the app, with sources. There is more context in the repository's README.",
-  ab_repo: "See the repository",
+  ab_deck: "Pitch deck", ab_repo: "See the repository",
   ab_cover: "Start screen",
   ab_team: "Team EnFoco: Leonardo Cagliero and Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, with Brainstorm.",
   scene_code: "3D scene active. Every model is drawn in code.",
@@ -1251,7 +1251,7 @@ function vAbout() {
       <label class="switch"><input type="checkbox" data-chg="breathOn"${S.skipBreath ? '' : ' checked'}><i aria-hidden="true"></i><span>${t('ab_breath')}</span></label></section>
     <section class="sec"><h2>${t('ab_limits')}</h2><ul class="bullets"><li>${t('ab_l1')}</li><li>${t('ab_l2')}</li><li>${t('ab_l3')}</li></ul>
       <p class="hint">${sceneStatus()}</p>
-      <p class="hint">${t('ab_more')} <a href="https://github.com/Bitcoindefi/foco-tdah" target="_blank" rel="noopener noreferrer">${t('ab_repo')}</a></p></section>
+      <p class="hint">${t('ab_more')} <a href="https://github.com/Bitcoindefi/foco-tdah" target="_blank" rel="noopener noreferrer">${t('ab_repo')}</a> · <a href="presentacion/">${t('ab_deck')}</a></p></section>
     <div class="pair"><button type="button" class="btn secondary" data-act="nav" data-v="cover">${t('ab_cover')}</button></div>
     <p class="hint">${t('ab_team')}</p>`;
 }

@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en" data-phase="night">
+<head>
+<meta charset="utf-8">
+<script>/* relative paths need a trailing slash: /presentacion -> /presentacion/ */
+(function(){var p=location.pathname;if(!/\/$/.test(p)&&!/\.[a-z0-9]+$/i.test(p)){location.replace(p+'/'+location.search+location.hash)}})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>EnFoco · Pitch deck</title>
+<meta name="description" content="EnFoco: one task, one light on. A focus web app for adults with ADHD. Pitch deck.">
+<meta name="theme-color" content="#0c1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 80%22%3E%3Cpath fill=%22%23ffc15e%22 d=%22M32 4 52 14 58 34 46 52H18L6 34 12 14z%22/%3E%3Cpath fill=%22%239aa3b8%22 d=%22M20 54H44L41 67H23z%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<style>
+/* Same tokens as the app (index.html): night by default, morning and afternoon palettes, amber only for what is lit */
+:root,[data-phase="night"]{
+  --bg:#0c1220; --raise:#121a2d; --raise-2:#18223a; --line:#222d47; --line-2:#34425f;
+  --text:#edf0f8; --muted:#a2adc6; --faint:#7785a3;
+  --accent:#ffc15e; --accent-text:#ffd08a; --accent-ink:#1d1503; --wash:rgba(255,193,94,.12);
+  --wd-tone:#6e5446; --wd-rim:#221b1a; --wd-ink:#f5e9d6; --wd-ink2:#d6c3a8; --wd-acc:#ffd08a; --wd-line:rgba(255,230,200,.16);
+  --st-face:#2a3146; --st-rim:#1a1f30; --st-ink:#edf0f8; --st-ink2:#aab4cc; --st-acc:#ffd08a; --st-line:rgba(220,230,255,.14);
+  --sky:radial-gradient(120% 75% at 50% 18%,#2a3558 0%,#161d33 52%,#0a0e19 100%);
+  --h1:#1b2b33; --h2:#21403d; --h3:#16242b; --h4:#2a3a4a;
+  --stars:1; --chip:rgba(18,26,45,.78);
+}
+[data-phase="morning"]{
+  --bg:#f3e7d6; --raise:#fff8ee; --raise-2:#fbf0e1; --line:#e3d2bb; --line-2:#cdb89c;
+  --text:#2a2028; --muted:#625560; --faint:#7f7078;
+  --accent:#f0a22e; --accent-text:#8a4700; --wash:rgba(240,162,46,.16);
+  --wd-tone:#ffffff; --wd-rim:#8a6440; --wd-ink:#2a1809; --wd-ink2:#4a2f17; --wd-acc:#5a2a00; --wd-line:rgba(60,30,8,.22);
+  --st-face:#e4dccd; --st-rim:#b3a894; --st-ink:#2c2730; --st-ink2:#544b55; --st-acc:#7a3a00; --st-line:rgba(40,30,30,.16);
+  --sky:linear-gradient(180deg,#a9cbe3 0%,#cfdde6 30%,#f7d8bb 58%,#f3e7d6 100%);
+  --h1:#9cc27a; --h2:#86b46a; --h3:#b6cf8e; --h4:#e2c99a;
+  --stars:0; --chip:rgba(255,248,238,.8);
+}
+[data-phase="afternoon"]{
+  --bg:#f6e3bf; --raise:#fffaf0; --raise-2:#fdf1da; --line:#e6cf9f; --line-2:#cfae73;
+  --text:#241a10; --muted:#5b4831; --faint:#7d6849;
+  --accent:#f0a22e; --accent-text:#7f4300; --wash:rgba(240,162,46,.18);
+  --wd-tone:#f4e2cf; --wd-rim:#7b5530; --wd-ink:#1f1006; --wd-ink2:#3d2410; --wd-acc:#4a1f00; --wd-line:rgba(50,22,0,.24);
+  --st-face:#dccfb3; --st-rim:#a99a7c; --st-ink:#261f16; --st-ink2:#4f4230; --st-acc:#6e3400; --st-line:rgba(50,35,10,.18);
+  --sky:linear-gradient(180deg,#5fa9db 0%,#9fd0ea 34%,#f3e2b4 70%,#f6e3bf 100%);
+  --h1:#6aa84a; --h2:#5fa043; --h3:#86bd5c; --h4:#e8c98a;
+  --stars:0; --chip:rgba(255,250,240,.82);
+}
+:root{
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:64px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font:400 clamp(15px,1.15vw + 6px,19px)/1.5 var(--body);overflow:hidden;-webkit-font-smoothing:antialiased;transition:background-color 1.2s ease,color 1.2s ease}
+a{color:inherit}
+:focus-visible{outline:2px solid #a9c1ff;outline-offset:3px;border-radius:8px}
+svg{display:block}
+
+/* ---------- the stage: sky, faceted hills, stars ---------- */
+.sky{position:fixed;inset:0;background:var(--sky);transition:opacity 1.2s;z-index:0}
+.stars{position:fixed;inset:0;z-index:0;opacity:var(--stars);transition:opacity 1.2s;pointer-events:none;
+  background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff8 50%,transparent 51%),radial-gradient(1.2px 1.2px at 32% 9%,#fff7 50%,transparent 51%),radial-gradient(1.6px 1.6px at 58% 22%,#fff9 50%,transparent 51%),radial-gradient(1.2px 1.2px at 77% 12%,#fff6 50%,transparent 51%),radial-gradient(1.4px 1.4px at 90% 30%,#fff8 50%,transparent 51%),radial-gradient(1.1px 1.1px at 44% 38%,#fff5 50%,transparent 51%),radial-gradient(1.3px 1.3px at 6% 44%,#fff6 50%,transparent 51%),radial-gradient(1.2px 1.2px at 68% 46%,#fff5 50%,transparent 51%),radial-gradient(1.5px 1.5px at 24% 58%,#fff4 50%,transparent 51%),radial-gradient(1.1px 1.1px at 86% 60%,#fff5 50%,transparent 51%)}
+.flies{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--stars);transition:opacity 1.2s}
+.flies i{position:absolute;width:6px;height:6px;border-radius:50%;background:#d8ff8a;box-shadow:0 0 14px 6px rgba(190,255,110,.35);animation:fly 9s ease-in-out infinite alternate}
+@keyframes fly{0%{transform:translate(0,0);opacity:.25}50%{opacity:1}100%{transform:translate(40px,-30px);opacity:.35}}
+.hills{position:fixed;left:0;right:0;bottom:0;height:24vh;z-index:0;pointer-events:none}
+.hills polygon{transition:fill 1.2s}
+
+/* ---------- slides ---------- */
+.deck{position:relative;z-index:1;height:100%}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:clamp(64px,8vh,88px) clamp(18px,5vw,72px) clamp(84px,11vh,104px);
+  opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease,visibility 0s .45s;color:var(--text)}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .45s ease,transform .45s ease}
+.slide>.in{width:100%;max-width:1220px;max-height:100%}
+@media (prefers-reduced-motion:reduce){.slide{transition:none;transform:none}.flies i{animation:none}}
+
+/* ---------- type ---------- */
+h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;margin:0;line-height:1.06}
+h1{font-size:clamp(44px,6.6vw,104px);font-weight:800;letter-spacing:-.035em}
+h2{font-size:clamp(30px,3.6vw,56px);font-weight:750}
+h3{font-size:clamp(18px,1.5vw,24px);font-weight:700;letter-spacing:-.01em}
+p{margin:0}
+.kicker{font:700 clamp(12px,.9vw,14px)/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-text);margin-bottom:var(--s3);display:flex;align-items:center;gap:10px}
+.kicker .n{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:9px;background:var(--wash);border:1.5px solid color-mix(in srgb,var(--accent) 45%,transparent);letter-spacing:0}
+.lede{font-size:clamp(17px,1.45vw,23px);color:var(--muted);max-width:60ch;margin-top:var(--s4)}
+.tag{color:var(--accent-text);font:700 clamp(20px,2vw,30px)/1.2 var(--display);letter-spacing:-.01em}
+.small{font-size:.82em;color:var(--muted)}
+.src{font-size:.74em;color:var(--faint);margin-top:var(--s2)}
+.src a{color:inherit;text-underline-offset:3px}
+.hl{color:var(--accent-text)}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:12px;background:var(--chip);border:1.5px solid var(--line);font:600 .8em var(--display);color:var(--text);backdrop-filter:blur(8px)}
+
+/* ---------- surfaces: the wooden board and the stone slab of the app ---------- */
+.wood{position:relative;color:var(--wd-ink);border:6px solid var(--wd-rim);border-radius:16px 22px 14px 20px;padding:clamp(16px,1.8vw,26px) clamp(18px,2vw,30px);
+  background-color:var(--wd-tone);background-image:repeating-linear-gradient(180deg,transparent 0 58px,color-mix(in srgb,var(--wd-line) 55%,transparent) 58px 60px),url(img/wood.jpg);background-size:auto,300px;background-blend-mode:normal,multiply;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.16),inset 0 -3px 0 rgba(0,0,0,.18),0 22px 34px -18px rgba(0,0,0,.55)}
+.wood::before,.wood::after{content:"";position:absolute;top:9px;width:7px;height:7px;border-radius:50%;background:#2a1f1a;box-shadow:0 1px 0 rgba(255,255,255,.25)}
+.wood::before{left:10px}.wood::after{right:10px}
+.wood .muted{color:var(--wd-ink2)} .wood .acc{color:var(--wd-acc)}
+.stone{position:relative;color:var(--st-ink);background:var(--st-face);border:6px solid var(--st-rim);border-radius:12px;padding:clamp(14px,1.6vw,24px) clamp(16px,1.8vw,26px);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.12),0 22px 34px -18px rgba(0,0,0,.5)}
+.stone .muted{color:var(--st-ink2)} .stone .acc{color:var(--st-acc)}
+.wood p+p,.stone p+p{margin-top:var(--s2)}
+.wood h3,.stone h3{margin-bottom:6px}
+
+/* ---------- buttons, same as the app ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 20px;border-radius:14px;border:1.5px solid transparent;font:600 1rem/1.15 var(--display);text-decoration:none;cursor:pointer;background:none;color:var(--text)}
+.btn svg{width:20px;height:20px}
+.btn.primary{color:var(--accent-ink);background:linear-gradient(158deg,#ffd992 0%,#ffc15e 46%,#f6ae3f 46.4%,#f0a22e 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 0 rgba(120,60,0,.22),0 10px 24px -14px rgba(160,80,0,.9)}
+.btn.primary:hover{transform:translateY(-1px)}
+.btn.secondary{border-color:var(--line-2);background:var(--chip)}
+
+/* ---------- layouts ---------- */
+.grid{display:grid;gap:clamp(12px,1.4vw,20px)}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(20px,3vw,48px);align-items:center}
+.mt{margin-top:clamp(16px,2.4vh,28px)}
+.shot{width:100%;border-radius:14px;border:5px solid var(--st-rim);box-shadow:0 24px 40px -20px rgba(0,0,0,.6);display:block;background:var(--st-face)}
+.logo{width:clamp(44px,5vw,78px);height:auto}
+.wordmark{display:flex;align-items:center;gap:clamp(10px,1.2vw,18px)}
+ul.ticks{list-style:none;margin:0;padding:0}
+ul.ticks li{position:relative;padding-left:26px;margin:6px 0}
+ul.ticks li::before{content:"";position:absolute;left:2px;top:.5em;width:10px;height:10px;border-radius:3px;transform:rotate(45deg);background:var(--accent)}
+.wood ul.ticks li::before{background:var(--wd-acc)}
+.stone ul.ticks li::before{background:var(--st-acc)}
+ul.ticks.x li::before{background:none;border:2px solid currentColor;opacity:.6;border-radius:50%;transform:none;width:9px;height:9px}
+
+/* title */
+.title-grid{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:clamp(20px,4vw,60px)}
+.hero3d{position:relative;aspect-ratio:1/1;width:100%;max-width:520px;justify-self:center}
+.hero3d canvas,.hero3d img{position:absolute;inset:0;width:100%;height:100%}
+.hero3d img{object-fit:contain;opacity:1;transition:opacity .6s;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
+#models3d img{-webkit-mask-image:none;mask-image:none}
+.hero3d.live img{opacity:0}
+.glow{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(255,206,110,.42),rgba(255,193,94,0) 65%);filter:blur(10px)}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:var(--s5)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.2vw,18px)}
+.step figure{margin:0}
+.step img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:0 0;border-radius:10px;border:4px solid var(--st-rim);display:block}
+.step .num{font:800 clamp(28px,2.6vw,40px)/1 var(--display);color:var(--accent-text)}
+.step h3{margin:8px 0 4px}
+.step p{font-size:.88em;color:var(--muted)}
+
+/* evidence table */
+table.ev{width:100%;border-collapse:collapse;font-size:clamp(13px,.95vw,16px)}
+table.ev th{font:700 .78em var(--display);letter-spacing:.12em;text-transform:uppercase;text-align:left;color:var(--st-ink2);padding:6px 10px;border-bottom:2px solid var(--st-line)}
+table.ev td{padding:9px 10px;border-bottom:1px solid var(--st-line);vertical-align:top}
+table.ev td:first-child{font-family:var(--display);font-weight:700;width:22%}
+table.ev td:nth-child(2){width:30%}
+table.ev a{color:var(--st-acc);text-underline-offset:3px}
+
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.2vw,16px);position:relative}
+.road::before{content:"";position:absolute;left:4%;right:4%;top:22px;height:3px;background:repeating-linear-gradient(90deg,var(--accent) 0 10px,transparent 10px 18px);opacity:.7}
+.ph{position:relative;padding-top:52px}
+.ph .dot{position:absolute;top:6px;left:12px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--raise);border:2px solid var(--accent);font:800 15px var(--display);color:var(--accent-text)}
+.ph.now .dot{background:var(--accent);color:var(--accent-ink);box-shadow:0 0 0 6px var(--wash),0 0 26px rgba(255,193,94,.7)}
+.ph .when{font:700 .74em var(--display);letter-spacing:.1em;text-transform:uppercase}
+.ph h3{margin:2px 0 8px}
+.ph ul.ticks li{font-size:.86em;margin:4px 0}
+.vision-q{font:700 clamp(20px,2.1vw,32px)/1.2 var(--display);letter-spacing:-.015em;max-width:30ch}
+.guard{display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--s4)}
+
+/* limits */
+.lim{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.2vw,16px)}
+.lim .stone h3,.lim .wood h3{display:flex;gap:10px;align-items:baseline}
+.lim .k{font:800 .8em var(--display);color:var(--st-acc);min-width:1.6em}
+.lim p{font-size:.86em}
+.lim .fix{font-size:.78em;margin-top:8px;padding-top:8px;border-top:1px dashed var(--st-line)}
+
+/* next steps */
+table.ns{width:100%;border-collapse:collapse;font-size:clamp(12.5px,.92vw,15.5px)}
+table.ns th{font:700 .76em var(--display);letter-spacing:.12em;text-transform:uppercase;text-align:left;padding:6px 10px;color:var(--st-ink2);border-bottom:2px solid var(--st-line)}
+table.ns td{padding:9px 10px;border-bottom:1px solid var(--st-line);vertical-align:top}
+table.ns td:nth-child(3){color:var(--st-ink2)}
+table.ns td:first-child{font:800 1em var(--display);white-space:nowrap;color:var(--st-acc)}
+table.ns td:nth-child(2) b{font-family:var(--display)}
+.nstar{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.metric{font:800 clamp(22px,2.2vw,34px)/1 var(--display);color:var(--wd-acc)}
+
+/* bulb lights row, the calendar idea */
+.lights{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.lights i{width:12px;height:12px;transform:rotate(45deg);border-radius:2px;background:#ffd08a;box-shadow:0 0 10px rgba(255,200,100,.8)}
+.lights i.off{background:transparent;border:1.5px solid currentColor;opacity:.4;box-shadow:none}
+
+/* ---------- chrome ---------- */
+.top{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));pointer-events:none}
+.top>*{pointer-events:auto}
+.top .grow{flex:1}
+.top .brand{display:flex;align-items:center;gap:8px;font:800 17px var(--display);text-decoration:none}
+.top .brand svg{width:22px;height:28px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;padding:0 max(14px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+.nav{display:flex;align-items:center;gap:6px;padding:6px;border-radius:16px;background:var(--chip);border:1.5px solid var(--line);backdrop-filter:blur(10px)}
+.nav button,.nav a{min-width:44px;min-height:44px;display:inline-grid;place-items:center;border:0;background:none;color:var(--text);border-radius:12px;cursor:pointer;font:600 14px var(--display);text-decoration:none;padding:0 10px}
+.nav button:hover,.nav a:hover{background:var(--wash)}
+.nav svg{width:20px;height:20px}
+.count{font:700 14px var(--display);min-width:64px;text-align:center;font-variant-numeric:tabular-nums}
+.prog{flex:1;display:flex;gap:5px;align-items:center;justify-content:center}
+.prog button{width:14px;height:14px;padding:0;border:1.5px solid var(--faint);background:transparent;transform:rotate(45deg);border-radius:3px;cursor:pointer;transition:background .3s,box-shadow .3s,border-color .3s}
+.prog button.lit{background:#ffd08a;border-color:#ffd08a;box-shadow:0 0 10px rgba(255,200,100,.75)}
+.prog button.cur{background:#ffc15e;border-color:#fff3d6;box-shadow:0 0 0 3px var(--wash),0 0 16px rgba(255,193,94,.95)}
+.hint{position:fixed;right:16px;top:64px;z-index:5;font-size:12px;color:var(--faint);transition:opacity .6s}
+
+/* ---------- responsive: stack on narrow screens and let a slide scroll ---------- */
+@media (max-width:980px){
+  .g4,.steps,.road{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .road::before{display:none}
+  .lim{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:760px),(max-height:560px) and (max-width:1100px){
+  .slide{align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide>.in{max-height:none}
+  .split,.title-grid,.g2,.g3,.nstar{grid-template-columns:1fr}
+  .hero3d{max-width:300px;order:-1}
+  .prog{display:none}
+  .hint{display:none}
+  table.ev td:first-child,table.ev td:nth-child(2){width:auto}
+}
+@media (max-width:520px){ .g4,.steps,.road,.lim{grid-template-columns:1fr} .top .brand span{display:none} }
+@media print{body{overflow:visible}.slide{position:relative;opacity:1;visibility:visible;transform:none;page-break-after:always;min-height:100vh}.bar,.top,.hint{display:none}}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true"></div>
+<div class="stars" aria-hidden="true"></div>
+<div class="flies" aria-hidden="true"><i style="left:8%;top:62%"></i><i style="left:22%;top:30%;animation-delay:-3s"></i><i style="left:71%;top:68%;animation-delay:-5s"></i><i style="left:88%;top:40%;animation-delay:-2s"></i><i style="left:46%;top:76%;animation-delay:-7s"></i></div>
+<svg class="hills" id="hills" viewBox="0 0 1600 260" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+<header class="top">
+  <a class="brand" href="../" title="Open the EnFoco app"><svg viewBox="0 0 64 80" aria-hidden="true"><path fill="#ffe2a6" d="M32 4 52 14 32 30z"/><path fill="#ffc15e" d="M52 14 58 34 32 30z"/><path fill="#f0a22e" d="M58 34 46 52 32 30z"/><path fill="#e08e1a" d="M46 52H18L32 30z"/><path fill="#f7b243" d="M18 52 6 34 32 30z"/><path fill="#ffd07a" d="M6 34 12 14 32 30z"/><path fill="#ffedc7" d="M12 14 32 4 32 30z"/><path fill="#9aa3b8" d="M20 54H44L41 67H23z"/><path fill="#5d6780" d="M25 69H39L35 77H29z"/></svg><span>EnFoco</span></a>
+  <span class="grow"></span>
+  <span class="chip" id="phase-chip">Night</span>
+</header>
+<p class="hint" id="hint">← → or swipe · N notes · F full screen</p>
+
+<main class="deck" id="deck" aria-live="polite">
+
+<!-- 1 · Title -->
+<section class="slide" data-phase="night" data-title="EnFoco" aria-label="1. EnFoco">
+ <div class="in title-grid">
+  <div>
+   <p class="kicker">Pitch deck · Portugal Tech Week · Hackathon for a Cause</p>
+   <div class="wordmark"><svg class="logo" viewBox="0 0 64 80" aria-hidden="true"><path fill="#ffe2a6" d="M32 4 52 14 32 30z"/><path fill="#ffc15e" d="M52 14 58 34 32 30z"/><path fill="#f0a22e" d="M58 34 46 52 32 30z"/><path fill="#e08e1a" d="M46 52H18L32 30z"/><path fill="#f7b243" d="M18 52 6 34 32 30z"/><path fill="#ffd07a" d="M6 34 12 14 32 30z"/><path fill="#ffedc7" d="M12 14 32 4 32 30z"/><path fill="#9aa3b8" d="M20 54H44L41 67H23z"/><path fill="#5d6780" d="M25 69H39L35 77H29z"/></svg><h1>EnFoco</h1></div>
+   <p class="tag" style="margin-top:14px">One task. One light on.</p>
+   <p class="lede">A focus web app for adults with ADHD. Pick one thing, take a tiny first step, turn the light on, and keep it on while you do it. No streaks, no guilt, no data leaving your device.</p>
+   <div class="meta">
+     <a class="btn primary" href="../">Try the live app <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+     <span class="chip">Leonardo Cagliero · Founder</span>
+     <span class="chip">With Brainstorm, Portuguese ADHD association</span>
+   </div>
+  </div>
+  <div class="hero3d" id="hero3d"><div class="glow"></div><img src="img/foquito-island-night.webp" alt="Foquito, the lightbulb mascot of EnFoco, lit on its low-poly island"><canvas id="c-hero" aria-hidden="true"></canvas></div>
+ </div>
+</section>
+
+<!-- 2 · Problem -->
+<section class="slide" data-phase="night" data-title="The problem" aria-label="2. The problem">
+ <div class="in">
+  <p class="kicker"><span class="n">2</span>The problem</p>
+  <h2>Knowing what to do isn't the hard part.<br><span class="hl">Starting, and staying, is.</span></h2>
+  <div class="grid g3 mt">
+   <div class="stone"><h3>Executive function</h3><p class="muted">Barkley describes ADHD as a problem of behavioural inhibition and the executive functions it supports: working memory, self-regulation, getting started.</p><p class="src"><a href="https://pubmed.ncbi.nlm.nih.gov/9000892/" target="_blank" rel="noopener">Barkley (1997), Psychol Bull</a></p></div>
+   <div class="stone"><h3>Time is felt, not seen</h3><p class="muted">Time is hard to feel and to steer toward. Interviewees plan for rare hyperfocus days and feel little urgency until the deadline is on top of them.</p><p class="src"><a href="https://pubmed.ncbi.nlm.nih.gov/9276836/" target="_blank" rel="noopener">Barkley (1997)</a> · <a href="https://arxiv.org/abs/2603.17258" target="_blank" rel="noopener">Chen, Meng &amp; Nie (2026)</a></p></div>
+   <div class="stone"><h3>Shame, not laziness</h3><p class="muted">In interviews with adults with ADHD, initiation block is central. When a plan breaks they describe shame and self-blame, and they reject tools that feel like surveillance.</p><p class="src"><a href="https://arxiv.org/abs/2603.17258" target="_blank" rel="noopener">Chen, Meng &amp; Nie (2026), arXiv 2603.17258, preprint</a></p></div>
+  </div>
+  <div class="wood mt"><h3>What most productivity tools add instead</h3>
+   <div class="grid g3" style="margin-top:6px">
+    <p><b>Longer lists</b> <span class="muted">→ a wall of overdue items.</span></p>
+    <p style="margin:0"><b>Streaks</b> <span class="muted">→ one blank day erases the rest.</span></p>
+    <p style="margin:0"><b>Tracking</b> <span class="muted">→ the feeling of being watched and judged.</span></p>
+   </div>
+   <p class="src" style="color:var(--wd-ink2)">Our design reading of the sources above. NICE NG87 recommends structure in daily life and environmental changes, such as shorter focus periods with movement breaks. <a href="https://www.nice.org.uk/guidance/NG87" target="_blank" rel="noopener">NICE NG87</a></p>
+  </div>
+ </div>
+</section>
+
+<!-- 3 · Solution -->
+<section class="slide" data-phase="morning" data-title="The solution" aria-label="3. The solution">
+ <div class="in split">
+  <div>
+   <p class="kicker"><span class="n">3</span>The solution</p>
+   <h2>One task now.<br>One light on while you do it.</h2>
+   <p class="lede">EnFoco does one thing: it helps a person start one task and stay with it. Everything else was cut. Version 3 had about twenty features. Version 4 kept only what serves "start, and stay".</p>
+   <div class="grid g2 mt">
+    <div class="wood"><h3>One thing at a time</h3><p class="muted">The screen asks only: what are you doing now?</p></div>
+    <div class="wood"><h3>A tiny first step</h3><p class="muted">Suggested from your words, always editable.</p></div>
+    <div class="wood"><h3>A light, not a judge</h3><p class="muted">If you drift, the light dims. One tap brings it back.</p></div>
+    <div class="wood"><h3>Private by default</h3><p class="muted">Everything stays in your browser. No account.</p></div>
+   </div>
+  </div>
+  <img class="shot" src="img/cover-morning.webp" alt="The EnFoco cover in the morning scene: Foquito on its island, 'One task. One light on.' and a Start button" loading="lazy">
+ </div>
+</section>
+
+<!-- 4 · How it works -->
+<section class="slide" data-phase="afternoon" data-title="How it works" aria-label="4. How it works">
+ <div class="in">
+  <p class="kicker"><span class="n">4</span>How it works · the demo</p>
+  <h2>Type, Enter, Enter. <span class="hl">The light is on.</span></h2>
+  <div class="steps mt">
+   <div class="step"><figure><img src="img/home-night.webp" alt="Pick screen: What are you doing now? with three tasks to pick, badged Recommended today" loading="lazy"></figure><p class="num">1</p><h3>Pick one task</h3><p>Write it, or tap one of the first three. Today's recommended tasks rotate daily.</p></div>
+   <div class="step"><figure><img src="img/ready.webp" alt="Ready screen: tiny first step, 2, 10 or 25 minutes, Light up and start" loading="lazy"></figure><p class="num">2</p><h3>Tiny first step</h3><p>"Open the message and write only the first sentence. It can be ugly." Choose 2, 10 or 25 min.</p></div>
+   <div class="step"><figure><img src="img/focus.webp" alt="Focus screen: a big 01:55 timer on the wooden board and Foquito lit" loading="lazy"></figure><p class="num">3</p><h3>The light stays on</h3><p>A big, plain timer. Foquito glows while you work. Pause or stop any time.</p></div>
+   <div class="step"><figure><img src="img/done.webp" alt="Done screen: the light went to 13 November on the calendar, next task one tap away" loading="lazy"></figure><p class="num">4</p><h3>Done: light to today</h3><p>The light flies to today on the calendar. The next task is one tap away.</p></div>
+  </div>
+  <p class="small mt">Screens from the live app in English. Sample list and history are made-up demo data. Live: <a href="../">enfoco-app.vercel.app</a></p>
+ </div>
+</section>
+
+<!-- 5 · No guilt -->
+<section class="slide" data-phase="night" data-title="No guilt by design" aria-label="5. No guilt by design">
+ <div class="in split">
+  <img class="shot" src="img/nudge-night.webp" alt="Night scene: the timer board says 'You were away and the light dimmed. One tap and it comes back on.' with an I'm here button" loading="lazy">
+  <div>
+   <p class="kicker"><span class="n">5</span>No guilt by design</p>
+   <h2>A light that dims.<br><span class="hl">Never a red alert.</span></h2>
+   <div class="grid mt">
+    <div class="wood"><h3>The drift nudge</h3><p class="muted">Tab hidden for 15 s, or 4 min without a touch: Foquito dims and asks for one tap. Nothing is counted as a failure, and session time still counts.</p></div>
+    <div class="wood"><h3>Lights, not streaks</h3><p class="muted">Each day earns a light per 10 min of focus started and per task done, up to twelve. A blank day erases nothing. Nothing is ever "overdue".</p><div class="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><i class="off"></i><i class="off"></i><i class="off"></i><i class="off"></i><i class="off"></i></div></div>
+    <div class="wood"><h3>Local only</h3><p class="muted">One localStorage object. No account, server or analytics. Export and delete are one tap in "About".</p></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 6 · Evidence -->
+<section class="slide" data-phase="morning" data-title="Why it works" aria-label="6. Why it works">
+ <div class="in">
+  <p class="kicker"><span class="n">6</span>Why it should work · the evidence behind each choice</p>
+  <h2>Every feature has a <span class="hl">"Why?"</span> with its sources, inside the app.</h2>
+  <div class="stone mt" style="padding-top:12px;padding-bottom:12px">
+   <table class="ev">
+    <thead><tr><th>Design choice</th><th>Source</th><th>What it supports</th></tr></thead>
+    <tbody>
+     <tr><td>One task on screen</td><td><a href="https://pubmed.ncbi.nlm.nih.gov/9000892/" target="_blank" rel="noopener">Barkley 1997</a>; <a href="https://arxiv.org/abs/2603.17258" target="_blank" rel="noopener">Chen et al. 2026</a></td><td>Lower load on executive functions. Initiation block is central.</td></tr>
+     <tr><td>Tiny first step</td><td><a href="https://www.socmot.uni-konstanz.de/sites/default/files/99_Gollwitzer_Implementation_Intentions.pdf" target="_blank" rel="noopener">Gollwitzer 1999</a>; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3641654/" target="_blank" rel="noopener">Safren et al. 2010, JAMA</a></td><td>Concrete if-then plans help people start. CBT for adult ADHD breaks tasks into steps.</td></tr>
+     <tr><td>2 / 10 / 25 min, timer in view</td><td><a href="https://pubmed.ncbi.nlm.nih.gov/9276836/" target="_blank" rel="noopener">Barkley 1997</a>; <a href="https://www.nice.org.uk/guidance/NG87" target="_blank" rel="noopener">NICE NG87</a>; <a href="https://adhdireland.ie/wp-content/uploads/2024/09/Erasmus-Shared-Practices-1.pdf" target="_blank" rel="noopener">ADHD-EU guide 2024</a></td><td>Make time visible. Shorter focus periods with breaks.</td></tr>
+     <tr><td>Dims without guilt</td><td><a href="https://arxiv.org/abs/2603.17258" target="_blank" rel="noopener">Chen et al. 2026</a></td><td>People describe shame when plans fail and reject surveillance.</td></tr>
+     <tr><td>Lights, no streaks</td><td><a href="https://arxiv.org/abs/2603.17258" target="_blank" rel="noopener">Chen et al. 2026</a></td><td>Progress markers that survive blank days.</td></tr>
+     <tr><td>Recommended tasks of the day</td><td><a href="https://www.nice.org.uk/guidance/NG87" target="_blank" rel="noopener">NICE NG87</a>; <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11907377/" target="_blank" rel="noopener">Yang et al. 2025, JOGH</a></td><td>Structure in daily activities. A meta-analysis links acute exercise to a small effect on inhibitory control in adults with ADHD.</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <p class="small mt"><b class="hl">Honest caveat:</b> these sources informed the design. None of them evaluates EnFoco. Chen, Meng &amp; Nie is a preprint. EnFoco is not a treatment.</p>
+ </div>
+</section>
+
+<!-- 7 · Built today -->
+<section class="slide" data-phase="afternoon" data-title="What's built today" aria-label="7. What's built today">
+ <div class="in">
+  <p class="kicker"><span class="n">7</span>What's built today · live, not a mock-up</p>
+  <h2>A working prototype, v1 → v6 in one hackathon.</h2>
+  <div class="grid g3 mt">
+   <div class="wood"><h3>The core loop</h3><ul class="ticks"><li>One task now, from text or list</li><li>Tiny first step from keyword rules, editable</li><li>2 / 10 / 25 min timer, pause, stop, +more</li><li>Drift nudge: dims, one tap back</li><li>Light flies to today's date</li></ul></div>
+   <div class="wood"><h3>Around it</h3><ul class="ticks"><li>Calendar of lights, no streaks</li><li>Task list and goals with date flags</li><li>Recommended tasks of the day, rotating</li><li>"Why?" notes with 8 linked sources</li><li>Optional 36 s breathing pause</li></ul></div>
+   <div class="wood"><h3>Care and craft</h3><ul class="ticks"><li>Portuguese and English UI</li><li>Morning, afternoon, night scenes by clock</li><li>Keyboard use, 44 px targets, reduced motion</li><li>Export and delete everything</li><li>Works without WebGL (HTML + SVG view)</li></ul></div>
+  </div>
+  <div class="stone mt" style="display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;font-size:.86em">
+   <b style="font-family:var(--display)">Build log (git, 12–13 Nov 2026):</b>
+   <span class="muted">v1 daily calendar</span><span class="muted">v2 Three.js bulbs, research</span><span class="muted">v3 isometric light map</span><span><b class="acc">v4 cut ~20 features to one loop</b></span><span class="muted">v5 day/night scenes, UI in the world</span><span class="muted">v6 Tripo 3D models, daily tasks, sourced "Why?"</span>
+  </div>
+ </div>
+</section>
+
+<!-- 8 · Tech -->
+<section class="slide" data-phase="night" data-title="Tech: Three.js + Tripo AI 3D" aria-label="8. Tech">
+ <div class="in split">
+  <div>
+   <p class="kicker"><span class="n">8</span>Tech · Three.js + Tripo AI 3D</p>
+   <h2>A whole world in <span class="hl">one HTML file.</span></h2>
+   <ul class="ticks mt">
+    <li><b>No build step.</b> One ~180 KB <code>index.html</code>: HTML, CSS and one module. Static hosting on Vercel and GitHub Pages.</li>
+    <li><b>Three.js 0.160</b> via import map and dynamic <code>import()</code>, so a CDN failure never breaks the loop.</li>
+    <li><b>Tripo AI models</b> (GLB, ~155–176 KB each): Foquito, tree, wooden board, rock. Normalised at load, re-tinted per phase, 8 s timeout, code-built fallback.</li>
+    <li><b>One canvas, two scenes</b>: island and isometric calendar map. InstancedMesh, one point light, pixel ratio ≤ 1.5, ~30 fps.</li>
+    <li><b>State</b>: one localStorage object. No backend.</li>
+   </ul>
+  </div>
+  <div class="stone" style="padding:10px">
+   <div class="hero3d" id="models3d" style="max-width:none;aspect-ratio:4/3"><img src="img/focus-night.webp" alt="The app at night with the Tripo models in the scene" style="border-radius:8px;object-fit:cover"><canvas id="c-models" aria-hidden="true"></canvas></div>
+   <p class="small" style="text-align:center;margin-top:6px;color:var(--st-ink2)">The four Tripo GLBs the app loads, rendered live here with Three.js</p>
+  </div>
+ </div>
+</section>
+
+<!-- 9 · Vision -->
+<section class="slide" data-phase="morning" data-title="Vision" aria-label="9. Vision, limits and next steps: vision">
+ <div class="in">
+  <p class="kicker"><span class="n">9</span>Vision, Limits &amp; Next Steps · 1 of 3 · Vision</p>
+  <h2>A calm light for every start.</h2>
+  <p class="vision-q mt">Any adult with ADHD, on any device and in their language, can start the next small thing in under a minute, without shame, surveillance or giving away their data.</p>
+  <div class="road mt">
+   <div class="ph now"><span class="dot">0</span><div class="stone"><p class="when acc">Today · v6</p><h3>Prototype</h3><ul class="ticks"><li>Full loop works end to end</li><li>Each choice linked to sources</li><li>Local-only, PT + EN</li></ul></div></div>
+   <div class="ph"><span class="dot">1</span><div class="stone"><p class="when acc">Months 0–3</p><h3>Validate</h3><ul class="ticks"><li>Co-design and testing with adults with ADHD, via Brainstorm</li><li>Tune the nudge from real sessions</li><li>Harden: reload-safe timer, real devices</li></ul></div></div>
+   <div class="ph"><span class="dot">2</span><div class="stone"><p class="when acc">Months 3–9</p><h3>Everyday tool</h3><ul class="ticks"><li>Installable offline PWA</li><li>Opt-in, end-to-end encrypted sync</li><li>Spanish added to PT + EN</li><li>Opt-in AI first step, always editable</li></ul></div></div>
+   <div class="ph"><span class="dot">3</span><div class="stone"><p class="when acc">Months 9–18</p><h3>Evidence &amp; reach</h3><ul class="ticks"><li>Pre-registered pilot with clinical / academic partners</li><li>Person-controlled export for clinicians</li><li>ADHD associations in Europe and Latin America</li></ul></div></div>
+  </div>
+  <div class="guard"><span class="chip">Constant: one task on screen</span><span class="chip">No streaks, no shame</span><span class="chip">Your data, your device first</span><span class="chip">No medical claims without evidence</span><span class="chip">Every phase asks: did they start? did they stay?</span></div>
+ </div>
+</section>
+
+<!-- 10 · Limits -->
+<section class="slide" data-phase="afternoon" data-title="Current limitations" aria-label="10. Vision, limits and next steps: current limitations">
+ <div class="in">
+  <p class="kicker"><span class="n">10</span>Vision, Limits &amp; Next Steps · 2 of 3 · Limits</p>
+  <h2>What EnFoco <span class="hl">is not</span>, yet.</h2>
+  <div class="lim mt">
+   <div class="stone"><h3><span class="k">01</span>Not validated</h3><p class="muted">Not yet tested with a single person with ADHD. The sources inform the design; none evaluates EnFoco.</p><p class="fix muted">→ Usability round, weeks 2–6</p></div>
+   <div class="stone"><h3><span class="k">02</span>Not a treatment</h3><p class="muted">It does not diagnose, treat or replace professional support. It is not a medical device.</p><p class="fix muted">→ Clinical advisors before any claim</p></div>
+   <div class="stone"><h3><span class="k">03</span>Hackathon architecture</h3><p class="muted">One ~180 KB HTML file, no automated tests, no build. Fast to iterate, hard to scale.</p><p class="fix muted">→ Modules + tests in Phase 1</p></div>
+   <div class="stone"><h3><span class="k">04</span>Local-only data</h3><p class="muted">localStorage only: no sync or backup between devices. Clearing the browser loses history (export exists).</p><p class="fix muted">→ Opt-in encrypted sync, Phase 2</p></div>
+   <div class="stone"><h3><span class="k">05</span>Simple heuristics</h3><p class="muted">First step comes from keyword rules, not AI. The nudge only sees tab visibility and touches. 15 s / 4 min are our guesses. A running timer is lost on reload.</p><p class="fix muted">→ Tune from data; persist timer</p></div>
+   <div class="stone"><h3><span class="k">06</span>Devices, language, polish</h3><p class="muted">Tested only in Chrome with software rendering, not on low-end phones. UI in PT + EN only. At night the Tripo boards stay warmer than the scene (simple colour-ratio tint). Needs CDN for 3D and fonts.</p><p class="fix muted">→ Device lab, Spanish, night tint fix</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- 11 · Next steps -->
+<section class="slide" data-phase="morning" data-title="Next steps" aria-label="11. Vision, limits and next steps: next steps">
+ <div class="in">
+  <p class="kicker"><span class="n">11</span>Vision, Limits &amp; Next Steps · 3 of 3 · Next steps</p>
+  <h2>Next 12 months, with a metric for each step.</h2>
+  <div class="split mt" style="grid-template-columns:1.6fr 1fr;align-items:start">
+   <div class="stone" style="padding-top:12px;padding-bottom:8px">
+    <table class="ns">
+     <thead><tr><th>When</th><th>Step</th><th>Success metric (target)</th></tr></thead>
+     <tbody>
+      <tr><td>Wk 1–2</td><td><b>Harden.</b> Reload-safe timer, night tint fix, test on 3+ low-end Android phones and an iPhone.</td><td>≥ 30 fps or auto-fallback on every device; 0 sessions lost on reload</td></tr>
+      <tr><td>Wk 2–6</td><td><b>Usability round 1</b> with 5–8 adults with ADHD via Brainstorm, with consent, think-aloud.</td><td>≥ 80% light up within 60 s of opening; SUS ≥ 70; all resume after a dim unaided</td></tr>
+      <tr><td>Wk 6–10</td><td><b>Tune and cut.</b> Set nudge thresholds from opt-in local logs; bring back cut v3 features only if testers ask.</td><td>Fewer false dims than round 1; no new step before "start"</td></tr>
+      <tr><td>Mo 3–6</td><td><b>Everyday tool.</b> PWA + offline, Spanish UI, opt-in E2E sync, WCAG 2.2 AA audit, code split into modules + tests.</td><td>Installable; 0 critical a11y issues; ≥ 40% of field testers return in week 2</td></tr>
+      <tr><td>Mo 6–12</td><td><b>Pilot protocol</b> with a clinical / academic partner, ethics review, pre-registration.</td><td>Protocol registered; outcomes: task initiation and time on task</td></tr>
+     </tbody>
+    </table>
+   </div>
+   <div class="grid">
+    <div class="wood"><h3>Two north-star metrics</h3><div class="nstar" style="margin-top:6px"><div><p class="metric">Start</p><p class="muted small">sessions lit ÷ app opens</p></div><div><p class="metric">Stay</p><p class="muted small">sessions finished or resumed after a dim ÷ sessions lit</p></div></div><p class="src muted">Computed on the device; shared only with consent.</p></div>
+    <div class="wood"><h3>What we need</h3><ul class="ticks"><li>Brainstorm's community for testing</li><li>Clinicians and researchers as advisors</li><li>A range of real devices to test on</li></ul></div>
+    <p class="small">All numbers on this slide are targets, not results.</p>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 12 · Close -->
+<section class="slide" data-phase="night" data-title="Thank you" aria-label="12. Thank you">
+ <div class="in title-grid">
+  <div>
+   <p class="kicker"><span class="n">12</span>Thank you</p>
+   <h1 style="font-size:clamp(40px,5.4vw,84px)">One task.<br><span class="hl">One light on.</span></h1>
+   <p class="lede">We want the light on to be the only goal on the screen, and we'll only add what people with ADHD show us they need.</p>
+   <div class="grid g2 mt" style="max-width:640px">
+    <div class="wood"><h3>Leonardo Cagliero</h3><p class="muted">Founder of EnFoco. Founder of Cosmos Pay, AI professor at UCASAL, Tripo Ace partner.</p></div>
+    <div class="wood"><h3>Try it</h3><p class="muted"><a href="../">enfoco-app.vercel.app</a><br><a href="https://github.com/Bitcoindefi/foco-tdah" target="_blank" rel="noopener">github.com/Bitcoindefi/foco-tdah</a></p></div>
+   </div>
+   <p class="small mt">Hackathon prototype for Portugal Tech Week, Hackathon for a Cause, with Brainstorm. Built at the hackathon with Sofía Vázquez Furriel. Not a medical tool.</p>
+  </div>
+  <div class="hero3d"><div class="glow"></div><img src="img/foquito-island-night.webp" alt="Foquito lit on its island at night"></div>
+ </div>
+</section>
+
+</main>
+
+<nav class="bar" aria-label="Slides">
+  <div class="nav">
+    <button type="button" id="prev" aria-label="Previous slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <span class="count" id="count">1 / 12</span>
+    <button type="button" id="next" aria-label="Next slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+  <div class="prog" id="prog"></div>
+  <div class="nav">
+    <a id="notes" href="../notas/#1" target="enfoco-notes" title="Speaker notes for this slide (N)">Notes</a>
+    <a href="../" title="Open the app">App</a>
+    <button type="button" id="fs" aria-label="Full screen (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  </div>
+</nav>
+
+<script>
+/* ---------- faceted hills, like the app's low-poly ground ---------- */
+(function(){
+  var svg=document.getElementById('hills'),out='',seed=7;
+  function r(){seed=(seed*16807)%2147483647;return seed/2147483647}
+  var cols=['var(--h1)','var(--h2)','var(--h3)','var(--h4)'];
+  var row=[],N=16,W=1600/N;
+  for(var i=0;i<=N;i++)row.push([i*W,120+r()*70]);
+  for(i=0;i<N;i++){
+    var a=row[i],b=row[i+1],m=[a[0]+W/2,(a[1]+b[1])/2+40+r()*40];
+    out+='<polygon points="'+a+' '+b+' '+m+'" fill="'+cols[i%3]+'"/>';
+    out+='<polygon points="'+a+' '+m+' '+a[0]+',260" fill="'+cols[(i+1)%3]+'"/>';
+    out+='<polygon points="'+b+' '+m+' '+b[0]+',260" fill="'+cols[(i+2)%3]+'"/>';
+    out+='<polygon points="'+m+' '+a[0]+',260 '+b[0]+',260" fill="'+cols[i%2?0:2]+'"/>';
+  }
+  svg.innerHTML=out;
+})();
+
+/* ---------- navigation: keys, clicks, swipe, hash ---------- */
+var slides=[].slice.call(document.querySelectorAll('.slide')),cur=0,N=slides.length;
+var prog=document.getElementById('prog');
+slides.forEach(function(s,i){var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Slide '+(i+1)+': '+s.dataset.title);b.onclick=function(e){e.stopPropagation();go(i)};prog.appendChild(b)});
+var PH={night:'Night',morning:'Morning',afternoon:'Afternoon'};
+function go(i,fromHash){
+  i=Math.max(0,Math.min(N-1,i));cur=i;
+  slides.forEach(function(s,k){s.classList.toggle('on',k===i);s.setAttribute('aria-hidden',k===i?'false':'true');if(k===i)s.scrollTop=0});
+  [].forEach.call(prog.children,function(b,k){b.classList.toggle('lit',k<i);b.classList.toggle('cur',k===i)});
+  var ph=slides[i].dataset.phase;document.documentElement.dataset.phase=ph;document.getElementById('phase-chip').textContent=PH[ph];
+  document.querySelector('meta[name=theme-color]').content=ph==='night'?'#0c1220':ph==='morning'?'#f3e7d6':'#f6e3bf';
+  document.getElementById('count').textContent=(i+1)+' / '+N;
+  document.getElementById('notes').href='../notas/#'+(i+1);
+  document.title=slides[i].dataset.title+' · EnFoco deck ('+(i+1)+'/'+N+')';
+  if(!fromHash&&location.hash!=='#'+(i+1))history.replaceState(null,'','#'+(i+1));
+  window.dispatchEvent(new CustomEvent('slide',{detail:i}));
+}
+function fromHash(){var n=parseInt((location.hash||'').slice(1),10);go(isNaN(n)?0:n-1,true)}
+window.addEventListener('hashchange',fromHash);
+document.getElementById('prev').onclick=function(e){e.stopPropagation();go(cur-1)};
+document.getElementById('next').onclick=function(e){e.stopPropagation();go(cur+1)};
+document.getElementById('fs').onclick=function(e){e.stopPropagation();fs()};
+function fs(){if(!document.fullscreenElement){(document.documentElement.requestFullscreen||function(){}).call(document.documentElement)}else{document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.altKey||e.ctrlKey||e.metaKey)return;
+  var k=e.key;
+  if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='ArrowDown'&&!scrollable()){e.preventDefault();go(cur+1)}
+  else if(k==='ArrowLeft'||k==='PageUp'||k==='ArrowUp'&&!scrollable()){e.preventDefault();go(cur-1)}
+  else if(k==='Home'){go(0)}else if(k==='End'){go(N-1)}
+  else if(k==='n'||k==='N'){window.open('../notas/#'+(cur+1),'enfoco-notes')}
+  else if(k==='f'||k==='F'){fs()}
+  else if(/^[1-9]$/.test(k)){go(+k-1)}
+});
+function scrollable(){var s=slides[cur];return s.scrollHeight>s.clientHeight+4}
+/* click: right two thirds forward, left third back; links, buttons, tables and canvases keep their own clicks */
+document.getElementById('deck').addEventListener('click',function(e){
+  if(e.target.closest('a,button,table,canvas,input,textarea')||String(window.getSelection())!=='')return;
+  go(e.clientX>window.innerWidth/3?cur+1:cur-1);
+});
+var tx=0,ty=0,tt=0;
+document.addEventListener('touchstart',function(e){var t=e.changedTouches[0];tx=t.clientX;ty=t.clientY;tt=Date.now()},{passive:true});
+document.addEventListener('touchend',function(e){var t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.4&&Date.now()-tt<800){go(dx<0?cur+1:cur-1)}},{passive:true});
+setTimeout(function(){document.getElementById('hint').style.opacity=0},6000);
+fromHash();
+</script>
+
+<script type="module">
+/* ---------- live Tripo models with Three.js: Foquito on the title, all four on the tech slide ----------
+   Same approach as the app: dynamic import, any failure keeps the still image. */
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+async function boot() {
+  let THREE, GLTFLoader;
+  try {
+    THREE = await import('three');
+    ({ GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js'));
+  } catch (e) { return; }
+  const loader = new GLTFLoader();
+  const load = n => loader.loadAsync('../assets/models/' + n + '.glb').then(g => {
+    const root = g.scene; const box = new THREE.Box3().setFromObject(root); const size = box.getSize(new THREE.Vector3()); const c = box.getCenter(new THREE.Vector3());
+    root.position.sub(c); const s = 1 / Math.max(size.x, size.y, size.z); const wrap = new THREE.Group(); const inner = new THREE.Group(); inner.add(root); inner.scale.setScalar(s); wrap.add(inner);
+    root.traverse(o => { if (o.isMesh) { const m = o.material; o.material = new THREE.MeshLambertMaterial({ map: m.map || null, color: m.map ? 0xffffff : (m.color || 0xffffff) }); } });
+    return wrap;
+  }).catch(() => null);
+
+  function makeView(canvasId, holderId, build) {
+    const cv = document.getElementById(canvasId), holder = document.getElementById(holderId);
+    let r; try { r = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); } catch (e) { return null; }
+    r.setPixelRatio(Math.min(devicePixelRatio, 1.5)); r.outputColorSpace = THREE.SRGBColorSpace;
+    const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
+    sc.add(new THREE.HemisphereLight(0xfff0dc, 0x2a2f45, 1.6));
+    const sun = new THREE.DirectionalLight(0xffe2b0, 1.6); sun.position.set(2, 3, 2.5); sc.add(sun);
+    const v = { r, sc, cam, cv, holder, tick: null, slide: +cv.closest('.slide').querySelector('.kicker .n')?.textContent || 1 };
+    const fit = () => { const w = holder.clientWidth, h = holder.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); };
+    v.fit = fit; addEventListener('resize', fit); fit();
+    return build(v) ? v : null;
+  }
+
+  const views = [];
+  const foquito = await load('foquito');
+  if (foquito) {
+    const hero = makeView('c-hero', 'hero3d', v => {
+      const light = new THREE.PointLight(0xffc15e, 3, 6); light.position.set(0, 0.2, 1.2); v.sc.add(light);
+      v.sc.add(foquito); v.cam.position.set(0, 0.15, 3.1); v.cam.lookAt(0, 0, 0);
+      foquito.traverse(o => { if (o.isMesh) { o.material.emissive = new THREE.Color(0xffffff); o.material.emissiveMap = o.material.map; o.material.emissiveIntensity = 0.28; } });
+      v.slide = 1;
+      v.tick = t => { foquito.rotation.y = reduce ? -0.35 : Math.sin(t * 0.0006) * 0.6; foquito.position.y = reduce ? 0 : Math.sin(t * 0.0015) * 0.04; };
+      return true;
+    });
+    if (hero) { views.push(hero); document.getElementById('hero3d').classList.add('live'); }
+  }
+  const names = ['foquito', 'tree', 'board', 'rock'];
+  const models = await Promise.all(names.map(n => n === 'foquito' ? load('foquito') : load(n)));
+  if (models.every(Boolean)) {
+    const mv = makeView('c-models', 'models3d', v => {
+      const xs = [-1.8, -0.6, 0.6, 1.8];
+      models.forEach((m, i) => { m.position.set(xs[i], 0, 0); m.scale.setScalar(i === 2 ? 1.05 : 0.95); v.sc.add(m); });
+      const ground = new THREE.Mesh(new THREE.CylinderGeometry(2.7, 2.9, 0.22, 8), new THREE.MeshLambertMaterial({ color: 0x21403d, flatShading: true }));
+      ground.position.y = -0.62; v.sc.add(ground); v.r.setClearColor(0x161d33, 1);
+      const glow = new THREE.PointLight(0xffc15e, 2.2, 3); glow.position.set(-1.65, 0.3, 0.8); v.sc.add(glow);
+      v.cam.position.set(0, 2.2, 6.6); v.cam.lookAt(0, -0.15, 0);
+      v.slide = 8;
+      v.tick = t => models.forEach((m, i) => { m.rotation.y = reduce ? 0.5 : t * 0.0005 + i; });
+      return true;
+    });
+    if (mv) { views.push(mv); document.getElementById('models3d').classList.add('live'); }
+  }
+  let active = 0, last = 0;
+  addEventListener('slide', e => { active = e.detail + 1; views.forEach(v => v.fit()); });
+  active = (parseInt(location.hash.slice(1), 10) || 1);
+  function loop(t) {
+    requestAnimationFrame(loop);
+    if (t - last < 33) return; last = t;          /* about 30 fps, like the app */
+    views.forEach(v => { if (v.slide === active) { v.tick(t); v.r.render(v.sc, v.cam); } });
+  }
+  requestAnimationFrame(loop);
+}
+boot();
+</script>
+</body>
+</html>

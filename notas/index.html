@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en" data-phase="night">
+<head>
+<meta charset="utf-8">
+<script>(function(){var p=location.pathname;if(!/\/$/.test(p)&&!/\.[a-z0-9]+$/i.test(p)){location.replace(p+'/'+location.search+location.hash)}})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>EnFoco · Speaker notes</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0c1220">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 80%22%3E%3Cpath fill=%22%23ffc15e%22 d=%22M32 4 52 14 58 34 46 52H18L6 34 12 14z%22/%3E%3Cpath fill=%22%239aa3b8%22 d=%22M20 54H44L41 67H23z%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap">
+<style>
+:root{
+  --bg:#0c1220;--raise:#121a2d;--line:#222d47;--line-2:#34425f;--text:#edf0f8;--muted:#a2adc6;--faint:#7785a3;
+  --accent:#ffc15e;--accent-text:#ffd08a;--accent-ink:#1d1503;--wash:rgba(255,193,94,.12);
+  --wd-tone:#6e5446;--wd-rim:#221b1a;--wd-ink:#f5e9d6;--wd-ink2:#d6c3a8;--wd-line:rgba(255,230,200,.16);
+  --st-face:#2a3146;--st-rim:#1a1f30;--st-ink:#edf0f8;--st-ink2:#aab4cc;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:radial-gradient(120% 60% at 50% 0%,#2a3558 0%,#161d33 45%,#0a0e19 100%) fixed,#0c1220;color:var(--text);font:400 18px/1.6 var(--body);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid #a9c1ff;outline-offset:3px;border-radius:8px}
+h1,h2{font-family:var(--display);letter-spacing:-.02em;margin:0;line-height:1.08}
+h1{font-size:clamp(34px,5vw,56px);font-weight:800}
+h2{font-size:clamp(24px,2.6vw,34px);font-weight:750}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,#0c1220 86%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;font:800 17px var(--display);text-decoration:none}
+.brand svg{width:22px;height:28px}
+.grow{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:11px;background:rgba(18,26,45,.78);border:1.5px solid var(--line);font:600 13px var(--display);color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:13px;font:600 15px var(--display);text-decoration:none;border:1.5px solid transparent}
+.btn.primary{color:var(--accent-ink);background:linear-gradient(158deg,#ffd992 0%,#ffc15e 46%,#f6ae3f 46.4%,#f0a22e 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 0 rgba(120,60,0,.22)}
+.btn.secondary{border-color:var(--line-2);background:rgba(18,26,45,.6)}
+.btn.secondary:hover{border-color:var(--accent)}
+main{max-width:1040px;margin:0 auto;padding:28px 18px 120px}
+.intro p{color:var(--muted);max-width:66ch}
+.kicker{font:700 13px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-text);margin:0 0 10px;display:flex;align-items:center;gap:10px}
+.kicker .n{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:9px;background:var(--wash);border:1.5px solid rgba(255,193,94,.45);letter-spacing:0}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:22px 0 10px}
+.toc a{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:8px 10px;border-radius:12px;border:1.5px solid var(--line);background:rgba(18,26,45,.6);text-decoration:none;font:600 13px var(--display)}
+.toc a b{color:var(--accent-text)} .toc a i{font-style:normal;color:var(--faint);font-variant-numeric:tabular-nums}
+.toc a span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc a:hover{border-color:var(--accent)}
+.note{margin-top:44px;padding-top:6px}
+.note.vls .head h2::after{content:" ★";color:var(--accent)}
+.head{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:center;margin-bottom:14px}
+.thumb img{width:100%;display:block;border-radius:10px;border:4px solid var(--st-rim);box-shadow:0 18px 28px -16px rgba(0,0,0,.7)}
+.thumb:hover img{border-color:var(--accent)}
+.time{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.wood{position:relative;color:var(--wd-ink);border:6px solid var(--wd-rim);border-radius:16px 22px 14px 20px;padding:20px 26px;
+  background-color:var(--wd-tone);background-image:url(../presentacion/img/wood.jpg);background-size:300px;background-blend-mode:multiply;box-shadow:inset 0 2px 0 rgba(255,255,255,.14),0 22px 34px -18px rgba(0,0,0,.55)}
+.wood::before,.wood::after{content:"";position:absolute;top:9px;width:7px;height:7px;border-radius:50%;background:#2a1f1a}
+.wood::before{left:10px}.wood::after{right:10px}
+.script p{margin:0;font-size:clamp(18px,1.6vw,21px);line-height:1.62}
+.script p+p{margin-top:12px}
+.script b{color:#ffe0a6}
+.stone{color:var(--st-ink);background:var(--st-face);border:6px solid var(--st-rim);border-radius:12px;padding:12px 20px;margin-top:12px}
+.stone ul{margin:4px 0 0;padding-left:20px;color:var(--st-ink2);font-size:16px}
+.label{font:700 12px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text);margin:0}
+.qa details{border:1.5px solid var(--line);border-radius:12px;background:rgba(18,26,45,.6);margin:8px 0;padding:10px 16px}
+.qa summary{cursor:pointer;font:700 17px var(--display)}
+.qa p{color:var(--muted);margin:8px 0 2px}
+.foot{margin-top:40px;color:var(--faint);font-size:14px}
+@media (max-width:720px){.head{grid-template-columns:1fr}.thumb{max-width:360px}}
+@media print{.top{position:static}body{background:#fff;color:#111}.wood,.stone{box-shadow:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../"><svg viewBox="0 0 64 80" aria-hidden="true"><path fill="#ffe2a6" d="M32 4 52 14 32 30z"/><path fill="#ffc15e" d="M52 14 58 34 32 30z"/><path fill="#f0a22e" d="M58 34 46 52 32 30z"/><path fill="#e08e1a" d="M46 52H18L32 30z"/><path fill="#f7b243" d="M18 52 6 34 32 30z"/><path fill="#ffd07a" d="M6 34 12 14 32 30z"/><path fill="#ffedc7" d="M12 14 32 4 32 30z"/><path fill="#9aa3b8" d="M20 54H44L41 67H23z"/><path fill="#5d6780" d="M25 69H39L35 77H29z"/></svg>EnFoco</a>
+  <span class="chip">Speaker notes · 4:50 total</span>
+  <span class="grow"></span>
+  <a class="btn primary" href="../presentacion/" id="open-deck">Open deck</a>
+</header>
+<main>
+  <section class="intro">
+    <p class="kicker">Pitch script · English</p>
+    <h1>EnFoco: speaker notes</h1>
+    <p style="margin-top:12px">One section per slide, with what to say and how long to take. Target about 4:50. Click a thumbnail to open that slide. In the deck, press <b>N</b> or tap "Notes" to jump here. Bold text marks the key line. ★ marks the Vision, Limits &amp; Next Steps block, which the judges score.</p>
+    <nav class="toc" aria-label="Slides"><a href="#1" title="EnFoco"><b>1</b><span>EnFoco</span><i>0:00</i></a><a href="#2" title="The problem"><b>2</b><span>The problem</span><i>0:20</i></a><a href="#3" title="The solution"><b>3</b><span>The solution</span><i>0:50</i></a><a href="#4" title="How it works"><b>4</b><span>How it works</span><i>1:10</i></a><a href="#5" title="No guilt by design"><b>5</b><span>No guilt by design</span><i>1:50</i></a><a href="#6" title="Why it works"><b>6</b><span>Why it works</span><i>2:10</i></a><a href="#7" title="What&#x27;s built today"><b>7</b><span>What&#x27;s built today</span><i>2:35</i></a><a href="#8" title="Tech: Three.js + Tripo AI 3D"><b>8</b><span>Tech: Three.js + Tripo AI 3D</span><i>2:50</i></a><a href="#9" title="Vision"><b>9</b><span>Vision</span><i>3:10</i></a><a href="#10" title="Current limitations"><b>10</b><span>Current limitations</span><i>3:40</i></a><a href="#11" title="Next steps"><b>11</b><span>Next steps</span><i>4:10</i></a><a href="#12" title="Thank you"><b>12</b><span>Thank you</span><i>4:40</i></a></nav>
+  </section>
+  <section class="note" id="1" data-phase="night" aria-labelledby="h1">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#1" title="Open slide 1 in the deck"><img src="img/slide-01.webp" alt="Slide 1: EnFoco" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">1</span>Slide 1 of 12</p>
+      <h2 id="h1">EnFoco</h2>
+      <p class="time"><span class="chip">⏱ 20 s</span><span class="chip">starts at 0:00</span><span class="chip">ends at 0:20</span></p>
+      <p><a class="btn secondary" href="../presentacion/#1">Open slide 1 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>Hi, I'm Leonardo Cagliero, founder of EnFoco.</p><p>EnFoco is a focus web app for adults with ADHD, and it does one thing: <b>one task, one light on.</b> You pick one thing, take a tiny first step, turn the light on, and keep it on while you do it.</p><p>No streaks, no guilt, and no data leaving your device.</p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>Foquito should be glowing and turning. If the 3D didn't load, the still image is fine.</li></ul></div>
+</section>
+<section class="note" id="2" data-phase="night" aria-labelledby="h2">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#2" title="Open slide 2 in the deck"><img src="img/slide-02.webp" alt="Slide 2: The problem" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">2</span>Slide 2 of 12</p>
+      <h2 id="h2">The problem</h2>
+      <p class="time"><span class="chip">⏱ 30 s</span><span class="chip">starts at 0:20</span><span class="chip">ends at 0:50</span></p>
+      <p><a class="btn secondary" href="../presentacion/#2">Open slide 2 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>Most people with ADHD know exactly what they need to do. <b>The hard part is starting, and staying.</b></p><p>Barkley describes ADHD as a problem of executive functions: working memory, self-regulation, getting started. Time is felt more than seen, so a deadline only feels real when it's on top of you.</p><p>And a 2026 interview study by Chen, Meng and Nie, still a preprint, found something important: when a plan breaks, people feel <b>shame</b>, and they reject tools that feel like surveillance.</p><p>Most productivity tools answer with longer lists, streaks and tracking. For this group, that becomes a wall of overdue items and a reason to feel judged.</p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>Say "preprint" out loud. Don't quote prevalence numbers; none are on the slide.</li></ul></div>
+</section>
+<section class="note" id="3" data-phase="morning" aria-labelledby="h3">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#3" title="Open slide 3 in the deck"><img src="img/slide-03.webp" alt="Slide 3: The solution" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">3</span>Slide 3 of 12</p>
+      <h2 id="h3">The solution</h2>
+      <p class="time"><span class="chip">⏱ 20 s</span><span class="chip">starts at 0:50</span><span class="chip">ends at 1:10</span></p>
+      <p><a class="btn secondary" href="../presentacion/#3">Open slide 3 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>So we went the other way. <b>One task now. One light on while you do it.</b></p><p>Our version 3 had about twenty features, and we couldn't say which ones anyone would use. So we cut it down to one loop: one thing at a time, a tiny first step, a light instead of a judge, and privacy by default.</p></div>
+  
+</section>
+<section class="note" id="4" data-phase="afternoon" aria-labelledby="h4">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#4" title="Open slide 4 in the deck"><img src="img/slide-04.webp" alt="Slide 4: How it works" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">4</span>Slide 4 of 12</p>
+      <h2 id="h4">How it works</h2>
+      <p class="time"><span class="chip">⏱ 40 s</span><span class="chip">starts at 1:10</span><span class="chip">ends at 1:50</span></p>
+      <p><a class="btn secondary" href="../presentacion/#4">Open slide 4 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>Here's the loop. It's literally type, Enter, Enter.</p><p>One: I write a task, say "Reply to the landlord", or pick one of today's recommended tasks.</p><p>Two: the app proposes a tiny first step: <i>open the message and write only the first sentence. It can be ugly.</i> I can rewrite it. I choose 2, 10 or 25 minutes.</p><p>Three: I tap "Light up and start". Foquito lights up and a big, plain timer runs.</p><p>Four: when I'm done, the light flies to today on the calendar, and the next task is one tap away.</p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>Live option: open the app (App button), choose 2 min, run the loop. If time is short, stay on the screenshots.</li><li>The list and history in the demo are made-up sample data. Say so if asked.</li></ul></div>
+</section>
+<section class="note" id="5" data-phase="night" aria-labelledby="h5">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#5" title="Open slide 5 in the deck"><img src="img/slide-05.webp" alt="Slide 5: No guilt by design" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">5</span>Slide 5 of 12</p>
+      <h2 id="h5">No guilt by design</h2>
+      <p class="time"><span class="chip">⏱ 20 s</span><span class="chip">starts at 1:50</span><span class="chip">ends at 2:10</span></p>
+      <p><a class="btn secondary" href="../presentacion/#5">Open slide 5 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>If I drift away, nothing turns red. If the tab is hidden for 15 seconds, or I don't touch the page for 4 minutes, <b>the light just dims</b> and asks for one tap: "I'm here". Nothing is logged as a failure.</p><p>The calendar keeps lights, not streaks. A blank day doesn't erase the others.</p><p>And everything stays in the browser. No account, no server, no analytics.</p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>Live demo of the nudge: switch tabs, count to twenty, come back.</li></ul></div>
+</section>
+<section class="note" id="6" data-phase="morning" aria-labelledby="h6">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#6" title="Open slide 6 in the deck"><img src="img/slide-06.webp" alt="Slide 6: Why it works" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">6</span>Slide 6 of 12</p>
+      <h2 id="h6">Why it works</h2>
+      <p class="time"><span class="chip">⏱ 25 s</span><span class="chip">starts at 2:10</span><span class="chip">ends at 2:35</span></p>
+      <p><a class="btn secondary" href="../presentacion/#6">Open slide 6 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>Every one of these choices has a "Why?" note inside the app, with links to its sources.</p><p>The tiny first step comes from Gollwitzer's implementation intentions and the task-breaking used in Safren's CBT trial in JAMA. Short visible sessions follow Barkley, NICE NG87 and the ADHD-EU practical guide. The no-guilt nudge and the no-streak calendar come from the Chen interviews.</p><p>And to be clear: <b>these sources informed the design. None of them evaluates EnFoco.</b> EnFoco is not a treatment.</p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>Don't present any of these studies as proof that EnFoco works.</li></ul></div>
+</section>
+<section class="note" id="7" data-phase="afternoon" aria-labelledby="h7">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#7" title="Open slide 7 in the deck"><img src="img/slide-07.webp" alt="Slide 7: What&#x27;s built today" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">7</span>Slide 7 of 12</p>
+      <h2 id="h7">What&#x27;s built today</h2>
+      <p class="time"><span class="chip">⏱ 15 s</span><span class="chip">starts at 2:35</span><span class="chip">ends at 2:50</span></p>
+      <p><a class="btn secondary" href="../presentacion/#7">Open slide 7 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>None of this is a mock-up. It's live today: the full loop, the calendar of lights, the list and goals, daily recommended tasks, the sourced notes, Portuguese and English, three times of day, keyboard use and reduced motion.</p><p>We built it in one hackathon, version 1 to version 6, and the most important commit was the one where we <b>cut twenty features down to one loop.</b></p></div>
+  
+</section>
+<section class="note" id="8" data-phase="night" aria-labelledby="h8">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#8" title="Open slide 8 in the deck"><img src="img/slide-08.webp" alt="Slide 8: Tech: Three.js + Tripo AI 3D" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">8</span>Slide 8 of 12</p>
+      <h2 id="h8">Tech: Three.js + Tripo AI 3D</h2>
+      <p class="time"><span class="chip">⏱ 20 s</span><span class="chip">starts at 2:50</span><span class="chip">ends at 3:10</span></p>
+      <p><a class="btn secondary" href="../presentacion/#8">Open slide 8 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>Technically it's a whole world in one HTML file. No build step, static hosting.</p><p>Three.js draws the scene. Foquito, the trees, the wooden boards and the rocks are 3D models generated with <b>Tripo AI</b>. They're re-tinted for morning, afternoon and night, and if a model fails to load, a code-built version takes its place. Without WebGL, the same loop runs in plain HTML.</p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>The four models on this slide are rendering live.</li></ul></div>
+</section>
+<section class="note vls" id="9" data-phase="morning" aria-labelledby="h9">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#9" title="Open slide 9 in the deck"><img src="img/slide-09.webp" alt="Slide 9: Vision" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">9</span>Vision, Limits &amp; Next Steps · Slide 9 of 12</p>
+      <h2 id="h9">Vision</h2>
+      <p class="time"><span class="chip">⏱ 30 s</span><span class="chip">starts at 3:10</span><span class="chip">ends at 3:40</span></p>
+      <p><a class="btn secondary" href="../presentacion/#9">Open slide 9 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>Where are we going? Our vision: <b>any adult with ADHD, on any device and in their language, can start the next small thing in under a minute, without shame, surveillance or giving away their data.</b></p><p>We get there in three phases. First, <b>validate</b>, in the next three months: test with adults with ADHD through Brainstorm, and tune the app from real sessions. Second, an <b>everyday tool</b>, months three to nine: installable and offline, opt-in encrypted sync, Spanish, and an optional AI first step that you can always edit. Third, <b>evidence and reach</b>, months nine to eighteen: a pre-registered pilot with clinical and academic partners, and ADHD associations across Europe and Latin America.</p><p>What doesn't change: one task on screen, no streaks, your data first, and no medical claims without evidence. Every phase answers the same two questions: <b>did they start, and did they stay?</b></p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>Slow down here. This block is what the judges score: vision, limits and next steps.</li><li>Every phase is a plan. Never imply it has already happened.</li></ul></div>
+</section>
+<section class="note vls" id="10" data-phase="afternoon" aria-labelledby="h10">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#10" title="Open slide 10 in the deck"><img src="img/slide-10.webp" alt="Slide 10: Current limitations" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">10</span>Vision, Limits &amp; Next Steps · Slide 10 of 12</p>
+      <h2 id="h10">Current limitations</h2>
+      <p class="time"><span class="chip">⏱ 30 s</span><span class="chip">starts at 3:40</span><span class="chip">ends at 4:10</span></p>
+      <p><a class="btn secondary" href="../presentacion/#10">Open slide 10 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>Now, honestly, what EnFoco is not, yet.</p><p><b>It isn't validated.</b> We haven't tested it with a single person with ADHD. <b>It isn't a treatment</b> or a medical device.</p><p>It's <b>hackathon architecture</b>: one file, no automated tests. Data is <b>local only</b>, so there's no sync between devices. The first step comes from <b>keyword rules, not AI</b>, and the nudge thresholds, 15 seconds and 4 minutes, are our guesses. A running timer is lost if you reload.</p><p>We've only tested in Chrome with software rendering, not on low-end phones. The UI is Portuguese and English only. And at night, the wooden boards stay warmer than the scene. Every one of these has a fix on the next slide.</p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>Say the limits plainly and confidently. Being honest here is the strength of this block.</li></ul></div>
+</section>
+<section class="note vls" id="11" data-phase="morning" aria-labelledby="h11">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#11" title="Open slide 11 in the deck"><img src="img/slide-11.webp" alt="Slide 11: Next steps" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">11</span>Vision, Limits &amp; Next Steps · Slide 11 of 12</p>
+      <h2 id="h11">Next steps</h2>
+      <p class="time"><span class="chip">⏱ 30 s</span><span class="chip">starts at 4:10</span><span class="chip">ends at 4:40</span></p>
+      <p><a class="btn secondary" href="../presentacion/#11">Open slide 11 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>So here's the next year, with a target for every step.</p><p><b>Weeks one to two:</b> harden it. Reload-safe timer, the night tint fix, and tests on real low-end phones. The target is 30 frames per second or an automatic fallback on every device.</p><p><b>Weeks two to six:</b> our first usability round, five to eight adults with ADHD through Brainstorm, with consent. Targets: at least 80% light up within 60 seconds, and a usability score of 70 or more.</p><p><b>Weeks six to ten:</b> tune the nudge from real data, and bring back cut features only if testers ask. <b>Months three to six:</b> PWA, Spanish, encrypted sync, an accessibility audit. <b>Months six to twelve:</b> a pilot protocol with ethics review.</p><p>Two north-star metrics guide all of it: <b>Start</b> and <b>Stay</b>. They're measured on the device and shared only with consent. To do this we need Brainstorm's community, clinical advisors, and real devices.</p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>Every number here is a target, not a result. Say "target" or "goal".</li></ul></div>
+</section>
+<section class="note" id="12" data-phase="night" aria-labelledby="h12">
+  <div class="head">
+    <a class="thumb" href="../presentacion/#12" title="Open slide 12 in the deck"><img src="img/slide-12.webp" alt="Slide 12: Thank you" loading="lazy"></a>
+    <div class="meta">
+      <p class="kicker"><span class="n">12</span>Slide 12 of 12</p>
+      <h2 id="h12">Thank you</h2>
+      <p class="time"><span class="chip">⏱ 10 s</span><span class="chip">starts at 4:40</span><span class="chip">ends at 4:50</span></p>
+      <p><a class="btn secondary" href="../presentacion/#12">Open slide 12 →</a></p>
+    </div>
+  </div>
+  <div class="wood script"><p>One task. One light on. We want the light on to be the only goal on the screen, and we'll only add what people with ADHD show us they need.</p><p>It's live at enfoco-app.vercel.app. Thank you.</p></div>
+  <div class="stone cues"><p class="label">Cues</p><ul><li>Leave this slide up for questions. Likely questions and answers are below.</li></ul></div>
+</section>
+  <section class="note qa" id="qa">
+    <p class="kicker">After the pitch</p>
+    <h2>Likely questions</h2>
+    <details><summary>Has this been validated?</summary><p>No. The design comes from public sources. Testing with adults with ADHD is our next step, which is why we want to work with Brainstorm.</p></details><details><summary>Is it a medical tool?</summary><p>No. It doesn't diagnose or treat, and it doesn't replace professional support.</p></details><details><summary>Does the app watch the user?</summary><p>No. It only knows whether the tab is visible and whether there was a touch. It doesn't record that, and session time counts anyway.</p></details><details><summary>Where is the data?</summary><p>Only in the browser, in localStorage. There are buttons to export and delete. The only network requests are for the 3D library and two fonts.</p></details><details><summary>Is there AI?</summary><p>Not today. The first step comes from keyword rules. If AI is added, it will be opt-in, suggest the first step, and stay editable.</p></details><details><summary>Will it run on a cheap phone?</summary><p>It's built to be light: few polygons, one light per scene, about 30 fps, and a plain HTML view without WebGL. We haven't tested real low-end devices yet. That's step one on our list.</p></details><details><summary>What did you cut?</summary><p>Demo personas, motivation boosters, co-focus, energy and mood check-ins, and rhythm-of-the-day charts. They can come back only if testing asks for them.</p></details><details><summary>How will you make money?</summary><p>We don't have a business model yet, and we won't claim one. Right now the priority is finding out whether people start and stay. The model comes after validation.</p></details>
+  </section>
+  <p class="foot">Facts used here come from the repo, the README and the in-app "Why?" sources. EnFoco is a hackathon prototype, not a medical tool. Every number on slides 9–11 is a target, not a result.</p>
+</main>
+<script>
+/* keep "Open deck" pointing at the slide whose notes are on screen */
+(function(){var link=document.getElementById('open-deck'),secs=[].slice.call(document.querySelectorAll('.note[id]')).filter(function(s){return /^\d+$/.test(s.id)});
+function upd(){var y=window.scrollY+120,cur=secs[0];secs.forEach(function(s){if(s.offsetTop<=y)cur=s});link.href='../presentacion/#'+cur.id;link.textContent='Open slide '+cur.id}
+addEventListener('scroll',upd,{passive:true});upd();})();
+</script>
+</body>
+</html>
