@@ -207,9 +207,38 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 .prog button.cur{background:#ffc15e;border-color:#fff3d6;box-shadow:0 0 0 3px var(--wash),0 0 16px rgba(255,193,94,.95)}
 .hint{position:fixed;right:16px;top:64px;z-index:5;font-size:12px;color:var(--faint);transition:opacity .6s}
 
+
+/* features from the live app */
+.feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.2vw,16px);align-items:start}
+.feat figure{margin:0}
+.feat img{width:100%;aspect-ratio:3/4;height:auto;max-height:36vh;object-fit:cover;object-position:top center;border-radius:10px;border:4px solid var(--st-rim);display:block;background:var(--st-face)}
+.feat img.from-bottom{object-position:bottom center}
+.feat h3{margin:8px 0 4px;font-size:clamp(15px,1.25vw,20px)}
+.feat p{font-size:.84em;color:var(--muted)}
+.tag-p{display:inline-block;font:700 .68em var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent);border-radius:6px;padding:2px 7px;vertical-align:middle}
+
+/* why now / market */
+.market{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1vw,12px)}
+.market .stone{padding:10px 14px}
+.market .metric{font:800 clamp(18px,1.8vw,28px)/1.05 var(--display);color:var(--accent-text)}
+.market p{font-size:.8em;margin-top:4px}
+.vision-q{font-size:clamp(18px,1.85vw,28px);max-width:40ch}
+.slide[data-title="Vision"] .road{margin-top:clamp(8px,1.4vh,14px)}
+.slide[data-title="Vision"] .ph{padding-top:36px}
+.slide[data-title="Vision"] .ph .stone{padding:10px 12px}
+.slide[data-title="Vision"] .ph ul.ticks li{font-size:.8em;margin:2px 0}
+.slide[data-title="Vision"] .guard{margin-top:8px;gap:6px}
+.slide[data-title="Vision"] .guard .chip{font-size:.72em;padding:4px 9px}
+.slide[data-title="Vision"] .src{margin-top:4px}
+
+/* ask */
+.ask{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,1.2vw,16px)}
+.ask h3{display:flex;gap:10px;align-items:baseline}
+.ask .k{font:800 .8em var(--display);color:var(--st-acc);min-width:1.6em}
+
 /* ---------- responsive: stack on narrow screens and let a slide scroll ---------- */
 @media (max-width:980px){
-  .g4,.steps,.road{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g4,.steps,.road,.feats,.market,.ask{grid-template-columns:repeat(2,minmax(0,1fr))}
   .road::before{display:none}
   .lim{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -304,21 +333,53 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
   <p class="kicker"><span class="n">4</span>How it works · the demo</p>
   <h2>Type, Enter, Enter. <span class="hl">The light is on.</span></h2>
   <div class="steps mt">
-   <div class="step"><figure><img src="img/home-night.webp" alt="Pick screen: What are you doing now? with three tasks to pick, badged Recommended today" loading="lazy"></figure><p class="num">1</p><h3>Pick one task</h3><p>Write it, or tap one of the first three. Today's recommended tasks rotate daily.</p></div>
-   <div class="step"><figure><img src="img/ready.webp" alt="Ready screen: tiny first step, 2, 10 or 25 minutes, Light up and start" loading="lazy"></figure><p class="num">2</p><h3>Tiny first step</h3><p>"Open the message and write only the first sentence. It can be ugly." Choose 2, 10 or 25 min.</p></div>
-   <div class="step"><figure><img src="img/focus.webp" alt="Focus screen: a big 01:55 timer on the wooden board and Foquito lit" loading="lazy"></figure><p class="num">3</p><h3>The light stays on</h3><p>A big, plain timer. Foquito glows while you work. Pause or stop any time.</p></div>
+   <div class="step"><figure><img src="img/feat-recommended.webp" alt="Live app, 13 Nov 2026: What are you doing now? with today's recommended tasks, including Empty your head" loading="lazy"></figure><p class="num">1</p><h3>Pick one task</h3><p>Write it, or tap one of the first three. Today's recommended tasks rotate daily.</p></div>
+   <div class="step"><figure><img src="img/feat-ready.webp" alt="Live app, 13 Nov 2026: ready screen with a tiny first step and 2, 10 or 25 minute timers" loading="lazy"></figure><p class="num">2</p><h3>Tiny first step</h3><p>"Open the message and write only the first sentence. It can be ugly." Choose 2, 10 or 25 min.</p></div>
+   <div class="step"><figure><img src="img/feat-focus.webp" alt="Live app, 13 Nov 2026: focus session with a 01:57 timer, Foquito lit, and the light on" loading="lazy"></figure><p class="num">3</p><h3>The light stays on</h3><p>A big, plain timer. Foquito glows while you work. Pause or stop any time.</p></div>
    <div class="step"><figure><img src="img/done.webp" alt="Done screen: the light went to 13 November on the calendar, next task one tap away" loading="lazy"></figure><p class="num">4</p><h3>Done: light to today</h3><p>The light flies to today on the calendar. The next task is one tap away.</p></div>
   </div>
-  <p class="small mt">Screens from the live app in English. Sample list and history are made-up demo data. Live: <a href="../">enfoco-app.vercel.app</a></p>
+  <p class="small mt">Screens captured from the live app on 13 Nov 2026, in English. The calendar lights are sample demo data, labelled in the app. Live: <a href="../">enfoco-app.vercel.app</a></p>
+ </div>
+</section>
+
+
+<!-- 5 · In the app -->
+<section class="slide" data-phase="afternoon" data-title="In the app" aria-label="5. In the app">
+ <div class="in">
+  <p class="kicker"><span class="n">5</span>In the app · live screens, 13 Nov 2026</p>
+  <h2>Built for the hard part: <span class="hl">starting, and staying.</span></h2>
+  <div class="feats mt">
+   <div class="feat">
+    <figure><img src="img/feat-recommended-board.webp" alt="Live app: today's recommended tasks, each badged Recommended today, including Empty your head: jot down everything pending 5 min"></figure>
+    <h3>Recommended today</h3>
+    <p>A small daily list, so you don't have to decide from a blank page. Cuts the load of choosing what to do now.</p>
+   </div>
+   <div class="feat">
+    <figure><img src="img/feat-list-board.webp" alt="Live app: the Tasks and goals list with recommended tasks, a See today's recommended tasks button, and a Save for later field to dump tasks out of your head"></figure>
+    <h3>Brain dump</h3>
+    <p>Get tasks out of your head into one list, then tap Now on a single one. Working memory stays off the mental stack.</p>
+   </div>
+   <div class="feat">
+    <figure><img src="img/feat-focus-board.webp" alt="Live app: a 2-minute focus timer at 01:49, first step visible, The light is on. Stay with just this."></figure>
+    <h3>Timers you can see</h3>
+    <p>Sessions of 2, 10 or 25 minutes, with a big timer and the light on. Time stays visible, not only felt.</p>
+   </div>
+   <div class="feat">
+    <figure><img class="from-bottom" src="img/feat-why-pick-board.webp" alt="Live app: the Why? note open under the pick screen, with sources Barkley 1997 and Chen, Meng and Nie 2026"></figure>
+    <h3>A Why? with sources</h3>
+    <p>Every feature has a Why? you can open in the app, with the papers and guidelines behind the choice.</p>
+   </div>
+  </div>
+  <p class="small mt">Captured from <a href="../">enfoco-app.vercel.app</a> today. The sources inform the design; none of them evaluates EnFoco.</p>
  </div>
 </section>
 
 <!-- 5 · No guilt -->
-<section class="slide" data-phase="night" data-title="No guilt by design" aria-label="5. No guilt by design">
+<section class="slide" data-phase="night" data-title="No guilt by design" aria-label="6. No guilt by design">
  <div class="in split">
   <img class="shot" src="img/nudge-night.webp" alt="Night scene: the timer board says 'You were away and the light dimmed. One tap and it comes back on.' with an I'm here button" loading="lazy">
   <div>
-   <p class="kicker"><span class="n">5</span>No guilt by design</p>
+   <p class="kicker"><span class="n">6</span>No guilt by design</p>
    <h2>A light that dims.<br><span class="hl">Never a red alert.</span></h2>
    <div class="grid mt">
     <div class="wood"><h3>The drift nudge</h3><p class="muted">Tab hidden for 15 s, or 4 min without a touch: Foquito dims and asks for one tap. Nothing is counted as a failure, and session time still counts.</p></div>
@@ -330,9 +391,9 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 </section>
 
 <!-- 6 · Evidence -->
-<section class="slide" data-phase="morning" data-title="Why it works" aria-label="6. Why it works">
+<section class="slide" data-phase="morning" data-title="Why it works" aria-label="7. Why it works">
  <div class="in">
-  <p class="kicker"><span class="n">6</span>Why it should work · the evidence behind each choice</p>
+  <p class="kicker"><span class="n">7</span>Why it should work · the evidence behind each choice</p>
   <h2>Every feature has a <span class="hl">"Why?"</span> with its sources, inside the app.</h2>
   <div class="stone mt" style="padding-top:12px;padding-bottom:12px">
    <table class="ev">
@@ -352,9 +413,9 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 </section>
 
 <!-- 7 · Built today -->
-<section class="slide" data-phase="afternoon" data-title="What's built today" aria-label="7. What's built today">
+<section class="slide" data-phase="afternoon" data-title="What's built today" aria-label="8. What's built today">
  <div class="in">
-  <p class="kicker"><span class="n">7</span>What's built today · live, not a mock-up</p>
+  <p class="kicker"><span class="n">8</span>What's built today · live, not a mock-up</p>
   <h2>A working prototype, v1 → v6 in one hackathon.</h2>
   <div class="grid g3 mt">
    <div class="wood"><h3>The core loop</h3><ul class="ticks"><li>One task now, from text or list</li><li>Tiny first step from keyword rules, editable</li><li>2 / 10 / 25 min timer, pause, stop, +more</li><li>Drift nudge: dims, one tap back</li><li>Light flies to today's date</li></ul></div>
@@ -369,10 +430,10 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 </section>
 
 <!-- 8 · Tech -->
-<section class="slide" data-phase="night" data-title="Tech: Three.js + Tripo AI 3D" aria-label="8. Tech">
+<section class="slide" data-phase="night" data-title="Tech: Three.js + Tripo AI 3D" aria-label="9. Tech">
  <div class="in split">
   <div>
-   <p class="kicker"><span class="n">8</span>Tech · Three.js + Tripo AI 3D</p>
+   <p class="kicker"><span class="n">9</span>Tech · Three.js + Tripo AI 3D</p>
    <h2>A whole world in <span class="hl">one HTML file.</span></h2>
    <ul class="ticks mt">
     <li><b>No build step.</b> One ~180 KB <code>index.html</code>: HTML, CSS and one module. Static hosting on Vercel and GitHub Pages.</li>
@@ -390,11 +451,17 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 </section>
 
 <!-- 9 · Vision -->
-<section class="slide" data-phase="morning" data-title="Vision" aria-label="9. Vision, limits and next steps: vision">
+<section class="slide" data-phase="morning" data-title="Vision" aria-label="10. Vision, limits and next steps: vision">
  <div class="in">
-  <p class="kicker"><span class="n">9</span>Vision, Limits &amp; Next Steps · 1 of 3 · Vision</p>
+  <p class="kicker"><span class="n">10</span>Vision, Limits &amp; Next Steps · 1 of 3 · Vision</p>
   <h2>A calm light for every start.</h2>
   <p class="vision-q mt">Any adult with ADHD, on any device and in their language, can start the next small thing in under a minute, without shame, surveillance or giving away their data.</p>
+  <div class="market mt">
+   <div class="stone"><p class="metric">1.5–3%</p><p class="muted">of adults in Portugal live with ADHD, according to Portuguese experts.</p></div>
+   <div class="stone"><p class="metric">&lt; 20%</p><p class="muted">of those adults are properly diagnosed and treated. Most still lack support that does not shame them.</p></div>
+   <div class="stone"><p class="metric">2.5%</p><p class="muted">of adults worldwide, and 5.9% of young people, in the World Federation of ADHD consensus.</p></div>
+  </div>
+  <p class="src">Madeira et al., <a href="https://doi.org/10.20344/amp.22149" target="_blank" rel="noopener">Acta Médica Portuguesa 2025;38(3):187–196</a> · Faraone et al., <a href="https://doi.org/10.1016/j.neubiorev.2021.01.022" target="_blank" rel="noopener">World Federation of ADHD International Consensus Statement, 2021</a></p>
   <div class="road mt">
    <div class="ph now"><span class="dot">0</span><div class="stone"><p class="when acc">Today · v6</p><h3>Prototype</h3><ul class="ticks"><li>Full loop works end to end</li><li>Each choice linked to sources</li><li>Local-only, PT + EN</li></ul></div></div>
    <div class="ph"><span class="dot">1</span><div class="stone"><p class="when acc">Months 0–3</p><h3>Validate</h3><ul class="ticks"><li>Co-design and testing with adults with ADHD, via Brainstorm</li><li>Tune the nudge from real sessions</li><li>Harden: reload-safe timer, real devices</li></ul></div></div>
@@ -406,9 +473,9 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 </section>
 
 <!-- 10 · Limits -->
-<section class="slide" data-phase="afternoon" data-title="Current limitations" aria-label="10. Vision, limits and next steps: current limitations">
+<section class="slide" data-phase="afternoon" data-title="Current limitations" aria-label="11. Vision, limits and next steps: current limitations">
  <div class="in">
-  <p class="kicker"><span class="n">10</span>Vision, Limits &amp; Next Steps · 2 of 3 · Limits</p>
+  <p class="kicker"><span class="n">11</span>Vision, Limits &amp; Next Steps · 2 of 3 · Limits</p>
   <h2>What EnFoco <span class="hl">is not</span>, yet.</h2>
   <div class="lim mt">
    <div class="stone"><h3><span class="k">01</span>Not validated</h3><p class="muted">Not yet tested with a single person with ADHD. The sources inform the design; none evaluates EnFoco.</p><p class="fix muted">→ Usability round, weeks 2–6</p></div>
@@ -422,9 +489,9 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 </section>
 
 <!-- 11 · Next steps -->
-<section class="slide" data-phase="morning" data-title="Next steps" aria-label="11. Vision, limits and next steps: next steps">
+<section class="slide" data-phase="morning" data-title="Next steps" aria-label="12. Vision, limits and next steps: next steps">
  <div class="in">
-  <p class="kicker"><span class="n">11</span>Vision, Limits &amp; Next Steps · 3 of 3 · Next steps</p>
+  <p class="kicker"><span class="n">12</span>Vision, Limits &amp; Next Steps · 3 of 3 · Next steps</p>
   <h2>Next 12 months, with a metric for each step.</h2>
   <div class="split mt" style="grid-template-columns:1.6fr 1fr;align-items:start">
    <div class="stone" style="padding-top:12px;padding-bottom:8px">
@@ -441,18 +508,77 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
    </div>
    <div class="grid">
     <div class="wood"><h3>Two north-star metrics</h3><div class="nstar" style="margin-top:6px"><div><p class="metric">Start</p><p class="muted small">sessions lit ÷ app opens</p></div><div><p class="metric">Stay</p><p class="muted small">sessions finished or resumed after a dim ÷ sessions lit</p></div></div><p class="src muted">Computed on the device; shared only with consent.</p></div>
-    <div class="wood"><h3>What we need</h3><ul class="ticks"><li>Brainstorm's community for testing</li><li>Clinicians and researchers as advisors</li><li>A range of real devices to test on</li></ul></div>
+    <div class="wood"><h3>What we need</h3><ul class="ticks"><li>Brainstorm's community for discovery and testing</li><li>Clinicians and researchers as advisors</li><li>A range of real devices to test on</li><li>Go-to-market: Portugal first, then EU associations <span class="small">(plan)</span></li></ul></div>
     <p class="small">All numbers on this slide are targets, not results.</p>
    </div>
   </div>
  </div>
 </section>
 
+
+<!-- 13 · Business model -->
+<section class="slide" data-phase="morning" data-title="Business model" aria-label="13. Business model">
+ <div class="in">
+  <p class="kicker"><span class="n">13</span>Business model · freemium</p>
+  <h2>The daily loop stays <span class="hl">free.</span></h2>
+  <p class="lede">People with ADHD should not have to pay to start one task and stay with it. We grow by earning trust first, then offering more, once they show us they need it.</p>
+  <div class="grid g3 mt">
+   <div class="wood">
+    <h3>Free · today</h3>
+    <ul class="ticks">
+     <li>Recommended tasks of the day</li>
+     <li>Brain dump: write tasks into the list</li>
+     <li>Tiny first step, always editable</li>
+     <li>2 / 10 / 25 min timers and the light</li>
+     <li>Drift nudge, lights calendar, Why? notes</li>
+     <li>Portuguese and English, no account, local only</li>
+    </ul>
+   </div>
+   <div class="wood">
+    <h3>Premium <span class="tag-p">Proposed</span></h3>
+    <ul class="ticks">
+     <li>Opt-in, end-to-end encrypted sync</li>
+     <li>Advanced routines and reminders</li>
+     <li>AI coach / AI first step, always editable</li>
+     <li>Insights on Start and Stay, on-device first</li>
+    </ul>
+    <p class="src muted">A modest subscription. The price is a hypothesis to validate in product-market fit testing, not a figure we are stating today.</p>
+   </div>
+   <div class="wood">
+    <h3>B2B / B2B2C <span class="tag-p">Proposed</span></h3>
+    <ul class="ticks">
+     <li>ADHD associations, starting with Brainstorm</li>
+     <li>Clinics and professional practices</li>
+     <li>Schools and universities</li>
+     <li>Employers, as a workplace support</li>
+    </ul>
+    <p class="src muted">A channel to test after the consumer loop is proven, not a claim of signed partners.</p>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 14 · Our ask -->
+<section class="slide" data-phase="night" data-title="Our ask" aria-label="14. Our ask">
+ <div class="in">
+  <p class="kicker"><span class="n">14</span>Our ask</p>
+  <h2>Help us prove it can <span class="hl">reach people.</span></h2>
+  <p class="lede">We are asking TESLA Venture Studio for the Most Marketable Product Award: the €25,000 in-kind Market Development &amp; Product-Market Fit Program.</p>
+  <div class="ask mt">
+   <div class="stone"><h3><span class="k">01</span>Customer discovery</h3><p class="muted">Work with the Brainstorm community to hear how adults with ADHD start, stall and stay — and what they would actually use.</p></div>
+   <div class="stone"><h3><span class="k">02</span>PMF testing of the freemium</h3><p class="muted">Test what should stay free, what people would pay for, and whether the proposed premium earns its place.</p></div>
+   <div class="stone"><h3><span class="k">03</span>Go-to-market</h3><p class="muted">A strategy for Portugal first — with associations, clinics and schools — then ADHD associations across the EU.</p></div>
+   <div class="stone"><h3><span class="k">04</span>Intros to pilots</h3><p class="muted">Introductions to pilots, partners and investors across TESLA's European and African hubs, when we are ready to test in the field.</p></div>
+  </div>
+  <div class="wood mt"><h3>And with Wexio</h3><p class="muted">Conversational AI credits to explore a <b>voice assistant</b> that helps you start out loud — a proposed complement to typing the first step, not a replacement for the quiet loop we have today.</p></div>
+ </div>
+</section>
+
 <!-- 12 · Close -->
-<section class="slide" data-phase="night" data-title="Thank you" aria-label="12. Thank you">
+<section class="slide" data-phase="night" data-title="Thank you" aria-label="15. Thank you">
  <div class="in title-grid">
   <div>
-   <p class="kicker"><span class="n">12</span>Thank you</p>
+   <p class="kicker"><span class="n">15</span>Thank you</p>
    <h1 style="font-size:clamp(40px,5.4vw,84px)">One task.<br><span class="hl">One light on.</span></h1>
    <p class="lede">We want the light on to be the only goal on the screen, and we'll only add what people with ADHD show us they need.</p>
    <div class="grid g2 mt" style="max-width:640px">
@@ -600,7 +726,7 @@ async function boot() {
       ground.position.y = -0.62; v.sc.add(ground); v.r.setClearColor(0x161d33, 1);
       const glow = new THREE.PointLight(0xffc15e, 2.2, 3); glow.position.set(-1.65, 0.3, 0.8); v.sc.add(glow);
       v.cam.position.set(0, 2.2, 6.6); v.cam.lookAt(0, -0.15, 0);
-      v.slide = 8;
+      v.slide = 9;
       v.tick = t => models.forEach((m, i) => { m.rotation.y = reduce ? 0.5 : t * 0.0005 + i; });
       return true;
     });
