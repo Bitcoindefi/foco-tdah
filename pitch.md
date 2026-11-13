@@ -3,59 +3,61 @@
 Portugal Tech Week, *Hackathon for a Cause*, com a Brainstorm.
 Equipa: Leonardo Cagliero e Sofía Vázquez Furriel.
 
-Cerca de 450 palavras faladas, mais os cliques da demonstração. As indicações entre parênteses retos são para quem está no computador. Ensaiar com cronómetro: a parte 3 depende dos cliques.
+Cerca de 410 palavras faladas, mais os cliques da demonstração. As indicações entre parênteses retos são para quem está no computador. Ensaiar com cronómetro: a parte 3 depende dos cliques.
 
 ---
 
 ## 1. Utilizador e problema (0:00 a 0:35)
 
-Conheçam o Tiago. Tem uma tarefa de cinco minutos: enviar um comprovativo à senhoria. Evita-a há três semanas. O que cresce todos os dias é a vergonha.
+Conheçam o Tiago. Tem uma tarefa de cinco minutos: responder à senhoria. Evita-a há três semanas. O que cresce todos os dias é a vergonha.
 
-A Brainstorm deu-nos cinco pessoas assim. A Marta tem ideias a mais e nenhum primeiro passo. A Joana faz o plano perfeito e à quarta-feira já ruiu. A Sofia volta ao fim de doze dias e encontra uma parede de atrasos. O Pedro tem um projeto encalhado e não sabe pedir ajuda.
+A Brainstorm deu-nos cinco pessoas assim: ideias a mais e nenhum primeiro passo, planos que ruem à quarta-feira, listas que se transformam numa parede de atrasos.
 
-Os calendários e as listas mostram-lhes as falhas a vermelho.
+O problema destas pessoas é começar uma tarefa e ficar nela. Mais uma lista não as ajuda.
 
-## 2. Aprendizagem e desenho (0:35 a 1:15)
+## 2. Aprendizagem e desenho (0:35 a 1:20)
 
-Lemos antes de desenhar. Três ideias mudaram o protótipo.
+A versão anterior tinha cerca de vinte funcionalidades. Perguntámo-nos qual delas alguém usaria de facto, e não soubemos responder. Por isso cortámos.
 
-Primeira: um estudo de 2026, de Chen, Meng e Nie, ainda em pré-publicação, propõe tratar o tempo como ritmo e guardar o progresso mesmo quando há dias em branco. Por isso o nosso calendário não tem atrasos nem séries para quebrar.
+Ficou uma função: ajudar a fazer uma tarefa, com a luz acesa enquanto se faz.
 
-Segunda: a ADDitude e o canal How to ADHD explicam que uma tarefa fácil pode pesar por razões emocionais. Por isso existe o «Só 2 minutos».
+O que guardámos veio do que lemos. A ADDitude recomenda começar por um passo pequeno e imperfeito: por isso a app propõe sempre o primeiro passo. O guia europeu ADHD-EU e a ADDitude pedem tempo à vista: por isso há um só temporizador, grande. E um estudo de 2026, de Chen, Meng e Nie, ainda em pré-publicação, mostra que as pessoas rejeitam vigilância e culpa: por isso o aviso de distração é só uma luz que baixa, e um toque para voltar.
 
-Terceira: o folheto INCUP, de Stanford, diz que o arranque vem do interesse, da novidade, do desafio, da urgência e das pessoas. Por isso cada tarefa tem cinco reforços, e há foco acompanhado.
+## 3. Protótipo e utilidade (1:20 a 2:25)
 
-Cada escolha tem na app uma nota «Porquê?», com a fonte.
+[Capa aberta. «Começar». Saltar a respiração.]
 
-## 3. Protótipo e utilidade (1:15 a 2:20)
+O EnFoco faz uma pergunta: o que vais fazer agora?
 
-[Capa aberta. Carregar em «Começar», deixar correr uma respiração, «Saltar», «O meu calendário».]
+[Escrever «Responder à senhoria». Enter.]
 
-O EnFoco abre com três respirações. Depois, o calendário: um mapa low poly em que cada data é um bloco com doze luzes à volta. Cada luz acesa vale dez minutos de foco ou uma tarefa feita.
+Escrevo a tarefa. A app devolve um primeiro passo minúsculo: abrir a mensagem e escrever só a primeira frase.
 
-[Roda do rato para aproximar. Carregar em «Começar».]
+[«Acender e começar».]
 
-Aproximo. Em hoje estão os foquitos, as tarefas do dia. Começo uma, e as luzes de hoje pulsam.
+Um toque, e a lâmpada acende. Fica acesa enquanto eu trabalho.
 
-[Cenários → Joana.]
+[Mudar de separador durante uns vinte segundos e voltar.]
 
-A Joana teve dois dias fortes e depois nada. O mapa mostra os dias que brilharam; os outros não levam marca nenhuma. Para hoje, a app propõe só duas coisas.
+Se me distraio, a luz baixa. Não há aviso vermelho nem contagem de falhas. Um toque, e volta a acender.
 
-[Cenários → Sofia.]
+[«Estou aqui». Depois, «Feito».]
 
-A Sofia volta ao fim de doze dias: três coisas pequenas, o resto guardado.
+Quando acabo, a luz voa para o dia de hoje no calendário. Cada data guarda as luzes do foco que teve, e um dia em branco não apaga os outros.
 
-Para o Tiago há o «Só 2 minutos», para a Marta o despejo de ideias, e para o Pedro uma nota de passagem já escrita.
+[Apontar para o botão «Começar: …».]
 
-Um único ficheiro, duas línguas, e os dados ficam no navegador.
+E a app já me oferece a tarefa seguinte, a um toque.
 
-## 4. Visão, limites e próximos passos (2:20 a 3:00)
+Um ficheiro, duas línguas, e os dados ficam no navegador. Todos os modelos 3D são desenhados por código.
 
-Isto é um protótipo. Os dados são inventados. A companhia do foco acompanhado é simulada, e o primeiro passo vem de regras simples, não de IA. Não é uma ferramenta médica. E ainda não o testámos com uma única pessoa com PHDA.
+## 4. Visão, limites e próximos passos (2:25 a 3:00)
 
-Esse é o próximo passo: pôr estes cinco cenários à frente de pessoas da comunidade da Brainstorm e descobrir o que cortar. Só depois vêm as salas de foco com pessoas reais e a recolha de compromissos, sempre com consentimento.
+Isto é um protótipo. A lista e o histórico que viram são dados inventados. O primeiro passo vem de regras simples, não de IA. O aviso só sabe se o separador está à vista: não sabe o que a pessoa faz fora dele. Não é uma ferramenta médica. E ainda não o testámos com uma única pessoa com PHDA.
 
-Queremos que, no EnFoco, voltar nunca custe mais do que ficar.
+Esse é o próximo passo: pôr este ciclo à frente de pessoas da comunidade da Brainstorm e medir uma coisa só. Começaram? Ficaram?
+
+Queremos que, no EnFoco, a luz acesa seja o único objetivo do ecrã.
 
 Obrigado.
 
@@ -63,17 +65,17 @@ Obrigado.
 
 ## Notas de palco
 
-- **Antes de entrar:** abrir a página e confirmar que a lâmpada da capa roda (a cena 3D carregou). Pôr em português. Se a rede falhar, a app mostra o calendário simples e a demonstração continua igual.
-- **Num portátil:** o mapa fica fixo à esquerda e o dia à direita. Ao carregar em «Começar», apontar para as luzes a pulsar no bloco de hoje.
-- **Zoom:** roda do rato sobre o mapa, ou os botões + e − no canto do mapa. O botão do quadrado volta a mostrar o mês inteiro.
-- **Se o tempo apertar:** cortar o cenário da Sofia e ficar pela frase.
-- **No fim:** «Sair e repor os meus dados», na faixa do topo.
+- **Antes de entrar:** abrir a página e confirmar que a lâmpada da capa está acesa e a rodar (a cena 3D carregou). Pôr em português. Se a rede falhar, a app mostra a vista simples e o ciclo funciona na mesma.
+- **Respiração:** existe e é opcional. No palco, saltar.
+- **O aviso de distração:** baixa a luz ao fim de 15 segundos com o separador escondido, ou 4 minutos sem tocar na página. Para o mostrar, mudar de separador, contar até vinte e voltar.
+- **Tempo:** escolher «2 min» antes de acender, para a sessão caber no pitch.
+- **Se o tempo apertar:** cortar a mudança de separador e dizer só a frase.
 
 ## Perguntas prováveis
 
 - **«Isto foi validado?»** Não. As escolhas vêm de leitura de fontes públicas. A validação com pessoas com PHDA é o próximo passo, e é por isso que queremos trabalhar com a Brainstorm.
-- **«Onde ficam os dados?»** Só no navegador da pessoa, em localStorage. Há botões para exportar e apagar. O único pedido de rede é a biblioteca gráfica.
-- **«E um dia sem luzes?»** Fica como está, sem marca. O que não se fez passa para hoje sem estado de atraso, e a contagem de foquitos acesos nunca volta a zero.
-- **«Corre num telemóvel fraco?»** Foi desenhado para isso: poucos polígonos, uma só luz por cena, 30 imagens por segundo. Só o testámos em poucos equipamentos; sem WebGL, aparece o calendário simples.
-- **«A companhia é uma pessoa?»** Não, é simulada, e a app di-lo no ecrã. As mensagens de convite servem para chamar uma pessoa a sério.
-- **«E a IA?»** Hoje não há nenhuma. Se vier, será para sugerir passos que a pessoa pode sempre editar ou recusar.
+- **«O que cortaram?»** Personas de demonstração, reforços de motivação, foco acompanhado, registo de energia e humor, ritmo do dia. Nenhuma servia diretamente o ciclo «começar e ficar». Podem voltar se os testes o pedirem.
+- **«A app vigia a pessoa?»** Não. Só sabe se o separador está à vista e se houve um toque. Não regista nada disso, e o tempo conta na mesma.
+- **«Onde ficam os dados?»** Só no navegador, em localStorage. Há botões para exportar e apagar. Os únicos pedidos de rede são a biblioteca gráfica e duas fontes.
+- **«E a IA?»** Hoje não há nenhuma. Se vier, será para sugerir o primeiro passo, que a pessoa pode sempre reescrever.
+- **«Corre num telemóvel fraco?»** Foi desenhado para isso: poucos polígonos, uma luz por cena, 30 imagens por segundo. Só o testámos em poucos equipamentos; sem WebGL, aparece a vista simples.
