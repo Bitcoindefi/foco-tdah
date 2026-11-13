@@ -230,6 +230,16 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 .slide[data-title="Vision"] .guard{margin-top:8px;gap:6px}
 .slide[data-title="Vision"] .guard .chip{font-size:.72em;padding:4px 9px}
 .slide[data-title="Vision"] .src{margin-top:4px}
+.slide[data-title="Vision, limits and next steps"] h2{font-size:clamp(26px,3.4vw,46px)}
+.slide[data-title="Vision, limits and next steps"] .vision-q{font-size:clamp(16px,1.45vw,22px);margin-top:6px;max-width:none}
+.slide[data-title="Vision, limits and next steps"] .market{margin-top:8px}
+.slide[data-title="Vision, limits and next steps"] .market .stone{padding:8px 12px}
+.slide[data-title="Vision, limits and next steps"] .src{margin-top:3px;font-size:.72em}
+.slide[data-title="Vision, limits and next steps"] .grid.mt{margin-top:8px}
+.slide[data-title="Vision, limits and next steps"] .wood{padding:10px 14px}
+.slide[data-title="Vision, limits and next steps"] ul.ticks li{font-size:.82em;margin:3px 0}
+.slide[data-title="Vision, limits and next steps"] .guard{margin-top:8px;gap:6px}
+.slide[data-title="Vision, limits and next steps"] .guard .chip{font-size:.72em;padding:4px 9px}
 
 /* ask */
 .ask{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,1.2vw,16px)}
@@ -330,7 +340,7 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 <!-- 4 · How it works -->
 <section class="slide" data-phase="afternoon" data-title="How it works" aria-label="4. How it works">
  <div class="in">
-  <p class="kicker"><span class="n">4</span>How it works · the demo</p>
+  <p class="kicker"><span class="n">4</span>How it works · the loop</p>
   <h2>Type, Enter, Enter. <span class="hl">The light is on.</span></h2>
   <div class="steps mt">
    <div class="step"><figure><img src="img/feat-recommended.webp" alt="Live app, 13 Nov 2026: What are you doing now? with today's recommended tasks, including Empty your head" loading="lazy"></figure><p class="num">1</p><h3>Pick one task</h3><p>Write it, or tap one of the first three. Today's recommended tasks rotate daily.</p></div>
@@ -419,41 +429,38 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
   <h2>A working prototype, v1 → v6 in one hackathon.</h2>
   <div class="grid g3 mt">
    <div class="wood"><h3>The core loop</h3><ul class="ticks"><li>One task now, from text or list</li><li>Tiny first step from keyword rules, editable</li><li>2 / 10 / 25 min timer, pause, stop, +more</li><li>Drift nudge: dims, one tap back</li><li>Light flies to today's date</li></ul></div>
-   <div class="wood"><h3>Around it</h3><ul class="ticks"><li>Calendar of lights, no streaks</li><li>Task list and goals with date flags</li><li>Recommended tasks of the day, rotating</li><li>"Why?" notes with 8 linked sources</li><li>Optional 36 s breathing pause</li></ul></div>
+   <div class="wood"><h3>Around it</h3><ul class="ticks"><li>Calendar of lights, no streaks</li><li>Task list and goals with date flags</li><li>Recommended tasks of the day, rotating</li><li>"Why?" notes with 8 linked sources</li><li>Optional 36 s breathing pause</li><li>Chill lofi focus music, generated on the device</li><li>Basic voice assistant in the browser (PT and EN)</li></ul></div>
    <div class="wood"><h3>Care and craft</h3><ul class="ticks"><li>Portuguese and English UI</li><li>Morning, afternoon, night scenes by clock</li><li>Keyboard use, 44 px targets, reduced motion</li><li>Export and delete everything</li><li>Works without WebGL (HTML + SVG view)</li></ul></div>
   </div>
   <div class="stone mt" style="display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;font-size:.86em">
    <b style="font-family:var(--display)">Build log (git, 12–13 Nov 2026):</b>
-   <span class="muted">v1 daily calendar</span><span class="muted">v2 Three.js bulbs, research</span><span class="muted">v3 isometric light map</span><span><b class="acc">v4 cut ~20 features to one loop</b></span><span class="muted">v5 day/night scenes, UI in the world</span><span class="muted">v6 Tripo 3D models, daily tasks, sourced "Why?"</span>
+   <span class="muted">v1 daily calendar</span><span class="muted">v2 Three.js bulbs, research</span><span class="muted">v3 isometric light map</span><span><b class="acc">v4 cut ~20 features to one loop</b></span><span class="muted">v5 day/night scenes, UI in the world</span><span class="muted">v6 Tripo 3D models, daily tasks, sourced "Why?"</span><span class="muted">today: on-device lofi music + basic browser voice</span>
   </div>
  </div>
 </section>
 
-<!-- 8 · Tech -->
-<section class="slide" data-phase="night" data-title="Tech: Three.js + Tripo AI 3D" aria-label="9. Tech">
- <div class="in split">
-  <div>
-   <p class="kicker"><span class="n">9</span>Tech · Three.js + Tripo AI 3D</p>
-   <h2>A whole world in <span class="hl">one HTML file.</span></h2>
-   <ul class="ticks mt">
-    <li><b>No build step.</b> One ~180 KB <code>index.html</code>: HTML, CSS and one module. Static hosting on Vercel and GitHub Pages.</li>
-    <li><b>Three.js 0.160</b> via import map and dynamic <code>import()</code>, so a CDN failure never breaks the loop.</li>
-    <li><b>Tripo AI models</b> (GLB, ~155–176 KB each): Foquito, tree, wooden board, rock. Normalised at load, re-tinted per phase, 8 s timeout, code-built fallback.</li>
-    <li><b>One canvas, two scenes</b>: island and isometric calendar map. InstancedMesh, one point light, pixel ratio ≤ 1.5, ~30 fps.</li>
-    <li><b>State</b>: one localStorage object. No backend.</li>
-   </ul>
-  </div>
-  <div class="stone" style="padding:10px">
-   <div class="hero3d" id="models3d" style="max-width:none;aspect-ratio:4/3"><img src="img/focus-night.webp" alt="The app at night with the Tripo models in the scene" style="border-radius:8px;object-fit:cover"><canvas id="c-models" aria-hidden="true"></canvas></div>
-   <p class="small" style="text-align:center;margin-top:6px;color:var(--st-ink2)">The four Tripo GLBs the app loads, rendered live here with Three.js</p>
-  </div>
- </div>
-</section>
-
-<!-- 9 · Vision -->
-<section class="slide" data-phase="morning" data-title="Vision" aria-label="10. Vision, limits and next steps: vision">
+<!-- 9 · Live demo -->
+<section class="slide" data-phase="afternoon" data-title="Live demo" aria-label="9. Live demo">
  <div class="in">
-  <p class="kicker"><span class="n">10</span>Vision, Limits &amp; Next Steps · 1 of 3 · Vision</p>
+  <p class="kicker"><span class="n">9</span>Live demo · 60 seconds</p>
+  <h2>See it in the browser. <span class="hl">One minute.</span></h2>
+  <div class="steps mt">
+   <div class="step"><figure><img src="img/feat-recommended.webp" alt="Live app: today's recommended tasks on the pick screen" loading="lazy"></figure><p class="num">1</p><h3>Recommended today</h3><p>Pick one of today's tasks, so you don't start from a blank page.</p></div>
+   <div class="step"><figure><img src="img/feat-list-board.webp" alt="Live app: the task list and Save for later field" loading="lazy"></figure><p class="num">2</p><h3>Brain dump</h3><p>Get something out of your head into the list.</p></div>
+   <div class="step"><figure><img src="img/feat-focus.webp" alt="Live app: a short focus timer with the light on" loading="lazy"></figure><p class="num">3</p><h3>Timer + lofi</h3><p>Start 2 minutes and turn the music on. The light stays on.</p></div>
+   <div class="step"><p class="num">4</p><h3>Voice</h3><p>“What should I do?” or “Add …”. A basic browser assistant, already live. If the mic is unavailable, type the command.</p></div>
+  </div>
+  <div class="meta mt">
+    <a class="btn primary" href="../#home">Open the live app <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <span class="chip">60 seconds on the live app · then back to the deck</span>
+  </div>
+ </div>
+</section>
+
+<!-- 10 · Vision, limits and next steps (one slide, scored block) -->
+<section class="slide" data-phase="morning" data-title="Vision, limits and next steps" aria-label="10. Vision, limits and next steps">
+ <div class="in">
+  <p class="kicker"><span class="n">10</span>Vision, limits and next steps</p>
   <h2>A calm light for every start.</h2>
   <p class="vision-q mt">Any adult with ADHD, on any device and in their language, can start the next small thing in under a minute, without shame, surveillance or giving away their data.</p>
   <div class="market mt">
@@ -462,64 +469,35 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
    <div class="stone"><p class="metric">2.5%</p><p class="muted">of adults worldwide, and 5.9% of young people, in the World Federation of ADHD consensus.</p></div>
   </div>
   <p class="src">Madeira et al., <a href="https://doi.org/10.20344/amp.22149" target="_blank" rel="noopener">Acta Médica Portuguesa 2025;38(3):187–196</a> · Faraone et al., <a href="https://doi.org/10.1016/j.neubiorev.2021.01.022" target="_blank" rel="noopener">World Federation of ADHD International Consensus Statement, 2021</a></p>
-  <div class="road mt">
-   <div class="ph now"><span class="dot">0</span><div class="stone"><p class="when acc">Today · v6</p><h3>Prototype</h3><ul class="ticks"><li>Full loop works end to end</li><li>Each choice linked to sources</li><li>Local-only, PT + EN</li></ul></div></div>
-   <div class="ph"><span class="dot">1</span><div class="stone"><p class="when acc">Months 0–3</p><h3>Validate</h3><ul class="ticks"><li>Co-design and testing with adults with ADHD, via Brainstorm</li><li>Tune the nudge from real sessions</li><li>Harden: reload-safe timer, real devices</li></ul></div></div>
-   <div class="ph"><span class="dot">2</span><div class="stone"><p class="when acc">Months 3–9</p><h3>Everyday tool</h3><ul class="ticks"><li>Installable offline PWA</li><li>Opt-in, end-to-end encrypted sync</li><li>Spanish added to PT + EN</li><li>Opt-in AI first step, always editable</li></ul></div></div>
-   <div class="ph"><span class="dot">3</span><div class="stone"><p class="when acc">Months 9–18</p><h3>Evidence &amp; reach</h3><ul class="ticks"><li>Pre-registered pilot with clinical / academic partners</li><li>Person-controlled export for clinicians</li><li>ADHD associations in Europe and Latin America</li></ul></div></div>
-  </div>
-  <div class="guard"><span class="chip">Constant: one task on screen</span><span class="chip">No streaks, no shame</span><span class="chip">Your data, your device first</span><span class="chip">No medical claims without evidence</span><span class="chip">Every phase asks: did they start? did they stay?</span></div>
- </div>
-</section>
-
-<!-- 10 · Limits -->
-<section class="slide" data-phase="afternoon" data-title="Current limitations" aria-label="11. Vision, limits and next steps: current limitations">
- <div class="in">
-  <p class="kicker"><span class="n">11</span>Vision, Limits &amp; Next Steps · 2 of 3 · Limits</p>
-  <h2>What EnFoco <span class="hl">is not</span>, yet.</h2>
-  <div class="lim mt">
-   <div class="stone"><h3><span class="k">01</span>Not validated</h3><p class="muted">Not yet tested with a single person with ADHD. The sources inform the design; none evaluates EnFoco.</p><p class="fix muted">→ Usability round, weeks 2–6</p></div>
-   <div class="stone"><h3><span class="k">02</span>Not a treatment</h3><p class="muted">It does not diagnose, treat or replace professional support. It is not a medical device.</p><p class="fix muted">→ Clinical advisors before any claim</p></div>
-   <div class="stone"><h3><span class="k">03</span>Hackathon architecture</h3><p class="muted">One ~180 KB HTML file, no automated tests, no build. Fast to iterate, hard to scale.</p><p class="fix muted">→ Modules + tests in Phase 1</p></div>
-   <div class="stone"><h3><span class="k">04</span>Local-only data</h3><p class="muted">localStorage only: no sync or backup between devices. Clearing the browser loses history (export exists).</p><p class="fix muted">→ Opt-in encrypted sync, Phase 2</p></div>
-   <div class="stone"><h3><span class="k">05</span>Simple heuristics</h3><p class="muted">First step comes from keyword rules, not AI. The nudge only sees tab visibility and touches. 15 s / 4 min are our guesses. A running timer is lost on reload.</p><p class="fix muted">→ Tune from data; persist timer</p></div>
-   <div class="stone"><h3><span class="k">06</span>Devices, language, polish</h3><p class="muted">Tested only in Chrome with software rendering, not on low-end phones. UI in PT + EN only. At night the Tripo boards stay warmer than the scene (simple colour-ratio tint). Needs CDN for 3D and fonts.</p><p class="fix muted">→ Device lab, Spanish, night tint fix</p></div>
-  </div>
- </div>
-</section>
-
-<!-- 11 · Next steps -->
-<section class="slide" data-phase="morning" data-title="Next steps" aria-label="12. Vision, limits and next steps: next steps">
- <div class="in">
-  <p class="kicker"><span class="n">12</span>Vision, Limits &amp; Next Steps · 3 of 3 · Next steps</p>
-  <h2>Next 12 months, with a metric for each step.</h2>
-  <div class="split mt" style="grid-template-columns:1.6fr 1fr;align-items:start">
-   <div class="stone" style="padding-top:12px;padding-bottom:8px">
-    <table class="ns">
-     <thead><tr><th>When</th><th>Step</th><th>Success metric (target)</th></tr></thead>
-     <tbody>
-      <tr><td>Wk 1–2</td><td><b>Harden.</b> Reload-safe timer, night tint fix, test on 3+ low-end Android phones and an iPhone.</td><td>≥ 30 fps or auto-fallback on every device; 0 sessions lost on reload</td></tr>
-      <tr><td>Wk 2–6</td><td><b>Usability round 1</b> with 5–8 adults with ADHD via Brainstorm, with consent, think-aloud.</td><td>≥ 80% light up within 60 s of opening; SUS ≥ 70; all resume after a dim unaided</td></tr>
-      <tr><td>Wk 6–10</td><td><b>Tune and cut.</b> Set nudge thresholds from opt-in local logs; bring back cut v3 features only if testers ask.</td><td>Fewer false dims than round 1; no new step before "start"</td></tr>
-      <tr><td>Mo 3–6</td><td><b>Everyday tool.</b> PWA + offline, Spanish UI, opt-in E2E sync, WCAG 2.2 AA audit, code split into modules + tests.</td><td>Installable; 0 critical a11y issues; ≥ 40% of field testers return in week 2</td></tr>
-      <tr><td>Mo 6–12</td><td><b>Pilot protocol</b> with a clinical / academic partner, ethics review, pre-registration.</td><td>Protocol registered; outcomes: task initiation and time on task</td></tr>
-     </tbody>
-    </table>
+  <div class="grid g2 mt">
+   <div class="wood">
+    <h3>What it is not, yet</h3>
+    <ul class="ticks">
+     <li>Not yet tested with a person with ADHD. The sources inform the design; none evaluates EnFoco.</li>
+     <li>Not a treatment or a medical device.</li>
+     <li>Hackathon architecture: one HTML file, no automated tests. Data is local only; a running timer is lost on reload.</li>
+     <li>Tested in Chrome with software rendering, not yet on low-end phones. UI in PT + EN only.</li>
+    </ul>
    </div>
-   <div class="grid">
-    <div class="wood"><h3>Two north-star metrics</h3><div class="nstar" style="margin-top:6px"><div><p class="metric">Start</p><p class="muted small">sessions lit ÷ app opens</p></div><div><p class="metric">Stay</p><p class="muted small">sessions finished or resumed after a dim ÷ sessions lit</p></div></div><p class="src muted">Computed on the device; shared only with consent.</p></div>
-    <div class="wood"><h3>What we need</h3><ul class="ticks"><li>Brainstorm's community for discovery and testing</li><li>Clinicians and researchers as advisors</li><li>A range of real devices to test on</li><li>Go-to-market: Portugal first, then EU associations <span class="small">(plan)</span></li></ul></div>
-    <p class="small">All numbers on this slide are targets, not results.</p>
+   <div class="wood">
+    <h3>Next, with targets</h3>
+    <ul class="ticks">
+     <li><b>Weeks 1–2:</b> harden (reload-safe timer, real devices). Target: 30 fps or auto-fallback.</li>
+     <li><b>Weeks 2–6:</b> usability with 5–8 adults with ADHD via Brainstorm, with consent. Target: ≥ 80% light up within 60 s; SUS ≥ 70.</li>
+     <li><b>Months 3–6:</b> installable PWA, Spanish, opt-in encrypted sync.</li>
+     <li><b>Months 6–12:</b> pre-registered pilot with a clinical or academic partner.</li>
+    </ul>
+    <p class="src muted">North stars, on the device and shared only with consent: <b>Start</b> and <b>Stay</b>. Every number here is a target, not a result.</p>
    </div>
   </div>
+  <div class="guard"><span class="chip">Constant: one task on screen</span><span class="chip">No streaks, no shame</span><span class="chip">Your data, your device first</span><span class="chip">No medical claims without evidence</span></div>
  </div>
 </section>
-
 
 <!-- 13 · Business model -->
-<section class="slide" data-phase="morning" data-title="Business model" aria-label="13. Business model">
+<section class="slide" data-phase="morning" data-title="Business model" aria-label="11. Business model">
  <div class="in">
-  <p class="kicker"><span class="n">13</span>Business model · freemium</p>
+  <p class="kicker"><span class="n">11</span>Business model · freemium</p>
   <h2>The daily loop stays <span class="hl">free.</span></h2>
   <p class="lede">People with ADHD should not have to pay to start one task and stay with it. We grow by earning trust first, then offering more, once they show us they need it.</p>
   <div class="grid g3 mt">
@@ -532,6 +510,8 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
      <li>2 / 10 / 25 min timers and the light</li>
      <li>Drift nudge, lights calendar, Why? notes</li>
      <li>Portuguese and English, no account, local only</li>
+     <li>Lofi focus music, generated on the device</li>
+     <li>Basic browser voice assistant</li>
     </ul>
    </div>
    <div class="wood">
@@ -559,9 +539,9 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 </section>
 
 <!-- 14 · Our ask -->
-<section class="slide" data-phase="night" data-title="Our ask" aria-label="14. Our ask">
+<section class="slide" data-phase="night" data-title="Our ask" aria-label="12. Our ask">
  <div class="in">
-  <p class="kicker"><span class="n">14</span>Our ask</p>
+  <p class="kicker"><span class="n">12</span>Our ask</p>
   <h2>Help us prove it can <span class="hl">reach people.</span></h2>
   <p class="lede">We are asking TESLA Venture Studio for the Most Marketable Product Award: the €25,000 in-kind Market Development &amp; Product-Market Fit Program.</p>
   <div class="ask mt">
@@ -570,15 +550,15 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
    <div class="stone"><h3><span class="k">03</span>Go-to-market</h3><p class="muted">A strategy for Portugal first — with associations, clinics and schools — then ADHD associations across the EU.</p></div>
    <div class="stone"><h3><span class="k">04</span>Intros to pilots</h3><p class="muted">Introductions to pilots, partners and investors across TESLA's European and African hubs, when we are ready to test in the field.</p></div>
   </div>
-  <div class="wood mt"><h3>And with Wexio</h3><p class="muted">Conversational AI credits to explore a <b>voice assistant</b> that helps you start out loud — a proposed complement to typing the first step, not a replacement for the quiet loop we have today.</p></div>
+  <div class="wood mt"><h3>And with Wexio</h3><p class="muted">A <b>basic browser version is already live</b>: it reads today's task, adds to the list, starts a timer and plays the music. We are asking Wexio for credits to <b>power the full conversational assistant</b> — still a complement to the quiet loop, not a replacement.</p></div>
  </div>
 </section>
 
 <!-- 12 · Close -->
-<section class="slide" data-phase="night" data-title="Thank you" aria-label="15. Thank you">
+<section class="slide" data-phase="night" data-title="Thank you" aria-label="13. Thank you">
  <div class="in title-grid">
   <div>
-   <p class="kicker"><span class="n">15</span>Thank you</p>
+   <p class="kicker"><span class="n">13</span>Thank you</p>
    <h1 style="font-size:clamp(40px,5.4vw,84px)">One task.<br><span class="hl">One light on.</span></h1>
    <p class="lede">We want the light on to be the only goal on the screen, and we'll only add what people with ADHD show us they need.</p>
    <div class="grid g2 mt" style="max-width:640px">
@@ -673,7 +653,7 @@ fromHash();
 </script>
 
 <script type="module">
-/* ---------- live Tripo models with Three.js: Foquito on the title, all four on the tech slide ----------
+/* ---------- live Tripo models with Three.js: Foquito on the title slide ----------
    Same approach as the app: dynamic import, any failure keeps the still image. */
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 async function boot() {
@@ -718,7 +698,7 @@ async function boot() {
   }
   const names = ['foquito', 'tree', 'board', 'rock'];
   const models = await Promise.all(names.map(n => n === 'foquito' ? load('foquito') : load(n)));
-  if (models.every(Boolean)) {
+  if (models.every(Boolean) && document.getElementById('c-models') && document.getElementById('models3d')) {
     const mv = makeView('c-models', 'models3d', v => {
       const xs = [-1.8, -0.6, 0.6, 1.8];
       models.forEach((m, i) => { m.position.set(xs[i], 0, 0); m.scale.setScalar(i === 2 ? 1.05 : 0.95); v.sc.add(m); });

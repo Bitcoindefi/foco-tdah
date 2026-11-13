@@ -109,6 +109,8 @@ Não há ficheiros de modelos. Tudo é construído com geometria do Three.js e m
 
 - Tudo fica no navegador. Não há conta, servidor nem análises.
 - Pedidos de rede: a biblioteca Three.js (unpkg.com) e duas fontes (Google Fonts). Nenhum leva dados da pessoa.
+- A música lofi de foco é gerada neste dispositivo com a Web Audio API. Não há ficheiro de áudio, amostras de terceiros nem pedido de rede (ver créditos abaixo).
+- O assistente de voz usa as APIs de voz deste navegador (reconhecimento, quando existe, e leitura). O EnFoco não tem chave nem servidor de voz; o navegador pode usar o serviço de voz do próprio fabricante. No Firefox o reconhecimento costuma falhar: fica a leitura e um campo para escrever o comando.
 - O aviso de distração só sabe se o separador está à vista e se houve um toque. Não sabe se a pessoa está a trabalhar fora do ecrã, e por isso o tempo da sessão conta sempre.
 - O primeiro passo vem de regras por palavras-chave, não de IA.
 - Um temporizador a correr perde-se se a página for recarregada (o foco já registado fica).
@@ -118,8 +120,14 @@ Não há ficheiros de modelos. Tudo é construído com geometria do Three.js e m
 
 - Abre a página uns minutos antes. A lâmpada da capa acesa e a rodar confirma que a cena 3D carregou.
 - Escolhe «2 min» para a sessão caber no pitch.
+- Música lofi: o botão de notas no topo (desligada por omissão). Volume ao lado. A preferência fica em localStorage.
+- Assistente de voz: o botão de microfone. Comandos: «o que faço», «anotar …», «começa 2, 10 ou 25 minutos», «toca música» / «para a música». Se o microfone não estiver disponível, escreve o comando ou usa «Ouvir a recomendada de hoje».
 - Para mostrar o aviso: muda de separador, conta até vinte, volta.
-- Para recomeçar do zero: Sobre → Apagar tudo. Para voltar ao exemplo, apaga a chave `enfoco.v4` nas ferramentas do navegador e recarrega.
+- Para recomeçar do zero: Sobre → Apagar tudo. Para voltar ao exemplo, apaga a chave `enfoco` nas ferramentas do navegador e recarrega.
+
+## Créditos de áudio
+
+A música lofi de foco é um ciclo original gerado em tempo real nesta página, com a Web Audio API (bateria suave, baixo, acordes de sétima e um pouco de «vinil»). Não se usa nenhum ficheiro, amostra ou biblioteca de terceiros. O código é do EnFoco e podes redistribuí-lo com o resto da app.
 
 ## Próximos passos
 
@@ -237,6 +245,8 @@ There are no model files. Everything is built from Three.js geometry and `flatSh
 
 - Everything stays in the browser. There is no account, server or analytics.
 - Network requests: the Three.js library (unpkg.com) and two fonts (Google Fonts). Neither carries personal data.
+- The lofi focus music is generated on this device with the Web Audio API. There is no audio file, no third-party sample and no network request (see credits below).
+- The voice assistant uses this browser's speech APIs (recognition, where it exists, and read-aloud). EnFoco has no voice key or server; the browser may use its vendor's built-in speech service. In Firefox, recognition is often missing: read-aloud and a typed command field remain.
 - The drift nudge only knows whether the tab is in view and whether there was a touch. It cannot tell if the person is working away from the screen, so session time always counts.
 - The first step comes from keyword rules, not from AI.
 - A running timer is lost if the page is reloaded (focus already logged stays).
@@ -246,8 +256,14 @@ There are no model files. Everything is built from Three.js geometry and `flatSh
 
 - Open the page a few minutes early. The cover bulb lit and turning confirms the 3D scene has loaded.
 - Choose "2 min" so the session fits in the pitch.
+- Lofi music: the notes button in the top bar (off by default). Volume next to it. The preference is stored in localStorage.
+- Voice assistant: the microphone button. Commands: “what should I do”, “add …”, “start 2, 10 or 25 minutes”, “play music” / “stop music”. If the microphone is unavailable, type the command or use “Hear today's recommended task”.
 - To show the nudge: switch tabs, count to twenty, come back.
-- To start from scratch: About → Delete everything. To get the sample back, remove the `enfoco.v4` key in the browser's developer tools and reload.
+- To start from scratch: About → Delete everything. To get the sample back, remove the `enfoco` key in the browser's developer tools and reload.
+
+## Audio credits
+
+The lofi focus music is an original loop generated in real time on this page, with the Web Audio API (a soft beat, bass, seventh chords and a little vinyl crackle). No file, sample or third-party library is used. The code is part of EnFoco and may be redistributed with the rest of the app.
 
 ## Next steps
 

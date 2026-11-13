@@ -110,8 +110,28 @@ svg{display:block}
 .top .grow{flex:1}
 body[data-view="cover"] .top,body[data-view="home"].world3d .top{position:fixed;left:0;right:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;pointer-events:none}
 body[data-view="cover"] .top>*,body[data-view="home"].world3d .top>*{pointer-events:auto}
-body[data-view="home"].world3d .top .seg,body[data-view="home"].world3d .top .btn.text,body[data-view="home"].world3d .phase-tag{background:color-mix(in srgb,var(--raise) 84%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+body[data-view="home"].world3d .top .seg,body[data-view="home"].world3d .top .btn.text,body[data-view="home"].world3d .phase-tag,body[data-view="home"].world3d .top .tools,body[data-view="home"].world3d .top .icon-btn{background:color-mix(in srgb,var(--raise) 84%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 body[data-view="home"].world3d .top .btn.text{border-radius:14px;color:var(--text)}
+.tools{display:flex;align-items:center;gap:6px;flex:none}
+.music-dock{display:flex;align-items:center;gap:4px;padding:2px 6px 2px 2px;border-radius:14px;border:1.5px solid var(--line);background:var(--raise)}
+.music-dock .icon-btn{border-color:transparent;background:none;width:40px;height:40px}
+.music-dock .icon-btn[aria-pressed="true"]{color:var(--accent-text)}
+.vol{display:flex;align-items:center;width:72px}
+.vol input[type=range]{width:100%;height:4px;margin:0;accent-color:var(--accent);cursor:pointer}
+#btn-voice{flex:none}
+#btn-voice[aria-pressed="true"]{color:var(--accent-ink);background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px var(--ring)}
+#btn-voice.listening{animation:listen 1.1s ease-in-out infinite}
+@keyframes listen{0%,100%{box-shadow:0 0 0 0 var(--ring)}50%{box-shadow:0 0 0 6px var(--ring)}}
+#voice-panel{position:fixed;top:64px;right:max(12px,env(safe-area-inset-right));z-index:30;width:min(92vw,360px);padding:16px 16px 14px;border-radius:16px;border:1.5px solid var(--line);background:var(--raise);box-shadow:0 18px 40px -18px rgba(0,0,0,.55);color:var(--text)}
+#voice-panel h2{margin:0 0 6px;font:700 var(--t-md) var(--display)}
+#voice-panel .vo-status{margin:0 0 8px;color:var(--muted);font-size:var(--t-sm)}
+#voice-panel .vo-heard{min-height:1.4em;margin:0 0 10px;font-weight:600}
+#voice-panel .vo-tip{margin:10px 0 0;color:var(--faint,#7785a3);font-size:var(--t-xs);line-height:1.4}
+#voice-panel .field-go{margin-top:8px}
+#voice-panel .pair{margin-top:10px}
+.focus-tools{display:flex;align-items:center;gap:8px;margin-top:var(--s4);flex-wrap:wrap}
+.focus-tools .music-dock{background:var(--well,var(--raise))}
+@media(max-width:560px){.vol{width:56px}.top .btn.text{padding:0 8px}}
 .phase-tag{display:inline-flex;align-items:center;gap:var(--s2);min-height:44px;padding:0 14px 0 10px;border-radius:14px;border:1.5px solid var(--line);
   font:600 var(--t-sm) var(--display);color:var(--text);transition:background-color 1.6s,border-color 1.6s,color 1.6s}
 .phase-tag svg{width:22px;height:22px;color:var(--accent-text)}
@@ -419,12 +439,37 @@ html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-moti
 <header class="top">
   <p class="phase-tag" id="phase-tag"></p>
   <span class="grow"></span>
+  <div class="tools" id="tools">
+    <div class="music-dock" id="music-dock">
+      <button type="button" class="icon-btn" id="btn-music" data-act="musicToggle" aria-pressed="false" data-i18n-aria="mu_play">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="18" cy="16" r="2.5"/></svg>
+      </button>
+      <label class="vol"><span class="sr" id="l-vol">Volume</span><input id="music-vol" type="range" min="0" max="100" value="40" data-chg="musicVol"></label>
+    </div>
+    <button type="button" class="icon-btn" id="btn-voice" data-act="voiceToggle" aria-pressed="false" data-i18n-aria="vo_btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 12a6 6 0 0 0 12 0M12 18v3M9 21h6"/></svg>
+    </button>
+  </div>
   <div class="seg" role="group" id="lang-seg">
     <button type="button" data-act="lang" data-v="pt" lang="pt">PT</button>
     <button type="button" data-act="lang" data-v="en" lang="en">EN</button>
   </div>
   <button type="button" class="btn text" id="btn-about" data-act="nav" data-v="about" data-i18n="about">Sobre</button>
 </header>
+<div id="voice-panel" hidden role="dialog" aria-labelledby="vo-title" aria-modal="false">
+  <h2 id="vo-title">Assistente de voz</h2>
+  <p class="vo-status" id="vo-status"></p>
+  <p class="vo-heard" id="vo-heard" aria-live="polite"></p>
+  <form data-form="voice" autocomplete="off">
+    <label class="sr" for="vo-in">Comando</label>
+    <div class="field-go"><input id="vo-in" name="q" type="text" maxlength="120" enterkeyhint="go"><button type="submit" id="vo-run" aria-label="Executar">↵</button></div>
+  </form>
+  <div class="pair">
+    <button type="button" class="btn secondary" data-act="voiceRead" id="vo-read">Ouvir a recomendada de hoje</button>
+    <button type="button" class="btn text" data-act="voiceClose" id="vo-close">Fechar</button>
+  </div>
+  <p class="vo-tip" id="vo-tip"></p>
+</div>
 
 <main id="main" tabindex="-1">
   <section id="v-cover" class="view" hidden>
@@ -648,7 +693,32 @@ pt: {
   ab_team: "Equipa EnFoco: Leonardo Cagliero e Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, com a Brainstorm.",
   scene_code: "Cena 3D ativa. Todos os modelos são desenhados por código.",
   scene_2d: "Vista simples ativa: o WebGL ou a biblioteca Three.js não estão disponíveis.",
-  scene_pending: "A cena ainda está a carregar."
+  scene_pending: "A cena ainda está a carregar.",
+
+  mu_play: "Tocar música lofi",
+  mu_off: "Música ligada, tocar para parar",
+  mu_vol: "Volume da música",
+  mu_started: "Música lofi ligada.",
+  mu_stopped: "Música parada.",
+  vo_btn: "Assistente de voz",
+  vo_title: "Assistente de voz",
+  vo_listen: "A ouvir… podes falar.",
+  vo_ready: "Diz ou escreve um comando: «o que faço», «anotar …», «começa 2, 10 ou 25 minutos», «toca música».",
+  vo_tip: "O microfone usa o serviço de voz deste navegador. O EnFoco não envia a tua voz para os seus servidores.",
+  vo_nosup: "Este navegador não reconhece voz (é comum no Firefox). Podes escrever um comando ou ouvir a tarefa recomendada.",
+  vo_ph: "Ex.: o que faço; anotar ligar à mãe; começa 2 minutos; toca música",
+  vo_run: "Executar",
+  vo_read: "Ouvir a recomendada de hoje",
+  vo_close: "Fechar",
+  vo_unknown: "Não percebi. Podes dizer «o que faço», «anotar …», «começa 2, 10 ou 25 minutos», ou «toca música».",
+  vo_rec: "Hoje, a tarefa recomendada é: {t}.",
+  vo_added: "Anotei: {t}.",
+  vo_timer: "A acender {n} minutos, em «{t}».",
+  vo_timer_busy: "Já há um temporizador a correr.",
+  vo_empty: "Não percebi a tarefa a anotar.",
+  vo_need_task: "Escolhe ou escreve uma tarefa primeiro.",
+  ab_d5: "A música lofi é gerada neste dispositivo, com a Web Audio API. Não há ficheiro de áudio nem pedido de rede.",
+  ab_d6: "O assistente de voz usa a API de voz deste navegador (reconhecimento e leitura). O EnFoco não tem chave nem servidor de voz; o navegador pode usar o serviço de voz do próprio fabricante."
 },
 
 en: {
@@ -812,7 +882,32 @@ en: {
   ab_team: "Team EnFoco: Leonardo Cagliero and Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, with Brainstorm.",
   scene_code: "3D scene active. Every model is drawn in code.",
   scene_2d: "Simple view active: WebGL or the Three.js library is not available.",
-  scene_pending: "The scene is still loading."
+  scene_pending: "The scene is still loading.",
+
+  mu_play: "Play lofi music",
+  mu_off: "Music on, tap to stop",
+  mu_vol: "Music volume",
+  mu_started: "Lofi music is on.",
+  mu_stopped: "Music stopped.",
+  vo_btn: "Voice assistant",
+  vo_title: "Voice assistant",
+  vo_listen: "Listening… you can speak.",
+  vo_ready: "Say or type a command: “what should I do”, “add …”, “start 2, 10 or 25 minutes”, “play music”.",
+  vo_tip: "The microphone uses this browser's built-in speech service. EnFoco does not send your voice to its own servers.",
+  vo_nosup: "This browser cannot recognise speech (common in Firefox). You can type a command or hear today's recommended task.",
+  vo_ph: "E.g. what should I do; add call mum; start 2 minutes; play music",
+  vo_run: "Run",
+  vo_read: "Hear today's recommended task",
+  vo_close: "Close",
+  vo_unknown: "I didn't catch that. You can say “what should I do”, “add …”, “start 2, 10 or 25 minutes”, or “play music”.",
+  vo_rec: "Today's recommended task is: {t}.",
+  vo_added: "Saved: {t}.",
+  vo_timer: "Starting {n} minutes on “{t}”.",
+  vo_timer_busy: "A timer is already running.",
+  vo_empty: "I didn't catch the task to save.",
+  vo_need_task: "Pick or write a task first.",
+  ab_d5: "The lofi music is generated on this device, with the Web Audio API. There is no audio file and no network request.",
+  ab_d6: "The voice assistant uses this browser's speech APIs (recognition and read-aloud). EnFoco has no voice key or server; the browser may use its vendor's built-in speech service."
 }
 };
 
@@ -849,7 +944,9 @@ const ICON = {
   afternoon: svg('<path d="M12 7.5l3.9 2.25v4.5L12 16.5l-3.9-2.25v-4.5z"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>'),
   night: svg('<path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/><path d="M17 3.5v3M15.5 5h3"/>'),
   cal: svg('<path d="M4 6.5h16v13H4zM4 10.5h16M8.5 4v4M15.5 4v4"/><path d="M8 14h2M14 14h2M8 17h2"/>'),
-  list: svg('<path d="M9 7h11M9 12h11M9 17h11M4.5 7h.01M4.5 12h.01M4.5 17h.01"/>')
+  list: svg('<path d="M9 7h11M9 12h11M9 17h11M4.5 7h.01M4.5 12h.01M4.5 17h.01"/>'),
+  music: svg('<path d="M9 18V6l11-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="18" cy="16" r="2.5"/>'),
+  mic: svg('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 12a6 6 0 0 0 12 0M12 18v3M9 21h6"/>')
 };
 const LOGO = '<svg viewBox="0 0 64 80" aria-hidden="true"><path fill="#ffe2a6" d="M32 4 52 14 32 30z"/><path fill="#ffc15e" d="M52 14 58 34 32 30z"/><path fill="#f0a22e" d="M58 34 46 52 32 30z"/><path fill="#e08e1a" d="M46 52H18L32 30z"/><path fill="#f7b243" d="M18 52 6 34 32 30z"/><path fill="#ffd07a" d="M6 34 12 14 32 30z"/><path fill="#ffedc7" d="M12 14 32 4 32 30z"/><path fill="#9aa3b8" d="M20 54H44L41 67H23z"/><path fill="#5d6780" d="M25 69H39L35 77H29z"/></svg>';
 
@@ -862,7 +959,7 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch (e) { this.ok = false; this.mem[k] = v; } },
   del(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } delete this.mem[k]; }
 };
-const fresh = () => ({ v: 5, lang: 'pt', phaseMode: 'auto', motion: 'auto', skipBreath: false, min: 10, tasks: [], goals: [], focus: {}, sample: false });
+const fresh = () => ({ v: 5, lang: 'pt', phaseMode: 'auto', motion: 'auto', skipBreath: false, min: 10, musicOn: false, musicVol: 0.4, tasks: [], goals: [], focus: {}, sample: false });
 const save = () => store.set(KEY, JSON.stringify(S));
 const mk = o => Object.assign({ id: uid(), t: '', step: '', done: false, date: '', goalId: '', created: Date.now() }, o);
 function normalise(o) {
@@ -878,6 +975,8 @@ function normalise(o) {
   delete s.theme;
   if (!['auto', 'reduce', 'full'].includes(s.motion)) s.motion = 'auto';
   if (!DURATIONS.includes(s.min)) s.min = 10;
+  s.musicOn = !!s.musicOn;
+  s.musicVol = Math.min(1, Math.max(0, +s.musicVol || 0.4));
   return s;
 }
 /* ADHD-friendly pool: tiny first steps, timeboxed, executive-function helpers.
@@ -1172,7 +1271,14 @@ function loopHTML() {
       <div class="clock" role="timer" aria-label="${t('fc_left')}"><span class="js-time">${fmt(T.left)}</span></div>
       <div class="bar" aria-hidden="true"><i class="js-bar" style="width:${pct.toFixed(2)}%"></i></div>
       <p class="step"><span class="label">${t('fc_step')}</span>${esc(stepOf(k))}</p>
-      ${tail}`;
+      ${tail}
+      <div class="focus-tools">
+        <div class="music-dock">
+          <button type="button" class="icon-btn" data-act="musicToggle" aria-pressed="${Music.on}" aria-label="${t(Music.on ? 'mu_off' : 'mu_play')}">${ICON.music}</button>
+          <label class="vol"><span class="sr">${t('mu_vol')}</span><input type="range" min="0" max="100" value="${Math.round(S.musicVol * 100)}" data-chg="musicVol" aria-label="${t('mu_vol')}"></label>
+        </div>
+        <button type="button" class="icon-btn" data-act="voiceToggle" aria-pressed="${!!Voice.listening}" aria-label="${t('vo_btn')}" title="${t('vo_tip')}">${ICON.mic}</button>
+      </div>`;
   }
   if (ui.step === 'done') {
     const today = dayKey(), next = p[0];
@@ -1241,7 +1347,7 @@ function vAbout() {
   return `<button type="button" class="back" data-act="nav" data-v="home">${ICON.chevL}<span>${t('back')}</span></button>
     <h1 tabindex="-1">${t('ab_title')}</h1>
     <p class="lede">${t('ab_what')}</p>
-    <section class="sec"><h2>${t('ab_data')}</h2><ul class="bullets"><li>${t('ab_d1')}</li><li>${t('ab_d2')}</li><li>${t('ab_d3')}</li><li>${t('ab_d4')}</li></ul>
+    <section class="sec"><h2>${t('ab_data')}</h2><ul class="bullets"><li>${t('ab_d1')}</li><li>${t('ab_d2')}</li><li>${t('ab_d3')}</li><li>${t('ab_d4')}</li><li>${t('ab_d5')}</li><li>${t('ab_d6')}</li></ul>
       ${why('privacy', [['privacy', ['chen']], ['nudge', ['chen']]])}
       <div class="pair"><button type="button" class="btn secondary" data-act="export">${t('ab_export')}</button><button type="button" class="btn text danger" data-act="wipe">${ui.wipe ? t('ab_wipe2') : t('ab_wipe')}</button></div></section>
     <section class="sec"><h2>${t('ab_prefs')}</h2>
@@ -1274,6 +1380,7 @@ function paintChrome() {
   $('#lang-seg').setAttribute('aria-label', t('lang_aria'));
   $$('#lang-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === S.lang)));
   $('#btn-about').hidden = ui.view === 'about' || ui.view === 'breath';
+  paintTools();
 }
 function focusKey() {
   const a = document.activeElement;
@@ -1335,7 +1442,7 @@ function exportData() {
 const toReady = id => { Object.assign(ui, { task: id, step: 'ready', refocus: '[data-act="start"]' }); render(); toStage(); };
 const ACT = {
   nav: d => nav(d.v),
-  lang: d => { if (I18N[d.v]) { S.lang = d.v; save(); render(); } },
+  lang: d => { if (I18N[d.v]) { S.lang = d.v; save(); render(); if (Voice.rec) Voice.rec.lang = loc(); } },
   begin: () => nav(S.skipBreath ? 'home' : 'breath'),
   skipBreath: () => nav('home'),
   pick: d => { if (byId(d.id) && !T.id) toReady(d.id); },
@@ -1375,17 +1482,22 @@ const ACT = {
     if (n) { save(); ui.open.list = true; toast(t('rec_added')); render(); goPlace('list'); }
     else toast(t('rec_all'));
   },
+  musicToggle: () => toggleMusic(),
+  voiceToggle: () => toggleVoice(),
+  voiceRead: () => handleVoice(S.lang === 'pt' ? 'o que faço' : 'what should I do'),
+  voiceClose: () => closeVoice(),
   wipe: () => {
     if (!ui.wipe) { ui.wipe = true; render(); setTimeout(() => { if (ui.wipe) { ui.wipe = false; if (ui.view === 'about') render(); } }, 6000); return; }
     endSession(); store.del(KEY);
-    S = Object.assign(fresh(), { lang: S.lang, phaseMode: S.phaseMode, motion: S.motion });
+    S = Object.assign(fresh(), { lang: S.lang, phaseMode: S.phaseMode, motion: S.motion, musicOn: S.musicOn, musicVol: S.musicVol });
     addRecOfDay();
     Object.assign(ui, { wipe: false, step: 'pick', task: null, fly: null }); save(); toast(t('ab_wiped')); render();
   }
 };
 const CHG = {
   skipAlways: el => { S.skipBreath = el.checked; save(); },
-  breathOn: el => { S.skipBreath = !el.checked; save(); }
+  breathOn: el => { S.skipBreath = !el.checked; save(); },
+  musicVol: el => setMusicVol((+el.value || 0) / 100)
 };
 const BIND = { step: v => { const x = byId(ui.task); if (x) { x.step = v.trim(); save(); } } };
 const FORMS = {
@@ -1401,6 +1513,10 @@ const FORMS = {
   goal: f => {
     const d = new FormData(f), title = String(d.get('t') || '').trim(), due = String(d.get('due') || ''); if (!title) return;
     S.goals.push({ id: uid(), t: title, due: isDate(due) ? due : '', done: false }); save(); f.reset(); render();
+  },
+  voice: f => {
+    const q = String(new FormData(f).get('q') || '').trim(); if (!q) return;
+    handleVoice(q); f.reset(); const inp = $('#vo-in'); if (inp) inp.placeholder = t('vo_ph');
   }
 };
 
@@ -2511,10 +2627,267 @@ function renderCover(ts, anim, ease) {
   R.renderer.render(C.sc, C.cam); R.dirty = false;
 }
 
+/* ---------- lofi music: generated on the device with the Web Audio API.
+   Soft 76 BPM loop (kick, hat, bass, warm seventh-chord pad, quiet vinyl).
+   No audio files, no network, no third-party samples. Original to this page. ---------- */
+const Music = { ctx: null, master: null, lp: null, crackle: null, on: false, next: 0, timer: null };
+function musicEnsure() {
+  if (Music.ctx) return Music.ctx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  const ctx = new AC();
+  const master = ctx.createGain();
+  master.gain.value = S.musicVol;
+  const lp = ctx.createBiquadFilter();
+  lp.type = 'lowpass'; lp.frequency.value = 2400; lp.Q.value = 0.65;
+  master.connect(lp); lp.connect(ctx.destination);
+  const crackle = ctx.createGain(); crackle.gain.value = 0.016; crackle.connect(master);
+  const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 2), ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  let acc = 0;
+  for (let i = 0; i < d.length; i++) { acc = acc * 0.97 + (Math.random() * 2 - 1) * 0.03; d[i] = acc + (Math.random() < 0.006 ? (Math.random() * 2 - 1) * 0.35 : 0); }
+  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 800;
+  src.connect(hp); hp.connect(crackle); src.start();
+  Music.ctx = ctx; Music.master = master; Music.lp = lp; Music.crackle = crackle;
+  return ctx;
+}
+function tone(ctx, dest, { type = 'sine', freq, t, dur, gain = 0.08, attack = 0.02, slide, filter }) {
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, slide), t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain), t + attack);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  if (filter) { const f = ctx.createBiquadFilter(); f.type = filter.type; f.frequency.setValueAtTime(filter.freq, t); o.connect(f); f.connect(g); }
+  else o.connect(g);
+  g.connect(dest); o.start(t); o.stop(t + dur + 0.02);
+}
+function noiseBurst(ctx, dest, { t, dur, gain = 0.05, freq = 2000, type = 'highpass' }) {
+  const n = Math.floor(ctx.sampleRate * Math.max(dur, 0.04));
+  const buf = ctx.createBuffer(1, n, ctx.sampleRate), data = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) data[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource(); src.buffer = buf;
+  const f = ctx.createBiquadFilter(); f.type = type; f.frequency.value = freq;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(f); f.connect(g); g.connect(dest); src.start(t); src.stop(t + dur + 0.02);
+}
+const LOFI_CHORDS = [
+  [220.00, 261.63, 329.63, 392.00],  /* A minor 7 */
+  [174.61, 220.00, 261.63, 329.63],  /* F major 7 */
+  [130.81, 164.81, 196.00, 246.94],  /* C major 7 */
+  [164.81, 196.00, 246.94, 293.66]   /* E minor 7 */
+];
+const LOFI_BASS = [110.00, 87.31, 130.81, 82.41];
+function scheduleBar(t0, bar) {
+  const ctx = Music.ctx, dest = Music.master;
+  if (!ctx || !dest) return;
+  const beat = 60 / 76, swing = beat * 0.16;
+  const chord = LOFI_CHORDS[bar % 4], bass = LOFI_BASS[bar % 4];
+  for (let b = 0; b < 4; b++) {
+    const t = t0 + b * beat;
+    if (b === 0 || b === 2) tone(ctx, dest, { type: 'sine', freq: 95, t, dur: 0.22, gain: 0.22, attack: 0.008, slide: 42 });
+    if (b === 1 || b === 3) noiseBurst(ctx, dest, { t, dur: 0.14, gain: 0.07, freq: 1800, type: 'bandpass' });
+    for (let h = 0; h < 2; h++) {
+      const ht = t + h * beat / 2 + (h ? swing : 0);
+      noiseBurst(ctx, dest, { t: ht, dur: 0.05, gain: h ? 0.018 : 0.03, freq: 7000, type: 'highpass' });
+    }
+    if (b === 0 || b === 2) tone(ctx, dest, { type: 'sine', freq: b === 0 ? bass : bass * 1.5, t, dur: 0.55, gain: 0.1, attack: 0.02, filter: { type: 'lowpass', freq: 420 } });
+  }
+  chord.forEach((f, i) => {
+    tone(ctx, dest, { type: 'triangle', freq: f, t: t0, dur: beat * 3.6, gain: 0.028 + (i === 0 ? 0.01 : 0), attack: 0.08, filter: { type: 'lowpass', freq: 1400 } });
+    tone(ctx, dest, { type: 'sine', freq: f * 2, t: t0 + 0.02, dur: beat * 3.4, gain: 0.01, attack: 0.1, filter: { type: 'lowpass', freq: 1800 } });
+  });
+}
+function musicTick() {
+  if (!Music.on || !Music.ctx) return;
+  const ctx = Music.ctx, beat = 60 / 76, barLen = beat * 4, ahead = 0.9;
+  if (Music.next < ctx.currentTime + 0.05) Music.next = ctx.currentTime + 0.08;
+  let guard = 0;
+  while (Music.next < ctx.currentTime + ahead && guard++ < 8) {
+    const bar = Math.round(Music.next / barLen);
+    scheduleBar(Music.next, bar);
+    Music.next += barLen;
+  }
+}
+function setMusicVol(v) {
+  S.musicVol = Math.min(1, Math.max(0, v));
+  save();
+  if (Music.master && Music.ctx) {
+    Music.master.gain.setTargetAtTime(S.musicVol, Music.ctx.currentTime, 0.05);
+  }
+  paintTools();
+}
+function playMusic() {
+  const ctx = musicEnsure();
+  if (!ctx) { toast(t('mu_play')); return false; }
+  ctx.resume();
+  if (Music.master) Music.master.gain.setTargetAtTime(S.musicVol, ctx.currentTime, 0.05);
+  if (!Music.on) {
+    Music.on = true; S.musicOn = true; save();
+    Music.next = ctx.currentTime + 0.08;
+    musicTick();
+    if (!Music.timer) Music.timer = setInterval(musicTick, 200);
+    toast(t('mu_started'));
+  }
+  paintTools();
+  return true;
+}
+function stopMusic() {
+  Music.on = false; S.musicOn = false; save();
+  if (Music.master && Music.ctx) Music.master.gain.setTargetAtTime(0.0001, Music.ctx.currentTime, 0.08);
+  if (Music.timer) { clearInterval(Music.timer); Music.timer = null; }
+  toast(t('mu_stopped'));
+  paintTools();
+}
+function toggleMusic() { if (Music.on) stopMusic(); else playMusic(); }
+
+/* ---------- basic voice assistant: Web Speech API only, no EnFoco servers ---------- */
+const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+const Voice = { rec: null, listening: false, open: false, supported: !!SR };
+function fold(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+}
+function speak(text) {
+  if (!text || !window.speechSynthesis) return;
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = loc(); u.rate = 1; u.pitch = 1;
+    window.speechSynthesis.speak(u);
+  } catch (e) { /* some browsers block speak without a gesture; the reply is also on screen */ }
+}
+function todaysRecommendedTitle() {
+  const rec = pending().find(x => isTodayRec(x));
+  return rec ? tx(rec.t) : tx(recOfDay()[0]);
+}
+function parseVoice(raw) {
+  const s = fold(raw);
+  if (!s) return { cmd: 'empty' };
+  if (/(para|parar|stop|desliga|desligar|off)\b.{0,24}\b(musica|music|lofi|lo-fi)\b|\b(musica|music)\b.{0,16}\b(off|para|stop)\b|^(para a musica|stop (the )?music|stop the music)$/.test(s)) return { cmd: 'musicOff' };
+  if (/(toca|tocar|poe|põe|liga|ligar|play|comeca|começar)\b.{0,24}\b(musica|music|lofi|lo-fi)\b|\b(musica|music)\b.{0,12}\b(on)\b|^(toca musica|play (the )?music|poe a musica)$/.test(s)) return { cmd: 'musicOn' };
+  if (/(o que faco|o que devo fazer|que hago|que faço|what should i do|what do i do|what's recommended|whats recommended|recommended task|tarefa do dia|recomendad|what now)/.test(s)) return { cmd: 'recommend' };
+  const add = s.match(/^(?:add|anotar|anota|adicionar|adiciona|guarda|guardar|apunta|apunte|brain dump|dump)(?:\s+(?:a|the|uma?|a tarefa|the task))?\s+(.+)$/);
+  if (add && add[1]) return { cmd: 'add', text: add[1].trim() };
+  const num = s.match(/\b(2|10|25|dois|duas|two|dez|ten|vinte e cinco|twenty ?five)\b/);
+  const wantsTimer = /(timer|temporizador|minuto|minutes|minutos|acende|acender|light up|iniciar|comeca|começar|start)\b/.test(s);
+  if (wantsTimer) {
+    let min = S.min;
+    if (num) {
+      const w = num[1];
+      min = (w === '2' || w === 'dois' || w === 'duas' || w === 'two') ? 2
+        : (w === '10' || w === 'dez' || w === 'ten') ? 10
+        : 25;
+    }
+    return { cmd: 'timer', min };
+  }
+  return { cmd: 'unknown' };
+}
+function voiceStartTimer(min) {
+  if (T.running) return t('vo_timer_busy');
+  if (DURATIONS.includes(min)) { S.min = min; save(); }
+  let task = (ui.task && byId(ui.task) && !byId(ui.task).done) ? byId(ui.task) : null;
+  if (!task && T.id && byId(T.id) && !byId(T.id).done) task = byId(T.id);
+  if (!task) task = pending().find(x => isTodayRec(x)) || pending()[0];
+  if (!task) { addRecOfDay(); save(); task = pending()[0]; }
+  if (!task) return t('vo_need_task');
+  if (T.id && T.id !== task.id) endSession();
+  startSession(task);
+  return t('vo_timer', { n: S.min, t: tx(task.t) });
+}
+function handleVoice(raw) {
+  const parsed = parseVoice(raw);
+  let reply = t('vo_unknown');
+  if (parsed.cmd === 'musicOn') { playMusic(); reply = t('mu_started'); }
+  else if (parsed.cmd === 'musicOff') { stopMusic(); reply = t('mu_stopped'); }
+  else if (parsed.cmd === 'recommend') { reply = t('vo_rec', { t: todaysRecommendedTitle() }); }
+  else if (parsed.cmd === 'add') {
+    const title = parsed.text.replace(/[.?!]+$/, '').trim();
+    if (!title) reply = t('vo_empty');
+    else { S.tasks.push(mk({ t: title })); save(); ui.open.list = true; toast(t('ts_saved')); render(); reply = t('vo_added', { t: title }); }
+  } else if (parsed.cmd === 'timer') reply = voiceStartTimer(parsed.min);
+  else if (parsed.cmd === 'empty') reply = t('vo_empty');
+  const heard = $('#vo-heard'); if (heard) heard.textContent = reply;
+  speak(reply);
+  return { reply, cmd: parsed.cmd, raw: raw };
+}
+function paintVoicePanel() {
+  const panel = $('#voice-panel'); if (!panel) return;
+  panel.hidden = !Voice.open;
+  const title = $('#vo-title'), st = $('#vo-status'), tip = $('#vo-tip'), read = $('#vo-read'), close = $('#vo-close'), inp = $('#vo-in'), run = $('#vo-run');
+  if (title) title.textContent = t('vo_title');
+  if (st) st.textContent = Voice.listening ? t('vo_listen') : (Voice.supported ? t('vo_ready') : t('vo_nosup'));
+  if (tip) tip.textContent = t('vo_tip');
+  if (read) read.textContent = t('vo_read');
+  if (close) close.textContent = t('vo_close');
+  if (inp) { inp.placeholder = t('vo_ph'); inp.setAttribute('aria-label', t('vo_title')); }
+  if (run) run.setAttribute('aria-label', t('vo_run'));
+  const btn = $('#btn-voice');
+  if (btn) { btn.classList.toggle('listening', Voice.listening); btn.setAttribute('aria-pressed', String(Voice.listening)); }
+}
+function paintTools() {
+  const on = Music.on;
+  $$('[data-act="musicToggle"]').forEach(btn => {
+    const lab = t(on ? 'mu_off' : 'mu_play');
+    btn.setAttribute('aria-pressed', String(on));
+    btn.setAttribute('aria-label', lab);
+    btn.title = lab;
+  });
+  $$('[data-chg="musicVol"]').forEach(el => {
+    el.value = String(Math.round((S.musicVol ?? 0.4) * 100));
+    el.setAttribute('aria-label', t('mu_vol'));
+  });
+  const volSr = $('#l-vol'); if (volSr) volSr.textContent = t('mu_vol');
+  const vb = $('#btn-voice');
+  if (vb) { const lab = t('vo_btn'); vb.setAttribute('aria-label', lab); vb.title = t('vo_tip'); vb.setAttribute('aria-pressed', String(Voice.listening)); vb.classList.toggle('listening', Voice.listening); }
+  if (Voice.open) paintVoicePanel();
+}
+function stopRec() {
+  Voice.listening = false;
+  try { if (Voice.rec) Voice.rec.stop(); } catch (e) { /* already stopped */ }
+  paintTools();
+}
+function startRec() {
+  if (!Voice.supported) { paintVoicePanel(); return; }
+  try {
+    if (!Voice.rec) {
+      Voice.rec = new SR();
+      Voice.rec.continuous = false;
+      Voice.rec.interimResults = true;
+      Voice.rec.onresult = ev => {
+        let said = '';
+        for (let i = ev.resultIndex; i < ev.results.length; i++) said += ev.results[i][0].transcript;
+        const heard = $('#vo-heard'); if (heard) heard.textContent = said;
+        if (ev.results[ev.results.length - 1].isFinal) { Voice.listening = false; handleVoice(said); paintTools(); }
+      };
+      Voice.rec.onerror = () => { Voice.listening = false; paintTools(); };
+      Voice.rec.onend = () => { Voice.listening = false; paintTools(); };
+    }
+    Voice.rec.lang = loc();
+    Voice.rec.start();
+    Voice.listening = true;
+  } catch (e) { Voice.listening = false; }
+  paintTools();
+}
+function openVoice() {
+  Voice.open = true;
+  paintVoicePanel();
+  const inp = $('#vo-in'); if (inp) inp.focus({ preventScroll: true });
+  startRec();
+}
+function closeVoice() {
+  Voice.open = false;
+  stopRec();
+  const panel = $('#voice-panel'); if (panel) panel.hidden = true;
+  paintTools();
+}
+function toggleVoice() { if (Voice.open && Voice.listening) { stopRec(); paintVoicePanel(); } else if (Voice.open) closeVoice(); else openVoice(); }
+
 /* ---------- wiring ---------- */
 function bindEvents() {
   document.addEventListener('click', e => {
-    if (ui.drift && T.id && ui.view === 'home') { here(); return; }      // while the light is low, any tap means "I'm here" and nothing else
+    if (ui.drift && T.id && ui.view === 'home' && !(e.target.closest && e.target.closest('.top, #voice-panel'))) { here(); return; }      // while the light is low, a tap in the world means "I'm here"
     const el = e.target.closest ? e.target.closest('[data-act]') : null;
     if (!el || el.disabled) return;
     const f = ACT[el.dataset.act]; if (f) f(el.dataset, el);
@@ -2550,7 +2923,11 @@ function boot() {
   const hash = (location.hash || '').slice(1);
   nav(hash === 'home' || hash === 'about' ? hash : 'cover');          // a plain visit always opens on the cover
   initScene();
-  window.__enfoco = { get state() { return S; }, timer: T, scene: scene3, ui, idle() { lastActive = 0; } };   // small debugging handle
+  window.__enfoco = {
+    get state() { return S; }, timer: T, scene: scene3, ui, idle() { lastActive = 0; },
+    music: { play: playMusic, stop: stopMusic, toggle: toggleMusic, setVolume: setMusicVol, isOn: () => Music.on, get context() { return Music.ctx; } },
+    voice: { handle: handleVoice, speak, supported: () => Voice.supported, isListening: () => Voice.listening, open: openVoice, close: closeVoice }
+  };   // small debugging handle
 }
 boot();
 </script>
