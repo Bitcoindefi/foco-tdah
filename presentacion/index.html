@@ -636,6 +636,7 @@ function go(i,fromHash){
   /* tell the speaker notes (other tab or window) which slide is on */
   try{(window.__bc=window.__bc||new BroadcastChannel('enfoco-deck')).postMessage(i+1)}catch(e){}
   try{localStorage.setItem('enfoco-slide',String(i+1)+':'+Date.now())}catch(e){}
+  try{fetch('https://ntfy.sh/enfoco-deck-lc7q',{method:'POST',body:String(i+1)})}catch(e){}
 }
 function fromHash(){var n=parseInt((location.hash||'').slice(1),10);go(isNaN(n)?0:n-1,true)}
 window.addEventListener('hashchange',fromHash);

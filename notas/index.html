@@ -281,6 +281,7 @@ function show(n){n=parseInt(n,10);if(!n||n===last)return;last=n;var el=document.
 el.scrollIntoView({behavior:'smooth',block:'start'});
 [].forEach.call(document.querySelectorAll('.note.live'),function(x){x.classList.remove('live')});el.classList.add('live')}
 try{new BroadcastChannel('enfoco-deck').onmessage=function(e){show(e.data)}}catch(e){}
+try{var es=new EventSource('https://ntfy.sh/enfoco-deck-lc7q/sse');es.onmessage=function(e){try{show(JSON.parse(e.data).message)}catch(x){}}}catch(e){}
 addEventListener('storage',function(e){if(e.key==='enfoco-slide'&&e.newValue)show(e.newValue.split(':')[0])});
 var st=document.createElement('style');st.textContent='.note.live{outline:2px solid #f2b552;outline-offset:6px;border-radius:14px}';document.head.appendChild(st);
 })();
