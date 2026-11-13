@@ -1375,11 +1375,78 @@ async function initScene() {
       import('three'),
       new Promise((_, rej) => setTimeout(() => rej(new Error('three-timeout')), CDN_TIMEOUT))
     ]);
+    scene3.glb = await loadModels(THREE);
     build3D(THREE);
     scene3.mode = '3d';
     render();
   } catch (err) { to2D(String((err && err.message) || err)); }
   if (ui.view === 'about') render();
+}
+/* ---------- the Tripo models (foquito, tree, board, rock) ----------
+   Loaded once as GLB files next to the page. Any one that fails or is late
+   is simply left out, and the code-built model of before is used instead. */
+const MODEL_TIMEOUT = 8000;
+async function loadModels(THREE) {
+  const out = { foquito: null, tree: null, board: null, rock: null };
+  let GLTFLoader;
+  try { ({ GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js')); } catch (e) { document.documentElement.dataset.models = 'none'; return out; }
+  const loader = new GLTFLoader();
+  const one = name => Promise.race([
+    loader.loadAsync('assets/models/' + name + '.glb'),
+    new Promise((_, rej) => setTimeout(() => rej(new Error('model-timeout')), MODEL_TIMEOUT))
+  ]).then(g => { try { return prepModel(THREE, name, g); } catch (e) { return null; } }, () => null);
+  const got = await Promise.all(Object.keys(out).map(one));
+  Object.keys(out).forEach((k, i) => { out[k] = got[i]; });
+  document.documentElement.dataset.models = Object.keys(out).filter(k => out[k]).join(',') || 'none';
+  return out;
+}
+/* one geometry per model, baked and normalised: centred on x/z, standing on y = 0, 1 unit tall;
+   the material becomes a light Lambert with only the colour texture (cheap without a GPU) */
+function prepModel(THREE, name, gltf) {
+  let mesh = null;
+  gltf.scene.updateMatrixWorld(true);
+  gltf.scene.traverse(o => { if (!mesh && o.isMesh) mesh = o; });
+  if (!mesh) return null;
+  let geo = mesh.geometry.clone(); geo.applyMatrix4(mesh.matrixWorld);
+  ['tangent', 'color', 'uv1', 'uv2'].forEach(a => { if (a in geo.attributes && a !== 'uv') geo.deleteAttribute(a); });
+  if (name === 'board') geo = boardPlank(THREE, geo);
+  geo.computeBoundingBox();
+  const b = geo.boundingBox, h = b.max.y - b.min.y || 1;
+  geo.translate(-(b.min.x + b.max.x) / 2, -b.min.y, -(b.min.z + b.max.z) / 2);
+  if (name === 'board') geo.scale(1 / (b.max.x - b.min.x || 1), 1 / h, 1 / (b.max.z - b.min.z || 1));
+  else geo.scale(1 / h, 1 / h, 1 / h);
+  geo.computeBoundingBox(); geo.computeBoundingSphere();
+  const src = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material, map = src && src.map;
+  const mat = name === 'board'
+    ? new THREE.MeshBasicMaterial({ map })
+    : new THREE.MeshLambertMaterial({ map, emissive: name === 'foquito' ? 0xffffff : 0x000000, emissiveMap: name === 'foquito' ? map : null, emissiveIntensity: 0 });
+  if (src) ['metalnessMap', 'roughnessMap', 'normalMap', 'aoMap'].forEach(k => { if (src[k] && src[k] !== map) src[k].dispose(); });
+  return { geo, mat };
+}
+/* the sign board stands on a post: keep only the wide plank, and lay it flat with its face up
+   so it can sit under an HTML surface (1 x 1 footprint, 1 unit thick once normalised) */
+function boardPlank(THREE, geo) {
+  geo.computeBoundingBox();
+  const bb = geo.boundingBox, W = bb.max.x - bb.min.x, H = bb.max.y - bb.min.y;
+  const g = geo.index ? geo.toNonIndexed() : geo, p = g.attributes.position, n = p.count / 3;
+  /* how wide the model is at each height: the plank is wide, the post is narrow */
+  const bins = 40, lo = new Float32Array(bins).fill(1e9), hi = new Float32Array(bins).fill(-1e9);
+  for (let i = 0; i < p.count; i++) { const k = Math.min(bins - 1, Math.floor((p.getY(i) - bb.min.y) / H * bins)); lo[k] = Math.min(lo[k], p.getX(i)); hi[k] = Math.max(hi[k], p.getX(i)); }
+  const wide = k => hi[k] - lo[k] > W * 0.6;
+  let k0 = -1, k1 = -1; for (let k = 0; k < bins; k++) if (wide(k)) { if (k0 < 0) k0 = k; k1 = k; }
+  if (k0 < 0) return geo;
+  const y0 = bb.min.y + k0 / bins * H, y1 = bb.min.y + (k1 + 1) / bins * H, keep = [];
+  const attrs = Object.keys(g.attributes);
+  for (let f = 0; f < n; f++) {
+    const cy = (p.getY(f * 3) + p.getY(f * 3 + 1) + p.getY(f * 3 + 2)) / 3;
+    if (cy >= y0 && cy <= y1) keep.push(f);
+  }
+  const out = new THREE.BufferGeometry();
+  attrs.forEach(a => { const s = g.attributes[a], sz = s.itemSize, arr = new Float32Array(keep.length * 3 * sz);
+    keep.forEach((f, j) => { for (let v = 0; v < 3; v++) for (let c = 0; c < sz; c++) arr[(j * 3 + v) * sz + c] = s.array[(f * 3 + v) * sz + c]; });
+    out.setAttribute(a, new THREE.BufferAttribute(arr, sz)); });
+  out.rotateX(-Math.PI / 2);   // the face (+z) now looks up
+  return out;
 }
 function to2D(reason) {
   const R = scene3;
@@ -1436,7 +1503,8 @@ function haloMat(color, add) {
   return new THREE.MeshBasicMaterial({ map: R.haloTex, color, transparent: true, opacity: 0, depthWrite: false, blending: add === false ? THREE.NormalBlending : THREE.AdditiveBlending });
 }
 
-/* ---------- models, all drawn in code ---------- */
+/* ---------- models, drawn in code (the Tripo models replace some of them when they load) ---------- */
+const TREE_SX = 1.9, TREE_SY = 2.25, ROCK_S = 0.8;   // the 1-unit Tripo tree and rock, sized like the code ones
 /* The bulb: eight-sided faceted glass turned on a lathe, a filament core on two posts, and a threaded screw base. */
 function makeBulb() {
   const R = scene3, THREE = R.THREE, g = new THREE.Group();
@@ -1455,12 +1523,14 @@ function makeBulb() {
 /* level 0 = off (cool, see-through glass, dark filament); around 2 = fully lit */
 function lightBulb(b, level) {
   const R = scene3, k = Math.min(1, level / 1.3);
+  if (b.glb) { b.glb.emissiveIntensity = Math.min(0.32, level * 0.2); return; }
   b.glass.emissive.copy(R.glow); b.glass.emissiveIntensity = level * 0.4;
   b.glass.opacity = 0.44 + 0.32 * k; b.glass.color.copy(b.cool).lerp(b.warm, k);
   b.fil.color.copy(b.off).lerp(b.hot, Math.min(1, level / 0.6));
 }
 function makeTree(s, rot) {
   const R = scene3, THREE = R.THREE, g = new THREE.Group();
+  if (R.glb && R.glb.tree) { const t = new THREE.Mesh(R.glb.tree.geo, R.glb.tree.mat); t.scale.set(TREE_SX, TREE_SY, TREE_SX); g.add(t); g.scale.setScalar(s); g.rotation.y = rot; return g; }
   const trunk = new THREE.Mesh(R.geo.trunk, R.m.bark); trunk.position.y = 0.25; g.add(trunk);
   const low = new THREE.Mesh(R.geo.cone1, R.m.pine); low.position.y = 0.98; g.add(low);
   const top = new THREE.Mesh(R.geo.cone2, R.m.pine2); top.position.y = 1.72; top.rotation.y = 0.5; g.add(top);
@@ -1469,10 +1539,18 @@ function makeTree(s, rot) {
 }
 function makeRock(s, rot) {
   const R = scene3, THREE = R.THREE, g = new THREE.Group();
+  if (R.glb && R.glb.rock) { const r = new THREE.Mesh(R.glb.rock.geo, R.glb.rock.mat); r.scale.setScalar(ROCK_S); g.add(r); g.scale.setScalar(s); g.rotation.y = rot; return g; }
   const a = new THREE.Mesh(R.geo.rockA, R.m.rock); a.scale.set(1, 0.62, 0.85); a.position.y = 0.2; g.add(a);
   const b = new THREE.Mesh(R.geo.rockB, R.m.rock2); b.scale.set(1, 0.7, 1); b.position.set(0.48, 0.12, 0.2); g.add(b);
   g.scale.setScalar(s); g.rotation.y = rot;
   return g;
+}
+/* the foquito from Tripo, when it loaded: same {group} shape as makeBulb, standing 1.8 units tall like the code bulb */
+function makeFoquito() {
+  const R = scene3, THREE = R.THREE, M = R.glb && R.glb.foquito;
+  if (!M) return null;
+  const g = new THREE.Group(), body = new THREE.Mesh(M.geo, M.mat); body.scale.setScalar(1.8); g.add(body);
+  return { group: g, glb: M.mat };
 }
 /* a lantern on a post: its glass warms up at night */
 function makeLantern() {
@@ -1508,7 +1586,7 @@ const ISO = { yaw: Math.PI / 4, el: Math.atan(Math.SQRT1_2) };   // the cover ke
 const TYPES = ['shallow', 'sand', 'grass', 'grass2', 'rock2'];
 
 function build3D(THREE) {
-  const R = scene3; R.THREE = THREE;
+  const R = scene3; R.THREE = THREE; R.glb = R.glb || {};
   R.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   R.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   R.cv = R.renderer.domElement;
@@ -1571,6 +1649,8 @@ function buildWorld() {
   /* decoration, all instanced; placed when the island is shaped */
   W.trunk = inst(G.trunk, m.bark, 160); W.cone1 = inst(G.cone1, m.pine, 160); W.cone2 = inst(G.cone2, m.pine2, 160);
   W.rockA = inst(G.rockA, m.rock, 80); W.rockB = inst(G.rockB, m.rock2, 80); W.bush = inst(G.bush, m.bush, 120);
+  if (R.glb.tree) { W.treeG = inst(R.glb.tree.geo, R.glb.tree.mat, 160); sc.add(W.treeG); }
+  if (R.glb.rock) { W.rockG = inst(R.glb.rock.geo, R.glb.rock.mat, 80); sc.add(W.rockG); }
   W.flower = inst(G.flower, m.flower, 420); W.tuft = inst(G.tuft, m.tuft, 420); W.pebble = inst(G.rockB, m.rock2, 120);
   sc.add(W.trunk, W.cone1, W.cone2, W.rockA, W.rockB, W.bush, W.flower, W.tuft, W.pebble);
   /* faked shadows: flat shapes laid on the ground, pushed away from the sun */
@@ -1579,8 +1659,12 @@ function buildWorld() {
   W.boards = { loop: { kind: 'wood', g: new THREE.Group(), w: 0, d: 0 }, cal: { kind: 'stone', g: new THREE.Group(), w: 0, d: 0 }, day: { kind: 'stone', g: new THREE.Group(), w: 0, d: 0 }, list: { kind: 'wood', g: new THREE.Group(), w: 0, d: 0 } };
   Object.values(W.boards).forEach(b => sc.add(b.g));
   /* the bulb, lying on a wooden cradle on a stone plinth */
-  const bulb = makeBulb(); bulb.group.rotation.z = -Math.PI / 2; bulb.group.scale.setScalar(2.7);
-  const bg = new THREE.Group(); bg.add(bulb.group); bulb.group.position.set(-2.45, 1.95, 0);
+  const fq = makeFoquito(), bulb = fq || makeBulb(), bg = new THREE.Group();
+  if (fq) {
+    /* the foquito lies on its back on the cradle, face to the sky, head to the east */
+    const lie = new THREE.Group(); lie.add(fq.group); fq.group.rotation.x = -Math.PI / 2; lie.rotation.y = -Math.PI / 2;
+    fq.group.scale.setScalar(2.7); lie.position.set(-2.45, 1.95, 0); bg.add(lie);
+  } else { bulb.group.rotation.z = -Math.PI / 2; bulb.group.scale.setScalar(2.7); bg.add(bulb.group); bulb.group.position.set(-2.45, 1.95, 0); }
   const plinth = new THREE.Mesh(new THREE.CylinderGeometry(3.7, 3.95, 0.42, 8), m.stoneRim); plinth.scale.z = 0.62; plinth.rotation.y = Math.PI / 8; plinth.position.y = 0.21; bg.add(plinth);
   const top = new THREE.Mesh(new THREE.CircleGeometry(3.45, 8).rotateX(-Math.PI / 2), m.stoneFace); top.scale.z = 0.62; top.rotation.y = Math.PI / 8; top.position.y = 0.425; bg.add(top);
   [-1.5, 0.9].forEach((x, i) => { const c = new THREE.Mesh(slabGeo(0.6, 1.1, 0.75 + i * 0.12, 0.18), m.woodRim); c.position.set(x, 0.42, 0); bg.add(c); });
@@ -1701,8 +1785,10 @@ function placeDecor() {
     for (let i = 0; i < n; i++) { const [x, h, z, s, r] = list[i]; setInst(mesh, i, x, h + y * s, z, sx * s, sy * s, sx * s, r); mesh.setColorAt(i, col.setScalar(1 - vary / 2 + hash2(i, n, 3) * vary)); }
     mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
   };
-  put(W.trunk, tr, 0.25, 1, 1, 160, 0.1); put(W.cone1, tr, 0.98, 1, 1, 160, 0.2); put(W.cone2, tr, 1.72, 1, 1, 160, 0.2);
-  put(W.rockA, rk, 0.18, 1, 0.62, 80, 0.2); put(W.rockB, rk.map(r => [r[0] + 0.45 * r[3], r[1], r[2] + 0.2 * r[3], r[3], r[4]]), 0.1, 1, 0.7, 80, 0.2);
+  if (W.treeG) { put(W.treeG, tr, -0.05, TREE_SX, TREE_SY, 160, 0.2); W.trunk.count = W.cone1.count = W.cone2.count = 0; }
+  else { put(W.trunk, tr, 0.25, 1, 1, 160, 0.1); put(W.cone1, tr, 0.98, 1, 1, 160, 0.2); put(W.cone2, tr, 1.72, 1, 1, 160, 0.2); }
+  if (W.rockG) { put(W.rockG, rk, -0.04, ROCK_S, ROCK_S, 80, 0.2); W.rockA.count = W.rockB.count = 0; }
+  else { put(W.rockA, rk, 0.18, 1, 0.62, 80, 0.2); put(W.rockB, rk.map(r => [r[0] + 0.45 * r[3], r[1], r[2] + 0.2 * r[3], r[3], r[4]]), 0.1, 1, 0.7, 80, 0.2); }
   put(W.bush, bu, 0.18, 1.1, 0.7, 120, 0.25); put(W.flower, fl, 0.1, 1, 0.8, 420, 0.4); put(W.tuft, tu, 0.15, 1, 1, 420, 0.3); put(W.pebble, pb, 0.04, 0.8, 0.5, 120, 0.3);
   W.decorCasters = tr.slice(0, 160).map(t => [t[0], t[1], t[2], 0.75 * t[3], 2.2 * t[3]]).concat(rk.slice(0, 80).map(r => [r[0], r[1], r[2], 0.6 * r[3], 0.5 * r[3]]), bu.slice(0, 120).map(b => [b[0], b[1], b[2], 0.55 * b[3], 0.45 * b[3]]));
   W.trees = tr;
@@ -1715,7 +1801,10 @@ function sizeBoard(b, w, d) {
   const R = scene3, THREE = R.THREE, m = R.m, G = R.geo;
   b.w = w; b.d = d;
   while (b.g.children.length) { const o = b.g.children.pop(); if (o.geometry && o.geometry !== G.box && o.geometry !== G.quad) o.geometry.dispose(); }
-  if (b.kind === 'wood') {
+  if (b.kind === 'wood' && R.glb && R.glb.board) {
+    /* the Tripo plank, laid flat and stretched to the surface; its top sits where the code planks' top was */
+    const pl = new THREE.Mesh(R.glb.board.geo, R.glb.board.mat); pl.scale.set(w + 1.2, PLAZA_Y + 0.04, d + 1.2); b.g.add(pl);
+  } else if (b.kind === 'wood') {
     const base = new THREE.Mesh(slabGeo(w + 1.0, d + 1.0, PLAZA_Y - 0.04, 0.12), m.woodRim); b.g.add(base);
     const n = Math.max(2, Math.round((d + 0.5) / 1.5)), pd = (d + 0.5) / n;
     const pl = new THREE.InstancedMesh(G.box, m.woodFace, n), nails = new THREE.InstancedMesh(G.box, m.nail, n * 4);
@@ -1747,7 +1836,8 @@ function buildCover() {
   const under = new THREE.Mesh(new THREE.ConeGeometry(2.5, 2.2, 7), m.rock2); under.rotation.x = Math.PI; under.position.y = -2.0; turn.add(under);
   const ped1 = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.3, 0.18, 6), m.stoneRim); ped1.position.y = 0.09; turn.add(ped1);
   const ped2 = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.95, 0.2, 6), m.stoneFace); ped2.position.y = 0.28; ped2.rotation.y = Math.PI / 6; turn.add(ped2);
-  const bulb = makeBulb(); bulb.group.scale.setScalar(1.7); bulb.group.position.y = 0.4; turn.add(bulb.group); C.bulb = bulb;
+  const bulb = makeFoquito() || makeBulb(); bulb.group.scale.setScalar(1.7); bulb.group.position.y = 0.4; turn.add(bulb.group); C.bulb = bulb;
+  if (bulb.glb) bulb.group.rotation.y = ISO.yaw;   // the foquito looks at the camera
   [[2.15, 0.35, 0.82], [-1.95, 1.25, 0.95], [-0.55, -2.25, 0.72], [-2.2, -0.9, 0.55], [1.6, -1.7, 0.5]].forEach(([x, z, s]) => { const tr = makeTree(s, rnd() * 3); tr.position.set(x, 0, z); turn.add(tr); });
   [[1.25, 2.1, 0.62], [0.9, -2.2, 0.5]].forEach(([x, z, s]) => { const rk = makeRock(s, rnd() * 3); rk.position.set(x, 0, z); turn.add(rk); });
   const fl = new THREE.InstancedMesh(G.flower, m.flower, 14);
@@ -1807,6 +1897,10 @@ function applyPalette() {
   });
   W.cal.string.material.color.copy(P.string);
   C.sc.fog.color.copy(P.fogCol); C.sc.fog.near = 30; C.sc.fog.far = 58 + 340 * (1 - P.fog);
+  /* the Tripo textures follow the moment too: tinted by how far the palette is from the afternoon one */
+  const tint = (M, k) => { if (!M) return; const a = R.tmpC.set(PAL.afternoon[k]), p = P[k];
+    M.mat.color.setRGB(Math.min(1.5, p.r / a.r), Math.min(1.5, p.g / a.g), Math.min(1.5, p.b / a.b)); };
+  if (R.glb) { tint(R.glb.tree, 'pine'); tint(R.glb.rock, 'rock'); tint(R.glb.board, 'wood'); }
   recolorTerrain(); recolorCalendar();
   R.shadowDirty = true; R.dirty = true;
 }
@@ -1941,7 +2035,7 @@ function updateShadows() {
   W.lanterns.forEach(l => disc(l.position.x, 0.05, l.position.z, 0.3, 1.9));
   disc(L.bulb[0] + 0.6, 0.27, L.bulb[1], 1.0, 2.6);
   disc(L.bulb[0], 0.02, L.bulb[1], 3.9, 0.45);
-  Object.values(W.boards).forEach(b => rect(b.x, 0.19, b.z, b.w + 1, b.d + 1, 0.46));
+  Object.values(W.boards).forEach(b => { const g = b.kind === 'wood' && R.glb && R.glb.board ? 0.15 : 1; rect(b.x, 0.19, b.z, b.w + g, b.d + g, 0.46); });   // the Tripo plank has ragged edges: a tighter shadow
   rect(L.grid[0], 0.19, L.grid[1], L.gw + 1.4, L.gh + 0.9, PLAZA_Y);
   if (W.model) W.model.cells.forEach(c => { if (c.x != null) rect(c.x, PLAZA_Y + 0.02, c.z, TILE, TILE, TILE_H); });
   W.shDisc.count = n; W.shRect.count = k;
@@ -2260,6 +2354,7 @@ function renderCover(ts, anim, ease) {
   C.halo.material.opacity = Math.min(0.72, Math.max(0, C.level - 0.1) * 0.36) * k * (0.5 + 0.5 * P.glow); C.halo.scale.setScalar(6 + C.level * 1.1);
   C.lampL.intensity = lv * (6 + 12 * P.wN);
   C.turn.rotation.y = anim ? ts * 0.00042 : 0.62;
+  if (C.bulb.glb) C.bulb.group.rotation.y = ISO.yaw - C.turn.rotation.y;   // the island turns, the foquito keeps looking at you
   const base = 0.16 + Math.min(1, C.level / 1.7) * 0.6, lead = Math.floor(ts / 320) % C.N;
   for (let i = 0; i < C.N; i++) { const q = (i - lead + C.N) % C.N; C.ring.setColorAt(i, R.col.copy(R.glow).multiplyScalar(anim ? (q === 0 ? base + 0.26 : q < 4 ? base + 0.14 - q * 0.04 : base * 0.6) : base)); }
   C.ring.instanceColor.needsUpdate = true;
