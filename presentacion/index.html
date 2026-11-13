@@ -245,6 +245,12 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
 .ask{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,1.2vw,16px)}
 .ask h3{display:flex;gap:10px;align-items:baseline}
 .ask .k{font:800 .8em var(--display);color:var(--st-acc);min-width:1.6em}
+.slide[data-title="Our ask"] .lede{margin-bottom:0}
+.slide[data-title="Our ask"] .ask{margin-top:clamp(8px,1.2vh,14px);gap:clamp(8px,1vw,12px)}
+.slide[data-title="Our ask"] .ask .stone{padding:10px 14px}
+.slide[data-title="Our ask"] .wood.mt{margin-top:clamp(8px,1.2vh,14px);padding:12px 16px}
+.slide[data-title="Our ask"] .wood.mt p{font-size:.86em;margin:0}
+.slide[data-title="Vision, limits and next steps"] .src + .src{margin-top:4px}
 
 /* ---------- responsive: stack on narrow screens and let a slide scroll ---------- */
 @media (max-width:980px){
@@ -429,12 +435,12 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
   <h2>A working prototype, v1 → v6 in one hackathon.</h2>
   <div class="grid g3 mt">
    <div class="wood"><h3>The core loop</h3><ul class="ticks"><li>One task now, from text or list</li><li>Tiny first step from keyword rules, editable</li><li>2 / 10 / 25 min timer, pause, stop, +more</li><li>Drift nudge: dims, one tap back</li><li>Light flies to today's date</li></ul></div>
-   <div class="wood"><h3>Around it</h3><ul class="ticks"><li>Calendar of lights, no streaks</li><li>Task list and goals with date flags</li><li>Recommended tasks of the day, rotating</li><li>"Why?" notes with 8 linked sources</li><li>Optional 36 s breathing pause</li><li>Chill lofi focus music, generated on the device</li><li>Basic voice assistant in the browser (PT and EN)</li></ul></div>
+   <div class="wood"><h3>Around it</h3><ul class="ticks"><li>Calendar of lights, no streaks</li><li>Task list and goals with date flags</li><li>Recommended tasks of the day, rotating</li><li>"Why?" notes with 8 linked sources</li><li>Optional 36 s breathing pause</li><li>Chill lofi focus music, generated on the device — live today</li><li>In-app voice assistant, live today (PT and EN)</li></ul></div>
    <div class="wood"><h3>Care and craft</h3><ul class="ticks"><li>Portuguese and English UI</li><li>Morning, afternoon, night scenes by clock</li><li>Keyboard use, 44 px targets, reduced motion</li><li>Export and delete everything</li><li>Works without WebGL (HTML + SVG view)</li></ul></div>
   </div>
   <div class="stone mt" style="display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;font-size:.86em">
    <b style="font-family:var(--display)">Build log (git, 12–13 Nov 2026):</b>
-   <span class="muted">v1 daily calendar</span><span class="muted">v2 Three.js bulbs, research</span><span class="muted">v3 isometric light map</span><span><b class="acc">v4 cut ~20 features to one loop</b></span><span class="muted">v5 day/night scenes, UI in the world</span><span class="muted">v6 Tripo 3D models, daily tasks, sourced "Why?"</span><span class="muted">today: on-device lofi music + basic browser voice</span>
+   <span class="muted">v1 daily calendar</span><span class="muted">v2 Three.js bulbs, research</span><span class="muted">v3 isometric light map</span><span><b class="acc">v4 cut ~20 features to one loop</b></span><span class="muted">v5 day/night scenes, UI in the world</span><span class="muted">v6 Tripo 3D models, daily tasks, sourced "Why?"</span><span class="muted">today: lofi music + in-app voice assistant, live</span>
   </div>
  </div>
 </section>
@@ -488,6 +494,7 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
      <li><b>Months 6–12:</b> pre-registered pilot with a clinical or academic partner.</li>
     </ul>
     <p class="src muted">North stars, on the device and shared only with consent: <b>Start</b> and <b>Stay</b>. Every number here is a target, not a result.</p>
+    <p class="src muted"><b>Next step, proposed, not built:</b> a WhatsApp assistant with Wexio (text or voice note → brain dump → your calendar) and two-way sync with Google, Apple/iCloud, Outlook and any CalDAV/ICS calendar. The in-app voice assistant is already live.</p>
    </div>
   </div>
   <div class="guard"><span class="chip">Constant: one task on screen</span><span class="chip">No streaks, no shame</span><span class="chip">Your data, your device first</span><span class="chip">No medical claims without evidence</span></div>
@@ -511,13 +518,14 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
      <li>Drift nudge, lights calendar, Why? notes</li>
      <li>Portuguese and English, no account, local only</li>
      <li>Lofi focus music, generated on the device</li>
-     <li>Basic browser voice assistant</li>
+     <li>In-app voice assistant, live today</li>
     </ul>
    </div>
    <div class="wood">
     <h3>Premium <span class="tag-p">Proposed</span></h3>
     <ul class="ticks">
      <li>Opt-in, end-to-end encrypted sync</li>
+     <li>Two-way calendar sync: Google, Apple/iCloud, Outlook, and any CalDAV/ICS calendar</li>
      <li>Advanced routines and reminders</li>
      <li>AI coach / AI first step, always editable</li>
      <li>Insights on Start and Stay, on-device first</li>
@@ -550,7 +558,11 @@ table.ns td:nth-child(2) b{font-family:var(--display)}
    <div class="stone"><h3><span class="k">03</span>Go-to-market</h3><p class="muted">A strategy for Portugal first — with associations, clinics and schools — then ADHD associations across the EU.</p></div>
    <div class="stone"><h3><span class="k">04</span>Intros to pilots</h3><p class="muted">Introductions to pilots, partners and investors across TESLA's European and African hubs, when we are ready to test in the field.</p></div>
   </div>
-  <div class="wood mt"><h3>And with Wexio</h3><p class="muted">A <b>basic browser version is already live</b>: it reads today's task, adds to the list, starts a timer and plays the music. We are asking Wexio for credits to <b>power the full conversational assistant</b> — still a complement to the quiet loop, not a replacement.</p></div>
+  <div class="wood mt">
+   <h3>EnFoco assistant everywhere <span class="tag-p">Next step · proposed</span></h3>
+   <p class="muted">The <b>in-app voice assistant is live today</b>. The next step, proposed, not built: a <b>WhatsApp assistant powered by Wexio</b> (wexio.io — conversational automation for WhatsApp, Telegram, Instagram and the web, with voice-note transcription; not a voice platform). Send a WhatsApp text or voice note; it is transcribed into the brain dump and the task lands in <b>whichever calendar you use</b> — Google, Apple/iCloud, Outlook, or any CalDAV/ICS calendar, two-way. A daily nudge can bring today's recommended task, with no guilt.</p>
+   <p class="muted" style="margin-top:8px"><b>Our ask of Wexio:</b> power the WhatsApp assistant (voice notes → brain dump → your calendar).</p>
+  </div>
  </div>
 </section>
 
