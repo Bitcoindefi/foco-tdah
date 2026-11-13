@@ -45,8 +45,11 @@ function toHttps(raw) {
 }
 
 function okUrl(s) {
+  /* Google calendar IDs contain "#". After query decoding that would become a
+     URL fragment and the fetch would hit the wrong path. Keep it encoded. */
+  const raw = String(s || '').replace(/#/g, '%23');
   let u;
-  try { u = new URL(s); } catch (e) { return null; }
+  try { u = new URL(raw); } catch (e) { return null; }
   if (u.protocol !== 'https:') return null;
   if (u.username || u.password) return null;
   if (isBlockedHost(hostOf(u))) return null;
