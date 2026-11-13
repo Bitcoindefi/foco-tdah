@@ -103,18 +103,21 @@ Não há ficheiros de modelos. Tudo é construído com geometria do Three.js e m
 - **Sem WebGL ou sem Three.js.** O mesmo ciclo corre com um calendário em HTML e CSS e uma lâmpada em SVG.
 - **Desempenho.** Poucos polígonos, uma luz pontual por cena, razão de píxeis limitada a 1,5, cerca de 30 imagens por segundo, animações baseadas em tempo. Testado apenas em Chrome com renderização por software; falta testar em equipamentos reais.
 - **Acessibilidade.** Alvos de toque de 44 px ou mais, foco visível, movimento reduzido, tudo utilizável por teclado. As cenas são decorativas para leitores de ecrã; o estado é dito em texto.
-- **Estado.** Um objeto em `localStorage` (chave `enfoco.v4`): tarefas, objetivos, segundos de foco por dia, preferências. Dados da versão 3 são trazidos uma vez.
+- **Estado.** Um objeto em `localStorage` (chave `enfoco`): tarefas, objetivos, segundos de foco por dia, calendários importados, preferências.
 
 ## Privacidade e limites
 
-- Tudo fica no navegador. Não há conta, servidor nem análises.
+- A maior parte do que escreves fica no navegador. Não há conta nem análises.
 - Pedidos de rede: a biblioteca Three.js (unpkg.com) e duas fontes (Google Fonts). Nenhum leva dados da pessoa.
+- Se colares um endereço ICS, um pequeno servidor do EnFoco (`/api/ics`) vai buscar essa página, porque o navegador costuma bloquear o pedido direto. Só aceita https, com limite de tamanho e de tempo. O servidor não guarda o endereço nem os eventos.
+- Se ligares «Sincronizar com o meu calendário», os títulos e as datas das tarefas com prazo são publicados em `/api/feed/<token>.ics`, debaixo de um código aleatório de 64 caracteres. Gerar uma ligação nova apaga a cópia antiga. Não vai o teu nome nem o teu e-mail.
 - A música lofi de foco é gerada neste dispositivo com a Web Audio API. Não há ficheiro de áudio, amostras de terceiros nem pedido de rede (ver créditos abaixo).
 - O assistente de voz usa as APIs de voz deste navegador (reconhecimento, quando existe, e leitura). O EnFoco não tem chave nem servidor de voz; o navegador pode usar o serviço de voz do próprio fabricante. No Firefox o reconhecimento costuma falhar: fica a leitura e um campo para escrever o comando.
 - O aviso de distração só sabe se o separador está à vista e se houve um toque. Não sabe se a pessoa está a trabalhar fora do ecrã, e por isso o tempo da sessão conta sempre.
 - O primeiro passo vem de regras por palavras-chave, não de IA.
 - Um temporizador a correr perde-se se a página for recarregada (o foco já registado fica).
-- Em «Sobre e privacidade»: exportar, apagar tudo, tema, movimento e respiração.
+- Em «Sobre e privacidade»: exportar, apagar tudo, tema, movimento, respiração, calendários e a pré-visualização do WhatsApp.
+- A sincronização automática nos dois sentidos (OAuth com Google, iCloud, Outlook ou CalDAV) ainda não está feita.
 
 ## Notas para a demonstração
 
@@ -122,6 +125,8 @@ Não há ficheiros de modelos. Tudo é construído com geometria do Three.js e m
 - Escolhe «2 min» para a sessão caber no pitch.
 - Música lofi: o botão de notas no topo (desligada por omissão). Volume ao lado. A preferência fica em localStorage.
 - Assistente de voz: o botão de microfone. Comandos: «o que faço», «anotar …», «começa 2, 10 ou 25 minutos», «toca música» / «para a música». Se o microfone não estiver disponível, escreve o comando ou usa «Ouvir a recomendada de hoje».
+- Calendários: no calendário ou em Sobre, «Calendários» (também `#cals`). Importar um ICS, exportar tarefas, e publicar um endereço para o iPhone, o Google ou o Outlook.
+- Assistente no WhatsApp: pré-visualização em Sobre ou em `#whatsapp`. Um texto ou a nota de voz de exemplo cria uma tarefa real na lista e no calendário. O WhatsApp a sério ainda não está ligado.
 - Para mostrar o aviso: muda de separador, conta até vinte, volta.
 - Para recomeçar do zero: Sobre → Apagar tudo. Para voltar ao exemplo, apaga a chave `enfoco` nas ferramentas do navegador e recarrega.
 
@@ -239,18 +244,21 @@ There are no model files. Everything is built from Three.js geometry and `flatSh
 - **Without WebGL or Three.js.** The same loop runs with an HTML and CSS calendar and an SVG bulb.
 - **Performance.** Low polygon counts, one point light per scene, pixel ratio capped at 1.5, about 30 frames per second, time-based animation. Tested only in Chrome with software rendering; real devices still need testing.
 - **Accessibility.** Tap targets of 44 px or more, visible focus, reduced motion, everything usable from the keyboard. The scenes are decorative for screen readers; state is given in text.
-- **State.** One object in `localStorage` (key `enfoco.v4`): tasks, goals, seconds of focus per day, preferences. Version 3 data is carried over once.
+- **State.** One object in `localStorage` (key `enfoco`): tasks, goals, seconds of focus per day, imported calendars, preferences.
 
 ## Privacy and limits
 
-- Everything stays in the browser. There is no account, server or analytics.
+- Most of what you write stays in the browser. There is no account or analytics.
 - Network requests: the Three.js library (unpkg.com) and two fonts (Google Fonts). Neither carries personal data.
+- If you paste an ICS address, a small EnFoco server (`/api/ics`) fetches that page, because the browser usually blocks the request directly. It only accepts https, with a size cap and a timeout. The server does not store the address or the events.
+- If you turn on “Sync to my calendar”, the titles and dates of dated tasks are published at `/api/feed/<token>.ics`, under a random 64-character token. Making a new link deletes the old copy. Your name and email are not sent.
 - The lofi focus music is generated on this device with the Web Audio API. There is no audio file, no third-party sample and no network request (see credits below).
 - The voice assistant uses this browser's speech APIs (recognition, where it exists, and read-aloud). EnFoco has no voice key or server; the browser may use its vendor's built-in speech service. In Firefox, recognition is often missing: read-aloud and a typed command field remain.
 - The drift nudge only knows whether the tab is in view and whether there was a touch. It cannot tell if the person is working away from the screen, so session time always counts.
 - The first step comes from keyword rules, not from AI.
 - A running timer is lost if the page is reloaded (focus already logged stays).
-- Under "About and privacy": export, delete everything, theme, motion and breathing.
+- Under "About and privacy": export, delete everything, theme, motion, breathing, calendars and the WhatsApp preview.
+- Automatic two-way sync (OAuth with Google, iCloud, Outlook or CalDAV) is not built yet.
 
 ## Notes for the demo
 
@@ -258,6 +266,8 @@ There are no model files. Everything is built from Three.js geometry and `flatSh
 - Choose "2 min" so the session fits in the pitch.
 - Lofi music: the notes button in the top bar (off by default). Volume next to it. The preference is stored in localStorage.
 - Voice assistant: the microphone button. Commands: “what should I do”, “add …”, “start 2, 10 or 25 minutes”, “play music” / “stop music”. If the microphone is unavailable, type the command or use “Hear today's recommended task”.
+- Calendars: from the calendar or About, “Calendars” (also `#cals`). Import an ICS, export tasks, and publish an address for iPhone, Google or Outlook.
+- WhatsApp assistant: preview under About or at `#whatsapp`. A typed message or the sample voice note creates a real task on the list and the calendar. Live WhatsApp is not connected yet.
 - To show the nudge: switch tabs, count to twenty, come back.
 - To start from scratch: About → Delete everything. To get the sample back, remove the `enfoco` key in the browser's developer tools and reload.
 

@@ -137,7 +137,7 @@ body[data-view="home"].world3d .top .btn.text{border-radius:14px;color:var(--tex
 .phase-tag svg{width:22px;height:22px;color:var(--accent-text)}
 main{max-width:1180px;margin:0 auto;padding:var(--s3) var(--s4) 120px}
 main.full{max-width:none;padding:0}
-#v-breath,#v-about{max-width:620px;margin:0 auto}
+#v-breath,#v-about,#v-cals,#v-whatsapp{max-width:620px;margin:0 auto}
 
 /* ---------- buttons: one primary per surface, then outline, then text ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 20px;border-radius:14px;border:1.5px solid transparent;
@@ -431,6 +431,69 @@ details.why .src a{color:var(--accent-text)}
 
 /* ---------- reduced motion: system setting or the in-app switch ---------- */
 html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-motion="reduce"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+
+/* ---------- calendars and WhatsApp preview ---------- */
+#v-cals,#v-whatsapp{max-width:620px;margin:0 auto;padding-bottom:var(--s6)}
+#v-cals .lede,#v-whatsapp .lede{color:var(--text);font-size:var(--t-lg);margin-top:var(--s3)}
+.badge-soon{display:inline-flex;align-items:center;gap:6px;margin-left:var(--s2);padding:2px 10px;border-radius:999px;border:1.5px solid var(--accent);background:var(--wash);color:var(--accent-text);
+  font:600 .72rem var(--display);letter-spacing:.01em;line-height:1.3;vertical-align:middle;white-space:nowrap}
+.cal-card{margin-top:var(--s5);padding:var(--s5);border-radius:16px;border:1.5px solid var(--line);background:var(--raise)}
+.cal-card h2{font-size:var(--t-lg);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2);margin:0}
+.cal-card>.hint{margin-top:var(--s2)}
+.cal-card .pair{margin-top:var(--s4)}
+.cal-how{margin-top:var(--s4)}
+.cal-how>summary{cursor:pointer;font:600 var(--t-sm) var(--display);color:var(--muted);list-style:none}
+.cal-how>summary::-webkit-details-marker{display:none}
+.cal-how ol{margin:var(--s3) 0 0;padding-left:1.2em;color:var(--muted);font-size:var(--t-sm)}
+.cal-how li{margin:var(--s2) 0;max-width:62ch}
+.cal-feeds{list-style:none;margin:var(--s3) 0 0;padding:0}
+.cal-feeds li{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2);padding:var(--s3) 0;border-bottom:1px solid var(--line)}
+.cal-feeds .row-t{flex:1;min-width:12ch}
+.src-tag{display:inline-flex;align-items:center;padding:1px 8px;border-radius:999px;font:600 .68rem var(--display);letter-spacing:.01em;line-height:1.35;background:var(--wash);color:var(--accent-text)}
+.src-tag.google{background:color-mix(in srgb,#4285f4 18%,transparent);color:color-mix(in srgb,#4285f4 70%,var(--text))}
+.src-tag.icloud{background:color-mix(in srgb,#8e8e93 22%,transparent);color:color-mix(in srgb,#8e8e93 55%,var(--text))}
+.src-tag.outlook{background:color-mix(in srgb,#0f6cbd 18%,transparent);color:color-mix(in srgb,#0f6cbd 70%,var(--text))}
+.src-tag.ics,.src-tag.file{background:color-mix(in srgb,var(--lilac) 22%,transparent);color:var(--lilac)}
+.src-tag.enfoco{background:var(--wash);color:var(--accent-text)}
+.feed-box{margin-top:var(--s4);padding:var(--s3);border-radius:12px;background:var(--raise-2);border:1.5px solid var(--line);font-size:var(--t-xs);color:var(--muted);overflow-wrap:anywhere;word-break:break-all}
+.day-evs{list-style:none;margin:var(--s3) 0 0;padding:0}
+.day-evs li{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s2);padding:var(--s2) 0;border-bottom:1px solid var(--line);font-size:var(--t-sm)}
+.day-evs time{color:var(--muted);font-variant-numeric:tabular-nums;font-size:var(--t-xs)}
+.c2.has-ev,.day.has-ev{/* hook for dots */}
+.c2-evs{position:absolute;left:50%;bottom:7%;display:flex;gap:2px;transform:translateX(-50%);pointer-events:none}
+.c2-evs i{width:5px;height:5px;border-radius:50%;background:var(--lilac)}
+.day small.ev-mark{display:none;margin-top:.1em;font-size:.38em;font-weight:600;opacity:.85}
+#cal-grid.zoomed .day small.ev-mark{display:block}
+#p-cal .cal-link{display:block;margin:var(--s2) auto 0;text-align:center;width:100%}
+.row-cal{display:flex;flex-wrap:wrap;gap:2px;flex:none}
+.row-cal .btn.mini{min-height:36px;padding:0 10px;font-size:var(--t-xs)}
+.file-btn input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+
+/* WhatsApp-style preview, contained so the rest of the app keeps its palette */
+.wa-frame{margin-top:var(--s5);border-radius:20px;border:1.5px solid var(--line);overflow:hidden;background:#efeae2;color:#111;max-width:440px}
+:root:not([data-phase="morning"]):not([data-phase="afternoon"]) .wa-frame{background:#0b141a;color:#e9edef;border-color:#1f2c34}
+.wa-head{display:flex;align-items:center;gap:var(--s3);padding:10px 14px;background:#008069;color:#fff}
+:root:not([data-phase="morning"]):not([data-phase="afternoon"]) .wa-head{background:#1f2c34}
+.wa-av{width:36px;height:36px;border-radius:50%;background:#fff;color:#008069;display:grid;place-items:center;font:800 .85rem var(--display);flex:none}
+.wa-head h2{font-size:var(--t-md);margin:0;color:#fff}
+.wa-head p{margin:0;font-size:var(--t-xs);opacity:.85;color:#fff}
+.wa-thread{min-height:280px;max-height:52vh;overflow:auto;padding:14px 12px 18px;display:flex;flex-direction:column;gap:8px}
+.wa-b{max-width:84%;padding:8px 12px;border-radius:16px;font-size:var(--t-sm);line-height:1.4;overflow-wrap:anywhere}
+.wa-b.in{align-self:flex-start;background:#fff;color:#111;border-top-left-radius:4px}
+.wa-b.out{align-self:flex-end;background:#d9fdd3;color:#111;border-top-right-radius:4px}
+:root:not([data-phase="morning"]):not([data-phase="afternoon"]) .wa-b.in{background:#1f2c34;color:#e9edef}
+:root:not([data-phase="morning"]):not([data-phase="afternoon"]) .wa-b.out{background:#005c4b;color:#e9edef}
+.wa-b.status{align-self:center;background:transparent;color:var(--muted);font-size:var(--t-xs);padding:0}
+.wa-note-btn{display:flex;align-items:center;gap:8px;width:auto;border:0;background:#d9fdd3;color:#111;cursor:pointer;text-align:left;font:inherit}
+.wa-wave{display:flex;align-items:center;gap:2px;height:18px}
+.wa-wave i{width:3px;height:var(--h,10px);border-radius:2px;background:currentColor;opacity:.8}
+.wa-composer{display:flex;gap:8px;padding:8px;background:color-mix(in srgb,#efeae2 70%,#fff);border-top:1px solid rgba(0,0,0,.08)}
+:root:not([data-phase="morning"]):not([data-phase="afternoon"]) .wa-composer{background:#1f2c34;border-top-color:#0b141a}
+.wa-composer .input{min-height:44px;background:#fff;color:#111;border-color:transparent;flex:1}
+:root:not([data-phase="morning"]):not([data-phase="afternoon"]) .wa-composer .input{background:#2a3942;color:#e9edef}
+.wa-composer .btn{min-height:44px;padding:0 14px}
+.wa-actions{margin-top:var(--s4)}
+
 </style>
 </head>
 <body data-view="cover">
@@ -504,6 +567,8 @@ html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-moti
     </div>
   </section>
   <section id="v-about" class="view" hidden></section>
+  <section id="v-cals" class="view" hidden></section>
+  <section id="v-whatsapp" class="view" hidden></section>
 </main>
 
 <div id="toast" role="status" aria-live="polite"></div>
@@ -669,7 +734,7 @@ pt: {
   ab_title: "Sobre e privacidade",
   ab_what: "O EnFoco é um protótipo de hackathon com uma única função: ajudar-te a fazer uma tarefa de cada vez, com a luz acesa enquanto a fazes. Não é uma ferramenta médica e não substitui acompanhamento profissional.",
   ab_data: "Os teus dados",
-  ab_d1: "Tudo o que escreves fica só neste navegador, em localStorage. Não há conta, servidor nem análises.",
+  ab_d1: "A maior parte do que escreves fica só neste navegador, em localStorage. Não há conta nem análises.",
   ab_d2: "A página vai buscar a biblioteca Three.js (unpkg.com) e duas fontes (Google Fonts). Esses pedidos não levam os teus dados.",
   ab_d3: "O aviso de distração só sabe se este separador está à vista e se tocaste no ecrã. Não sabe o que fazes fora dele, e não regista nada disso.",
   ab_d4: "O cenário da manhã, da tarde ou da noite vem do relógio deste dispositivo. A app não mostra horas nem guarda a que horas fizeste o quê.",
@@ -718,7 +783,86 @@ pt: {
   vo_empty: "Não percebi a tarefa a anotar.",
   vo_need_task: "Escolhe ou escreve uma tarefa primeiro.",
   ab_d5: "A música lofi é gerada neste dispositivo, com a Web Audio API. Não há ficheiro de áudio nem pedido de rede.",
-  ab_d6: "O assistente de voz usa a API de voz deste navegador (reconhecimento e leitura). O EnFoco não tem chave nem servidor de voz; o navegador pode usar o serviço de voz do próprio fabricante."
+  ab_d6: "O assistente de voz usa a API de voz deste navegador (reconhecimento e leitura). O EnFoco não tem chave nem servidor de voz; o navegador pode usar o serviço de voz do próprio fabricante.",
+  preview_badge: "Pré-visualização · em breve",
+  cal_manage: "Calendários",
+  cal_page: "Calendários",
+  cal_intro: "Podes importar um calendário com um endereço ICS ou um ficheiro, exportar as tuas tarefas e publicar um endereço para o telemóvel. A sincronização automática nos dois sentidos ainda não está feita.",
+  cal_import_h: "Importar um calendário",
+  cal_import_p: "Cola um endereço ICS secreto do Google, do iCloud ou do Outlook, ou envia um ficheiro .ics. Os eventos aparecem no calendário da app, com a origem marcada.",
+  cal_url_in: "Endereço ICS ou webcal",
+  cal_url_ph: "https://… ou webcal://…",
+  cal_url_add: "Adicionar",
+  cal_file: "Ou escolhe um ficheiro .ics",
+  cal_file_btn: "Enviar ficheiro",
+  cal_how: "Como obter o endereço",
+  cal_how_g: "No Google Calendar, num computador: Definições (engrenagem) → Definições → no menu à esquerda, abre o calendário → «Integrar calendário» → copia o «Endereço secreto no formato iCal».",
+  cal_how_a: "No iCloud.com, abre Calendário. No calendário, toca no ícone de partilha, liga «Calendário público» e copia a ligação. O EnFoco aceita o endereço webcal e trata-o como https. Quem tiver a ligação pode ver os eventos.",
+  cal_how_o: "No Outlook na web: Definições → Calendário → Calendários partilhados → Publicar um calendário → escolhe o calendário, permite ver todos os detalhes, publica e copia a ligação ICS.",
+  cal_connected: "Calendários ligados",
+  cal_none: "Ainda não há nenhum calendário importado.",
+  cal_ev_n: "{n} eventos",
+  cal_ev_n_1: "1 evento",
+  cal_sync_ago: "Atualizado agora.",
+  cal_refresh: "Atualizar",
+  cal_remove: "Remover",
+  cal_refreshing: "A atualizar…",
+  cal_imported: "Calendário importado: {n} eventos.",
+  cal_import_fail: "Não deu para ler esse calendário. Confirma o endereço ou tenta o ficheiro .ics.",
+  cal_bad_url: "Esse endereço não parece um ICS em https ou webcal.",
+  cal_bad_ics: "Esse ficheiro não parece um calendário iCalendar.",
+  cal_cleared: "Calendário removido.",
+  cal_src_google: "Google",
+  cal_src_icloud: "iCloud",
+  cal_src_outlook: "Outlook",
+  cal_src_ics: "ICS",
+  cal_src_file: "Ficheiro",
+  cal_src_enfoco: "EnFoco",
+  cal_day_events: "Neste dia",
+  cal_day_none: "Nada marcado neste dia.",
+  cal_export_h: "Exportar tarefas",
+  cal_export_p: "Cada tarefa e cada objetivo com data pode ir para o Google Calendar ou descarregar-se como ficheiro .ics, que o Apple Calendar e o Outlook abrem.",
+  cal_gcal: "Google Calendar",
+  cal_ics_one: "Descarregar .ics",
+  cal_ics_all: "Descarregar as tarefas com data (.ics)",
+  cal_ics_none: "Ainda não há tarefas com data para exportar.",
+  cal_ics_done: "Ficheiro .ics descarregado.",
+  cal_feed_h: "Sincronizar com o meu calendário",
+  cal_feed_p: "O EnFoco publica um endereço privado com as tuas tarefas e objetivos que têm data. O calendário do iPhone, o Google e o Outlook podem subscrevê-lo e ir buscar as alterações sozinhos.",
+  cal_feed_apple: "Adicionar ao iPhone / Apple Calendar",
+  cal_feed_google: "Adicionar ao Google Calendar",
+  cal_feed_copy: "Copiar ligação para o Outlook",
+  cal_feed_copied: "Ligação copiada.",
+  cal_feed_reset: "Gerar uma ligação nova",
+  cal_feed_reset2: "Confirmar: invalidar a ligação atual",
+  cal_feed_reset_ok: "Ligação nova. A anterior deixa de funcionar.",
+  cal_feed_hint: "As apps de calendário atualizam a subscrição no horário delas. No iPhone podes pedir uma atualização a cada 15 minutos (por vezes 5). O Google Calendar costuma demorar horas.",
+  cal_feed_priv: "Neste servidor ficam só os títulos e as datas, debaixo de um código aleatório e impossível de adivinhar. Não vai o teu nome nem o teu e-mail. Se gerares uma ligação nova, a cópia antiga é apagada.",
+  cal_feed_wait: "A preparar a ligação…",
+  cal_feed_fail: "Não deu para publicar o calendário. Tenta outra vez dentro de um momento.",
+  cal_oauth_h: "Sincronização automática nos dois sentidos",
+  cal_oauth_p: "Ligar o Google, o iCloud, o Outlook ou o CalDAV para as alterações fluírem sozinhas nos dois sentidos. Isto precisa de iniciação de sessão (OAuth) e ainda não está feito.",
+  wa_page: "Assistente no WhatsApp",
+  wa_intro: "Pré-visualização: escreves um texto ou tocas numa nota de voz de exemplo. O EnFoco anota a tarefa na lista e marca-a no calendário. O WhatsApp a sério ainda não está ligado.",
+  wa_head: "EnFoco",
+  wa_sub: "Pré-visualização",
+  wa_ph: "Escreve uma mensagem",
+  wa_send: "Enviar",
+  wa_note: "Nota de voz de exemplo",
+  wa_note_sample: "Amanhã às 10, ligar à senhoria",
+  wa_transcribe: "A transcrever a nota de voz…",
+  wa_saved: "Anotei na lista e marquei no calendário: «{t}», {d}.",
+  wa_open_list: "Ver na lista",
+  wa_open_cal: "Ver no calendário",
+  wa_empty: "Escreve o que tens na cabeça, ou toca na nota de voz de exemplo.",
+  ab_cals: "Calendários",
+  ab_cals_p: "Importar um ICS, exportar tarefas, ou publicar um endereço para o telemóvel.",
+  ab_cals_go: "Abrir calendários",
+  ab_wa: "Assistente no WhatsApp",
+  ab_wa_p: "Pré-visualização de um texto ou de uma nota de voz a virar tarefa e entrada no calendário.",
+  ab_wa_go: "Abrir a pré-visualização",
+  ab_d7: "Se colares um endereço de calendário, a app pede a um pequeno servidor do EnFoco que vá buscar essa página, porque o navegador costuma bloquear o pedido direto. O servidor não guarda o endereço nem os eventos.",
+  ab_d8: "Se ligares «Sincronizar com o meu calendário», os títulos e as datas das tarefas com prazo ficam no servidor do EnFoco, debaixo de uma ligação aleatória e impossível de adivinhar, para o Apple Calendar, o Google ou o Outlook a poderem subscrever. Gerar uma ligação nova apaga a cópia antiga. Não vai o teu nome nem o teu e-mail."
 },
 
 en: {
@@ -858,7 +1002,7 @@ en: {
   ab_title: "About and privacy",
   ab_what: "EnFoco is a hackathon prototype with a single job: helping you do one task at a time, with the light on while you do it. It is not a medical tool and does not replace professional support.",
   ab_data: "Your data",
-  ab_d1: "Everything you write stays only in this browser, in localStorage. There is no account, no server and no analytics.",
+  ab_d1: "Most of what you write stays only in this browser, in localStorage. There is no account and no analytics.",
   ab_d2: "The page fetches the Three.js library (unpkg.com) and two fonts (Google Fonts). Those requests do not carry your data.",
   ab_d3: "The drift nudge only knows whether this tab is in view and whether you touched the screen. It does not know what you do outside it, and it records none of that.",
   ab_d4: "The morning, afternoon or night scene comes from this device's clock. The app shows no times and does not store when you did what.",
@@ -907,7 +1051,86 @@ en: {
   vo_empty: "I didn't catch the task to save.",
   vo_need_task: "Pick or write a task first.",
   ab_d5: "The lofi music is generated on this device, with the Web Audio API. There is no audio file and no network request.",
-  ab_d6: "The voice assistant uses this browser's speech APIs (recognition and read-aloud). EnFoco has no voice key or server; the browser may use its vendor's built-in speech service."
+  ab_d6: "The voice assistant uses this browser's speech APIs (recognition and read-aloud). EnFoco has no voice key or server; the browser may use its vendor's built-in speech service.",
+  preview_badge: "Preview · coming soon",
+  cal_manage: "Calendars",
+  cal_page: "Calendars",
+  cal_intro: "You can import a calendar with an ICS address or a file, export your tasks, and publish an address for your phone. Automatic two-way sync is not built yet.",
+  cal_import_h: "Import a calendar",
+  cal_import_p: "Paste a secret ICS address from Google, iCloud or Outlook, or upload a .ics file. Events appear on the app calendar, tagged by source.",
+  cal_url_in: "ICS or webcal address",
+  cal_url_ph: "https://… or webcal://…",
+  cal_url_add: "Add",
+  cal_file: "Or choose a .ics file",
+  cal_file_btn: "Upload file",
+  cal_how: "How to get the address",
+  cal_how_g: "In Google Calendar, on a computer: Settings (gear) → Settings → in the left-hand list, open the calendar → “Integrate calendar” → copy the “Secret address in iCal format”.",
+  cal_how_a: "On iCloud.com, open Calendar. On the calendar, tap the sharing icon, turn on “Public Calendar” and copy the link. EnFoco accepts a webcal address and treats it as https. Anyone with the link can see the events.",
+  cal_how_o: "In Outlook on the web: Settings → Calendar → Shared calendars → Publish a calendar → pick the calendar, allow viewing of all details, publish, and copy the ICS link.",
+  cal_connected: "Connected calendars",
+  cal_none: "No calendar has been imported yet.",
+  cal_ev_n: "{n} events",
+  cal_ev_n_1: "1 event",
+  cal_sync_ago: "Just updated.",
+  cal_refresh: "Refresh",
+  cal_remove: "Remove",
+  cal_refreshing: "Refreshing…",
+  cal_imported: "Calendar imported: {n} events.",
+  cal_import_fail: "That calendar could not be read. Check the address or try the .ics file.",
+  cal_bad_url: "That address does not look like an https or webcal ICS link.",
+  cal_bad_ics: "That file does not look like an iCalendar calendar.",
+  cal_cleared: "Calendar removed.",
+  cal_src_google: "Google",
+  cal_src_icloud: "iCloud",
+  cal_src_outlook: "Outlook",
+  cal_src_ics: "ICS",
+  cal_src_file: "File",
+  cal_src_enfoco: "EnFoco",
+  cal_day_events: "On this day",
+  cal_day_none: "Nothing scheduled on this day.",
+  cal_export_h: "Export tasks",
+  cal_export_p: "Each task and each goal with a date can go to Google Calendar, or download as a .ics file that Apple Calendar and Outlook open.",
+  cal_gcal: "Google Calendar",
+  cal_ics_one: "Download .ics",
+  cal_ics_all: "Download dated tasks (.ics)",
+  cal_ics_none: "There are no dated tasks to export yet.",
+  cal_ics_done: ".ics file downloaded.",
+  cal_feed_h: "Sync to my calendar",
+  cal_feed_p: "EnFoco publishes a private address with your tasks and goals that have a date. The iPhone calendar, Google and Outlook can subscribe to it and pick up changes on their own.",
+  cal_feed_apple: "Add to iPhone / Apple Calendar",
+  cal_feed_google: "Add to Google Calendar",
+  cal_feed_copy: "Copy link for Outlook",
+  cal_feed_copied: "Link copied.",
+  cal_feed_reset: "Make a new link",
+  cal_feed_reset2: "Confirm: drop the current link",
+  cal_feed_reset_ok: "New link. The previous one no longer works.",
+  cal_feed_hint: "Calendar apps refresh a subscription on their own schedule. On iPhone you can ask for an update every 15 minutes (sometimes 5). Google Calendar often takes hours.",
+  cal_feed_priv: "Only titles and dates are stored on this server, under a random, unguessable link. Your name and email are not sent. Making a new link deletes the old copy.",
+  cal_feed_wait: "Preparing the link…",
+  cal_feed_fail: "The calendar could not be published. Try again in a moment.",
+  cal_oauth_h: "Automatic two-way sync",
+  cal_oauth_p: "Connect Google, iCloud, Outlook or CalDAV so changes flow both ways on their own. This needs a sign-in (OAuth) and is not built yet.",
+  wa_page: "WhatsApp assistant",
+  wa_intro: "Preview: you type a message or tap a sample voice note. EnFoco saves the task on the list and puts it on the calendar. Live WhatsApp is not connected yet.",
+  wa_head: "EnFoco",
+  wa_sub: "Preview",
+  wa_ph: "Type a message",
+  wa_send: "Send",
+  wa_note: "Sample voice note",
+  wa_note_sample: "Tomorrow at 10, call the landlord",
+  wa_transcribe: "Transcribing the voice note…",
+  wa_saved: "Saved to the list and put on the calendar: “{t}”, {d}.",
+  wa_open_list: "See in the list",
+  wa_open_cal: "See in the calendar",
+  wa_empty: "Type what’s on your mind, or tap the sample voice note.",
+  ab_cals: "Calendars",
+  ab_cals_p: "Import an ICS, export tasks, or publish an address for your phone.",
+  ab_cals_go: "Open calendars",
+  ab_wa: "WhatsApp assistant",
+  ab_wa_p: "A preview of a text or a voice note turning into a task and a calendar entry.",
+  ab_wa_go: "Open the preview",
+  ab_d7: "If you paste a calendar address, the app asks a small EnFoco server to fetch that page, because the browser usually blocks the request directly. The server does not store the address or the events.",
+  ab_d8: "If you turn on “Sync to my calendar”, the titles and dates of your dated tasks are stored on EnFoco's server, under a random, unguessable link, so Apple Calendar, Google or Outlook can subscribe. Making a new link deletes the old copy. Your name and email are not sent."
 }
 };
 
@@ -959,14 +1182,22 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch (e) { this.ok = false; this.mem[k] = v; } },
   del(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } delete this.mem[k]; }
 };
-const fresh = () => ({ v: 5, lang: 'pt', phaseMode: 'auto', motion: 'auto', skipBreath: false, min: 10, musicOn: false, musicVol: 0.4, tasks: [], goals: [], focus: {}, sample: false });
-const save = () => store.set(KEY, JSON.stringify(S));
-const mk = o => Object.assign({ id: uid(), t: '', step: '', done: false, date: '', goalId: '', created: Date.now() }, o);
+const fresh = () => ({ v: 6, lang: 'pt', phaseMode: 'auto', motion: 'auto', skipBreath: false, min: 10, musicOn: false, musicVol: 0.4, tasks: [], goals: [], focus: {}, sample: false, cals: [], feedToken: '', feedPushed: 0 });
+const save = (quiet) => { store.set(KEY, JSON.stringify(S)); if (!quiet) scheduleFeedPush(); };
+const mk = o => Object.assign({ id: uid(), t: '', step: '', done: false, date: '', due: '', time: '', goalId: '', created: Date.now() }, o);
 function normalise(o) {
   const s = Object.assign(fresh(), o);
-  s.v = 5;
-  s.tasks = (Array.isArray(s.tasks) ? s.tasks : []).filter(x => x && x.t).map(x => { const k = mk(x); k.done = !!k.done; if (k.done && !isDate(k.date)) k.date = dayKey(); return k; });
+  s.v = 6;
+  s.tasks = (Array.isArray(s.tasks) ? s.tasks : []).filter(x => x && x.t).map(x => { const k = mk(x); k.done = !!k.done; if (k.done && !isDate(k.date)) k.date = dayKey(); k.due = isDate(k.due) ? k.due : ''; k.time = /^([01]\d|2[0-3]):[0-5]\d$/.test(k.time || '') ? k.time : ''; return k; });
   s.goals = (Array.isArray(s.goals) ? s.goals : []).filter(g => g && g.t).map(g => ({ id: g.id || uid(), t: g.t, due: isDate(g.due) ? g.due : '', done: !!g.done }));
+  const kinds = ['google', 'icloud', 'outlook', 'ics', 'file'];
+  s.cals = (Array.isArray(s.cals) ? s.cals : []).map(f => {
+    if (!f || typeof f !== 'object') return null;
+    const events = (Array.isArray(f.events) ? f.events : []).filter(ev => ev && ev.title && isDate(ev.start)).slice(0, 400);
+    return { id: f.id || uid(), name: String(f.name || '').slice(0, 120), kind: kinds.includes(f.kind) ? f.kind : 'ics', url: String(f.url || ''), events, synced: +f.synced || 0, error: f.error || '' };
+  }).filter(Boolean);
+  s.feedToken = /^[a-f0-9]{64}$/.test(s.feedToken || '') ? s.feedToken : '';
+  s.feedPushed = +s.feedPushed || 0;
   const f = {};
   if (s.focus && typeof s.focus === 'object') Object.keys(s.focus).forEach(k => { if (isDate(k) && +s.focus[k] > 0) f[k] = Math.round(+s.focus[k]); });
   s.focus = f;
@@ -1306,8 +1537,9 @@ function listHTML() {
     <div class="drawer-in">
       ${S.sample ? `<p class="hint">${t('ls_sample')}</p>` : ''}
       <h2>${t('ls_tasks')}</h2>
-      ${n ? `<ul class="rows">${p.map(x => { const title = esc(tx(x.t)); return `<li><span class="row-t"><span>${title}</span>${isTodayRec(x) ? `<span class="badge-rec">${t('rec_badge')}</span>` : ''}</span>
+      ${n ? `<ul class="rows">${p.map(x => { const title = esc(tx(x.t)); return `<li><span class="row-t"><span>${title}${isDate(x.due) ? `<small>${t('go_when', { d: fmtDate(x.due) })}${x.time ? ' · ' + x.time : ''}</small>` : ''}</span>${isTodayRec(x) ? `<span class="badge-rec">${t('rec_badge')}</span>` : ''}</span>
           <button type="button" class="btn secondary mini" data-act="pick" data-id="${x.id}" aria-label="${t('ls_now')}: ${title}">${t('ls_now')}</button>
+          ${calActions(exportableForTask(x))}
           <button type="button" class="icon-btn bare" data-act="del" data-id="${x.id}" aria-label="${t('remove')}: ${title}">${ICON.x}</button></li>`; }).join('')}</ul>` : `<p class="hint">${t('ls_none')}</p>`}
       <button type="button" class="btn secondary rec-btn" data-act="recToday">${t('rec_btn')}</button>
       <form data-form="later" autocomplete="off"><label class="sr" for="ls-in">${t('ls_add_in')}</label>
@@ -1316,6 +1548,7 @@ function listHTML() {
       <h2>${t('ls_goals')}</h2>
       ${goals.length ? `<ul class="rows">${goals.map(g => { const title = esc(tx(g.t)); return `<li><span class="row-t">${ICON.flag}<span>${title}${g.due ? `<small>${t('go_when', { d: fmtDate(g.due) })}</small>` : ''}</span></span>
           <button type="button" class="btn secondary mini" data-act="goalNow" data-id="${g.id}" aria-label="${t('ls_now')}: ${title}">${t('ls_now')}</button>
+          ${calActions(exportableForGoal(g))}
           <button type="button" class="icon-btn bare" data-act="goalDone" data-id="${g.id}" aria-label="${t('go_mark')}: ${title}">${ICON.check}</button>
           <button type="button" class="icon-btn bare" data-act="goalDel" data-id="${g.id}" aria-label="${t('remove')}: ${title}">${ICON.x}</button></li>`; }).join('')}</ul>` : `<p class="hint">${t('go_none')}</p>`}
       <form class="goal-form" data-form="goal" autocomplete="off">
@@ -1332,9 +1565,19 @@ function calSign() {
     <div class="cal-bar"><button type="button" class="icon-btn" data-act="monthShift" data-v="-1" aria-label="${t('cal_prev')}">${ICON.chevL}</button>
     <p class="cal-month" aria-live="polite">${fmtMonth(ui.month)}</p>
     <button type="button" class="icon-btn" data-act="monthShift" data-v="1" aria-label="${t('cal_next')}">${ICON.chevR}</button></div>
+    <button type="button" class="btn text cal-link" data-act="nav" data-v="cals">${t('cal_manage')}</button>
     <div id="cal-flat"></div>`;
 }
-const dayPlate = () => `<h2>${t('day_title')}</h2><p>${daySum()}</p><p class="hint">${t('day_legend')}</p>${why('day', [['cal', ['chen']]])}`;
+const dayPlate = () => {
+  const evs = eventsOn(ui.day);
+  const list = evs.length
+    ? `<ul class="day-evs">${evs.slice(0, 8).map(ev => `<li>${ev.startTime ? `<time>${esc(ev.startTime)}</time>` : ''}<span>${esc(ev.title)}</span> ${srcTag(ev.kind || 'enfoco')}</li>`).join('')}</ul>`
+    : `<p class="hint">${t('cal_day_none')}</p>`;
+  return `<h2>${t('day_title')}</h2><p>${daySum()}</p>
+    <p class="label">${t('cal_day_events')}</p>${list}
+    <button type="button" class="btn text cal-link" data-act="nav" data-v="cals">${t('cal_manage')}</button>
+    <p class="hint">${t('day_legend')}</p>${why('day', [['cal', ['chen']]])}`;
+};
 const PLACES = [['loop', 'bulb', 'pl_loop'], ['cal', 'cal', 'pl_cal'], ['list', 'list', 'pl_list']];
 const daySum = () => { const d = ui.day, st = dayStats(d); return t('day_sum', { day: d === dayKey() ? cap(t('d_today')) : fmtDate(d), min: st.min, done: st.done }); };
 function sceneStatus() {
@@ -1347,7 +1590,7 @@ function vAbout() {
   return `<button type="button" class="back" data-act="nav" data-v="home">${ICON.chevL}<span>${t('back')}</span></button>
     <h1 tabindex="-1">${t('ab_title')}</h1>
     <p class="lede">${t('ab_what')}</p>
-    <section class="sec"><h2>${t('ab_data')}</h2><ul class="bullets"><li>${t('ab_d1')}</li><li>${t('ab_d2')}</li><li>${t('ab_d3')}</li><li>${t('ab_d4')}</li><li>${t('ab_d5')}</li><li>${t('ab_d6')}</li></ul>
+    <section class="sec"><h2>${t('ab_data')}</h2><ul class="bullets"><li>${t('ab_d1')}</li><li>${t('ab_d2')}</li><li>${t('ab_d3')}</li><li>${t('ab_d4')}</li><li>${t('ab_d5')}</li><li>${t('ab_d6')}</li><li>${t('ab_d7')}</li><li>${t('ab_d8')}</li></ul>
       ${why('privacy', [['privacy', ['chen']], ['nudge', ['chen']]])}
       <div class="pair"><button type="button" class="btn secondary" data-act="export">${t('ab_export')}</button><button type="button" class="btn text danger" data-act="wipe">${ui.wipe ? t('ab_wipe2') : t('ab_wipe')}</button></div></section>
     <section class="sec"><h2>${t('ab_prefs')}</h2>
@@ -1355,6 +1598,10 @@ function vAbout() {
       <p class="hint">${t('ab_phase_h')}</p>
       <div class="seg-row"><span class="label">${t('ab_motion')}</span>${seg('motion', S.motion, [['auto', t('mo_auto')], ['reduce', t('mo_reduce')], ['full', t('mo_full')]], t('ab_motion'))}</div>
       <label class="switch"><input type="checkbox" data-chg="breathOn"${S.skipBreath ? '' : ' checked'}><i aria-hidden="true"></i><span>${t('ab_breath')}</span></label></section>
+    <section class="sec"><h2>${t('ab_cals')}</h2><p class="hint">${t('ab_cals_p')}</p>
+      <div class="pair"><button type="button" class="btn secondary" data-act="nav" data-v="cals">${t('ab_cals_go')}</button></div>
+      <h2>${t('ab_wa')}</h2><p class="hint">${t('ab_wa_p')}</p>
+      <div class="pair"><button type="button" class="btn secondary" data-act="nav" data-v="whatsapp">${t('ab_wa_go')}</button></div></section>
     <section class="sec"><h2>${t('ab_limits')}</h2><ul class="bullets"><li>${t('ab_l1')}</li><li>${t('ab_l2')}</li><li>${t('ab_l3')}</li></ul>
       <p class="hint">${sceneStatus()}</p>
       <p class="hint">${t('ab_more')} <a href="https://github.com/Bitcoindefi/foco-tdah" target="_blank" rel="noopener noreferrer">${t('ab_repo')}</a> · <a href="presentacion/">${t('ab_deck')}</a></p></section>
@@ -1379,7 +1626,7 @@ function paintChrome() {
   $$('[data-i18n-aria]').forEach(el => { const l = t(el.dataset.i18nAria); el.setAttribute('aria-label', l); el.title = l; });
   $('#lang-seg').setAttribute('aria-label', t('lang_aria'));
   $$('#lang-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === S.lang)));
-  $('#btn-about').hidden = ui.view === 'about' || ui.view === 'breath';
+  $('#btn-about').hidden = ui.view === 'about' || ui.view === 'breath' || ui.view === 'cals' || ui.view === 'whatsapp';
   paintTools();
 }
 function focusKey() {
@@ -1399,6 +1646,8 @@ function render() {
   if (v === 'cover') $('#cover-body').innerHTML = vCover();
   else if (v === 'breath') { scope.innerHTML = vBreath(); paintBreath(); }
   else if (v === 'about') scope.innerHTML = vAbout();
+  else if (v === 'cals') scope.innerHTML = vCals();
+  else if (v === 'whatsapp') { scope.innerHTML = vWhatsapp(); queueMicrotask(waScroll); }
   else {
     if (ui.step === 'focus' && !T.id) ui.step = 'pick';
     if (ui.step === 'ready' && !(ui.task && byId(ui.task))) ui.step = 'pick';
@@ -1418,11 +1667,12 @@ function render() {
   else if (fk) { let el = null; try { el = $(fk, scope); } catch (e) { el = null; } if (el) el.focus({ preventScroll: true }); }
 }
 function nav(v) {
-  if (!['cover', 'breath', 'home', 'about'].includes(v)) v = 'home';
+  if (!['cover', 'breath', 'home', 'about', 'cals', 'whatsapp'].includes(v)) v = 'home';
   if (ui.view === 'breath' && v !== 'breath') stopBreath();
   ui.view = v; ui.wipe = false;
   if (v === 'breath') startBreath();
-  if (v === 'home') { ui.lastStep = ''; ui.place = 'loop'; if (scene3.cam) scene3.cam.free = false; }
+  if (v === 'home') { ui.lastStep = ''; ui.place = 'loop'; if (scene3.cam) scene3.cam.free = false; refreshFeeds(false); }
+  if (v === 'cals') { CalUI.feedReset = false; ensureFeed(); refreshFeeds(false); }
   render();
   window.scrollTo(0, 0);
   const h = $('#v-' + v + ' h1'); if (h) h.focus({ preventScroll: true });
@@ -1436,6 +1686,568 @@ function exportData() {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'enfoco-' + dayKey() + '.json';
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000);
   toast(t('ab_exported'));
+}
+
+/* ---------- calendars: real ICS import/export and a private subscription feed;
+   two-way OAuth sync stays a preview. WhatsApp assistant is a preview that
+   writes a real item on the list and on the calendar. ---------- */
+const ICS_PROXY = '/api/ics?url=';
+const FEED_API = token => '/api/feed/' + token;
+const FEED_ICS = token => '/api/feed/' + token + '.ics';
+const MAX_IMPORT = 400;
+const CalUI = { busy: '', feedReady: false, feedReset: false, fileBusy: false };
+const WA = { lines: [], busy: false };
+
+function srcKind(url, filename) {
+  const u = String(url || '').toLowerCase(), f = String(filename || '').toLowerCase();
+  if (/google\.com|calendar\.google/.test(u)) return 'google';
+  if (/icloud\.com|caldav\.icloud|apple\.com/.test(u)) return 'icloud';
+  if (/outlook\.|office\.com|office365|live\.com|hotmail\.com/.test(u)) return 'outlook';
+  if (f) return 'file';
+  return 'ics';
+}
+function srcLabel(kind) { return t('cal_src_' + (kind || 'ics')); }
+function srcTag(kind) { return `<span class="src-tag ${esc(kind || 'ics')}">${esc(srcLabel(kind))}</span>`; }
+
+function toHttpsIcs(raw) {
+  let s = String(raw || '').trim();
+  if (/^webcal:\/\//i.test(s)) s = 'https://' + s.slice('webcal://'.length);
+  return s;
+}
+function okIcsUrl(raw) {
+  const s = toHttpsIcs(raw);
+  let u;
+  try { u = new URL(s); } catch (e) { return ''; }
+  if (u.protocol !== 'https:') return '';
+  const h = u.hostname.toLowerCase();
+  if (!h || h === 'localhost' || h === '127.0.0.1' || h === '::1') return '';
+  return u.toString();
+}
+
+function unfoldIcs(text) {
+  return String(text || '').replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '');
+}
+function icsUnescape(s) {
+  return String(s || '').replace(/\\[nN]/g, '\n').replace(/\\([,;\\])/g, '$1');
+}
+function parseIcsDate(value, params) {
+  const raw = String(value || '').trim();
+  const isDateOnly = /VALUE=DATE/i.test(params || '') || (/^\d{8}$/.test(raw) && !/T/.test(raw));
+  const m = raw.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?)?(Z)?/);
+  if (!m) return null;
+  const Y = +m[1], Mo = +m[2], D = +m[3];
+  const date = Y + '-' + pad(Mo) + '-' + pad(D);
+  if (isDateOnly || !m[4]) return { date, allDay: true };
+  let hh = +m[4], mm = +m[5], ss = +(m[6] || 0);
+  if (m[7] === 'Z') {
+    const dt = new Date(Date.UTC(Y, Mo - 1, D, hh, mm, ss));
+    return {
+      date: dayKey(dt),
+      allDay: false,
+      time: pad(dt.getHours()) + ':' + pad(dt.getMinutes())
+    };
+  }
+  return { date, allDay: false, time: pad(hh) + ':' + pad(mm) };
+}
+function addDaysKey(date, n) {
+  const [y, m, d] = date.split('-').map(Number);
+  const dt = new Date(y, m - 1, d + n, 12);
+  return dayKey(dt);
+}
+function bydayIndex(tok) {
+  const map = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+  return map[String(tok || '').toUpperCase()];
+}
+function expandRrule(start, rule, winFrom, winTo) {
+  const parts = {};
+  String(rule || '').split(';').forEach(p => {
+    const i = p.indexOf('='); if (i < 0) return;
+    parts[p.slice(0, i).toUpperCase()] = p.slice(i + 1);
+  });
+  const freq = (parts.FREQ || '').toUpperCase();
+  if (!freq) return [start];
+  const interval = Math.max(1, parseInt(parts.INTERVAL || '1', 10) || 1);
+  let count = parts.COUNT ? Math.min(MAX_IMPORT, parseInt(parts.COUNT, 10) || 0) : 0;
+  let until = '';
+  if (parts.UNTIL) {
+    const u = parseIcsDate(parts.UNTIL, /T/.test(parts.UNTIL) ? '' : 'VALUE=DATE');
+    if (u) until = u.date;
+  }
+  const days = (parts.BYDAY || '').split(',').map(bydayIndex).filter(n => n != null);
+  const out = [];
+  let cur = start.date, guards = 0, added = 0;
+  const limit = count || 400;
+  while (guards++ < 800 && added < limit) {
+    if (until && cur > until) break;
+    if (cur > winTo) break;
+    const inWin = cur >= winFrom;
+    let ok = true;
+    if (days.length) {
+      const [y, m, d] = cur.split('-').map(Number);
+      ok = days.includes(new Date(y, m - 1, d, 12).getDay());
+    }
+    if (ok && inWin) { out.push(cur); added++; }
+    if (count && added >= count) break;
+    if (freq === 'DAILY') cur = addDaysKey(cur, interval);
+    else if (freq === 'WEEKLY') cur = addDaysKey(cur, 7 * interval);
+    else if (freq === 'MONTHLY') {
+      const [y, m, d] = cur.split('-').map(Number);
+      const dt = new Date(y, m - 1 + interval, d, 12);
+      cur = dayKey(dt);
+    } else if (freq === 'YEARLY') {
+      const [y, m, d] = cur.split('-').map(Number);
+      const dt = new Date(y + interval, m - 1, d, 12);
+      cur = dayKey(dt);
+    } else break;
+  }
+  return out.length ? out : [start.date];
+}
+function parseIcs(text) {
+  const lines = unfoldIcs(text).split('\n');
+  const events = [];
+  let ev = null, calName = '';
+  const winFrom = addDaysKey(dayKey(), -400);
+  const winTo = addDaysKey(dayKey(), 800);
+  const pushEv = ev0 => {
+    if (!ev0 || !ev0.start) return;
+    const title = icsUnescape(ev0.summary || '').trim() || '(event)';
+    const dates = ev0.rrule ? expandRrule(ev0.start, ev0.rrule, winFrom, winTo) : [ev0.start.date];
+    const ex = new Set((ev0.exdate || []).map(x => x.date));
+    dates.forEach(d => {
+      if (ex.has(d)) return;
+      if (d < winFrom || d > winTo) return;
+      events.push({
+        uid: ev0.uid || (title + '@' + d),
+        title: title.slice(0, 200),
+        start: d,
+        end: ev0.end && ev0.end.date && ev0.end.date !== ev0.start.date ? ev0.end.date : '',
+        allDay: !!ev0.start.allDay,
+        startTime: ev0.start.allDay ? '' : (ev0.start.time || ''),
+        endTime: ev0.end && !ev0.end.allDay ? (ev0.end.time || '') : ''
+      });
+    });
+  };
+  for (let i = 0; i < lines.length && events.length < MAX_IMPORT; i++) {
+    const line = lines[i].replace(/\r$/, '');
+    if (!line) continue;
+    if (line === 'BEGIN:VEVENT') { ev = { exdate: [] }; continue; }
+    if (line === 'END:VEVENT') { pushEv(ev); ev = null; continue; }
+    const split = line.indexOf(':');
+    if (split < 0) continue;
+    const left = line.slice(0, split), value = line.slice(split + 1);
+    const semi = left.indexOf(';');
+    const key = (semi < 0 ? left : left.slice(0, semi)).toUpperCase();
+    const params = semi < 0 ? '' : left.slice(semi + 1);
+    if (!ev) {
+      if (key === 'X-WR-CALNAME') calName = icsUnescape(value).trim();
+      continue;
+    }
+    if (key === 'SUMMARY') ev.summary = value;
+    else if (key === 'UID') ev.uid = value.trim();
+    else if (key === 'DTSTART') ev.start = parseIcsDate(value, params);
+    else if (key === 'DTEND') ev.end = parseIcsDate(value, params);
+    else if (key === 'RRULE') ev.rrule = value;
+    else if (key === 'EXDATE') {
+      const p = parseIcsDate(value, params);
+      if (p) ev.exdate.push(p);
+    }
+  }
+  return { name: calName, events: events.slice(0, MAX_IMPORT) };
+}
+
+function allImported() {
+  const out = [];
+  (S.cals || []).forEach(f => (f.events || []).forEach(ev => out.push(Object.assign({ feedId: f.id, kind: f.kind, source: f.name || srcLabel(f.kind) }, ev))));
+  return out;
+}
+function scheduledItems() {
+  const items = [];
+  pending().forEach(x => {
+    if (isDate(x.due)) items.push({ id: x.id, title: tx(x.t), start: x.due, startTime: x.time || '', kind: 'enfoco', type: 'task' });
+  });
+  (S.goals || []).filter(g => !g.done && isDate(g.due)).forEach(g => {
+    items.push({ id: 'g-' + g.id, title: tx(g.t), start: g.due, startTime: '', kind: 'enfoco', type: 'goal' });
+  });
+  return items;
+}
+function eventsOn(d) {
+  const out = [];
+  allImported().forEach(ev => { if (ev.start === d) out.push(ev); });
+  scheduledItems().forEach(ev => { if (ev.start === d) out.push(ev); });
+  out.sort((a, b) => String(a.startTime || '').localeCompare(String(b.startTime || '')) || String(a.title).localeCompare(String(b.title)));
+  return out;
+}
+
+function icsEscape(s) {
+  return String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+}
+function icsFold(line) {
+  const u8 = new TextEncoder().encode(line);
+  if (u8.length <= 75) return line;
+  const dec = new TextDecoder();
+  const parts = [];
+  let i = 0, cap = 75;
+  while (i < u8.length) {
+    let n = Math.min(cap, u8.length - i);
+    while (n > 0 && (u8[i + n] & 0xc0) === 0x80) n--;
+    if (n <= 0) n = Math.min(cap, u8.length - i);
+    parts.push(dec.decode(u8.slice(i, i + n)));
+    i += n;
+    cap = 74;
+  }
+  return parts.join('\r\n ');
+}
+function icsUtcNow() {
+  const d = new Date();
+  return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T' +
+    pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z';
+}
+function compactDate(s) { return String(s).replace(/-/g, ''); }
+function nextDay(s) { return compactDate(addDaysKey(s, 1)); }
+function itemsToIcs(items, calName) {
+  const now = icsUtcNow();
+  const lines = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//EnFoco//Calendar//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'X-WR-CALNAME:' + icsEscape(calName || 'EnFoco')
+  ];
+  items.forEach(it => {
+    const uid = it.uid || ('enfoco-' + it.id + '@enfoco-app.vercel.app');
+    lines.push('BEGIN:VEVENT');
+    lines.push('UID:' + uid);
+    lines.push('DTSTAMP:' + now);
+    if (it.startTime) {
+      lines.push('DTSTART:' + compactDate(it.start) + 'T' + it.startTime.replace(':', '') + '00');
+      lines.push('DTEND:' + compactDate(it.end || it.start) + 'T' + (it.endTime || it.startTime).replace(':', '') + '00');
+    } else {
+      lines.push('DTSTART;VALUE=DATE:' + compactDate(it.start));
+      lines.push('DTEND;VALUE=DATE:' + (it.end ? compactDate(it.end) : nextDay(it.start)));
+    }
+    lines.push('SUMMARY:' + icsEscape(it.title));
+    lines.push('END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  return lines.map(icsFold).join('\r\n') + '\r\n';
+}
+function downloadIcs(filename, text) {
+  const blob = new Blob([text], { type: 'text/calendar;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  toast(t('cal_ics_done'));
+}
+function gcalHref(it) {
+  const title = encodeURIComponent(it.title || '');
+  let dates;
+  if (it.startTime) {
+    const a = compactDate(it.start) + 'T' + it.startTime.replace(':', '') + '00';
+    const b = compactDate(it.end || it.start) + 'T' + (it.endTime || it.startTime).replace(':', '') + '00';
+    dates = a + '/' + b;
+  } else {
+    dates = compactDate(it.start) + '/' + (it.end ? compactDate(it.end) : nextDay(it.start));
+  }
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + title + '&dates=' + dates;
+}
+function exportableForTask(x) {
+  const start = isDate(x.due) ? x.due : dayKey();
+  return { id: x.id, title: tx(x.t), start, startTime: x.time || '', endTime: '', type: 'task' };
+}
+function exportableForGoal(g) {
+  const start = isDate(g.due) ? g.due : dayKey();
+  return { id: 'g-' + g.id, title: tx(g.t), start, startTime: '', type: 'goal' };
+}
+function calActions(it) {
+  return `<span class="row-cal">
+    <a class="btn text mini" href="${esc(gcalHref(it))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(t('cal_gcal') + ': ' + it.title)}">${esc(t('cal_gcal'))}</a>
+    <button type="button" class="btn text mini" data-act="${it.type === 'goal' ? 'goalIcs' : 'taskIcs'}" data-id="${esc(it.type === 'goal' ? it.id.replace(/^g-/, '') : it.id)}">${esc(t('cal_ics_one'))}</button>
+  </span>`;
+}
+
+function addFromDump(title, due, time) {
+  const text = String(title || '').replace(/[.?!]+$/, '').trim();
+  if (!text) return null;
+  const x = mk({ t: text, due: isDate(due) ? due : '', time: time || '' });
+  S.tasks.unshift(x); save(); ui.open.list = true; toast(t('ts_saved')); render();
+  return x;
+}
+function parseLooseWhen(raw) {
+  const s = fold(raw);
+  let due = dayKey(), time = '';
+  if (/\b(amanha|amanhã|tomorrow)\b/.test(s)) due = addDaysKey(dayKey(), 1);
+  else if (/\b(hoje|today)\b/.test(s)) due = dayKey();
+  const tm = s.match(/\b(?:as|às|at)\s*(\d{1,2})(?::(\d{2}))?\b/) || s.match(/\b(\d{1,2}):(\d{2})\b/);
+  if (tm) time = pad(Math.min(23, +tm[1])) + ':' + pad(tm[2] ? +tm[2] : 0);
+  let title = String(raw || '').trim();
+  title = title.replace(/^\s*(amanh[ãa]|tomorrow|hoje|today)\s*(às|as|at)?\s*(\d{1,2}(:\d{2})?)?\s*,?\s*/i, '');
+  title = title.replace(/^\s*(às|as|at)\s*\d{1,2}(:\d{2})?\s*,?\s*/i, '').trim() || String(raw || '').trim();
+  return { title, due, time };
+}
+
+function newFeedToken() {
+  const a = new Uint8Array(32);
+  (window.crypto || crypto).getRandomValues(a);
+  return Array.from(a, b => b.toString(16).padStart(2, '0')).join('');
+}
+function feedPayload() {
+  return {
+    items: scheduledItems().map(it => ({
+      uid: 'enfoco-' + it.id + '@enfoco-app.vercel.app',
+      title: it.title,
+      start: it.start,
+      startTime: it.startTime || '',
+      allDay: !it.startTime
+    }))
+  };
+}
+let feedTimer = null, feedLast = '', feedInflight = false;
+function scheduleFeedPush() {
+  if (!S.feedToken) return;
+  clearTimeout(feedTimer);
+  feedTimer = setTimeout(() => { pushFeed(); }, 2000);
+}
+async function pushFeed() {
+  if (!S.feedToken) return false;
+  const body = JSON.stringify(feedPayload());
+  if (body === feedLast && S.feedPushed) return true;
+  feedInflight = true;
+  try {
+    const r = await fetch(FEED_API(S.feedToken), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body
+    });
+    if (!r.ok) throw new Error('push');
+    feedLast = body;
+    S.feedPushed = Date.now();
+    save(true);
+    CalUI.feedReady = true;
+    return true;
+  } catch (e) {
+    return false;
+  } finally {
+    feedInflight = false;
+    if (ui.view === 'cals') render();
+  }
+}
+async function ensureFeed() {
+  if (!S.feedToken) { S.feedToken = newFeedToken(); S.feedPushed = 0; save(true); }
+  const ok = await pushFeed();
+  CalUI.feedReady = ok;
+  if (ui.view === 'cals') render();
+  return ok;
+}
+async function resetFeed() {
+  const old = S.feedToken;
+  if (old) { try { await fetch(FEED_API(old), { method: 'DELETE' }); } catch (e) { /* keep going */ } }
+  S.feedToken = newFeedToken();
+  S.feedPushed = 0;
+  feedLast = '';
+  CalUI.feedReset = false;
+  CalUI.feedReady = false;
+  save();
+  const ok = await pushFeed();
+  CalUI.feedReady = ok;
+  toast(t('cal_feed_reset_ok'));
+  render();
+}
+function feedHttps() { return location.origin + FEED_ICS(S.feedToken); }
+function feedWebcal() { return feedHttps().replace(/^https:\/\//i, 'webcal://'); }
+
+async function fetchIcsUrl(url) {
+  const r = await fetch(ICS_PROXY + encodeURIComponent(url));
+  if (!r.ok) throw new Error('fetch');
+  const text = await r.text();
+  if (!/BEGIN:VCALENDAR/i.test(text)) throw new Error('not-ics');
+  return text;
+}
+function storeFeed(f) {
+  S.cals = S.cals || [];
+  const i = S.cals.findIndex(x => x.id === f.id || (f.url && x.url === f.url));
+  if (i >= 0) S.cals[i] = Object.assign({}, S.cals[i], f);
+  else S.cals.push(f);
+  save();
+}
+async function importFromUrl(raw, opts) {
+  const url = okIcsUrl(raw);
+  if (!url) { toast(t('cal_bad_url')); return null; }
+  CalUI.busy = 'import';
+  if (ui.view === 'cals') render();
+  try {
+    const text = await fetchIcsUrl(url);
+    const parsed = parseIcs(text);
+    if (!parsed.events.length && !/BEGIN:VEVENT/i.test(text)) throw new Error('empty');
+    const kind = srcKind(url);
+    const f = {
+      id: (opts && opts.id) || uid(),
+      name: parsed.name || srcLabel(kind),
+      kind, url, events: parsed.events, synced: Date.now(), error: ''
+    };
+    storeFeed(f);
+    if (!(opts && opts.silent)) toast(t('cal_imported', { n: parsed.events.length }));
+    render();
+    return f;
+  } catch (e) {
+    if (!(opts && opts.silent)) toast(t('cal_import_fail'));
+    if (opts && opts.id) {
+      const cur = (S.cals || []).find(x => x.id === opts.id);
+      if (cur) { cur.error = 'fail'; save(); }
+    }
+    render();
+    return null;
+  } finally {
+    CalUI.busy = '';
+    if (ui.view === 'cals') render();
+  }
+}
+async function importFromFile(file) {
+  if (!file) return;
+  CalUI.busy = 'file';
+  render();
+  try {
+    const text = await file.text();
+    if (!/BEGIN:VCALENDAR/i.test(text)) { toast(t('cal_bad_ics')); return; }
+    const parsed = parseIcs(text);
+    const f = {
+      id: uid(),
+      name: parsed.name || file.name || srcLabel('file'),
+      kind: 'file', url: '', events: parsed.events, synced: Date.now(), error: ''
+    };
+    storeFeed(f);
+    toast(t('cal_imported', { n: parsed.events.length }));
+  } catch (e) {
+    toast(t('cal_bad_ics'));
+  } finally {
+    CalUI.busy = '';
+    render();
+  }
+}
+async function refreshFeeds(force) {
+  const list = (S.cals || []).filter(f => f.url);
+  if (!list.length) return;
+  const now = Date.now();
+  for (const f of list) {
+    if (!force && f.synced && now - f.synced < 120000) continue;
+    await importFromUrl(f.url, { id: f.id, silent: true });
+  }
+}
+
+function vCals() {
+  const feeds = S.cals || [];
+  const token = S.feedToken;
+  const ready = !!(token && CalUI.feedReady);
+  const https = token ? feedHttps() : '';
+  const webcal = token ? feedWebcal() : '';
+  const gcalSub = webcal ? ('https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(webcal)) : '#';
+  return `<button type="button" class="back" data-act="nav" data-v="home">${ICON.chevL}<span>${t('back')}</span></button>
+    <h1 tabindex="-1">${t('cal_page')}</h1>
+    <p class="lede">${t('cal_intro')}</p>
+    <section class="cal-card" id="cal-import">
+      <h2>${t('cal_import_h')}</h2>
+      <p class="hint">${t('cal_import_p')}</p>
+      <form data-form="calUrl" autocomplete="off">
+        <label class="sr" for="cal-url">${t('cal_url_in')}</label>
+        <div class="field-go"><input id="cal-url" name="url" type="url" inputmode="url" placeholder="${t('cal_url_ph')}" required><button type="submit" ${CalUI.busy === 'import' ? 'disabled' : ''} aria-label="${t('cal_url_add')}">${ICON.plus}</button></div>
+      </form>
+      <p class="label">${t('cal_file')}</p>
+      <label class="btn secondary file-btn">${t('cal_file_btn')}<input id="cal-file" type="file" accept=".ics,text/calendar,text/plain" data-chg="calFile"></label>
+      <details class="cal-how"><summary>${t('cal_how')}</summary>
+        <ol><li>${t('cal_how_g')}</li><li>${t('cal_how_a')}</li><li>${t('cal_how_o')}</li></ol>
+      </details>
+      <h2 class="label">${t('cal_connected')}</h2>
+      ${feeds.length ? `<ul class="cal-feeds">${feeds.map(f => `<li>
+        <span class="row-t"><span>${esc(f.name)}</span> ${srcTag(f.kind)}<small>${tn('cal_ev_n', (f.events || []).length, { n: (f.events || []).length })}${f.error ? ' · ' + esc(t('cal_import_fail')) : ''}</small></span>
+        ${f.url ? `<button type="button" class="btn secondary mini" data-act="calRefresh" data-id="${f.id}">${t('cal_refresh')}</button>` : ''}
+        <button type="button" class="btn text mini" data-act="calRemove" data-id="${f.id}">${t('cal_remove')}</button>
+      </li>`).join('')}</ul>` : `<p class="hint">${t('cal_none')}</p>`}
+    </section>
+    <section class="cal-card" id="cal-export">
+      <h2>${t('cal_export_h')}</h2>
+      <p class="hint">${t('cal_export_p')}</p>
+      <div class="pair"><button type="button" class="btn secondary" data-act="icsAll">${t('cal_ics_all')}</button></div>
+    </section>
+    <section class="cal-card" id="cal-feed">
+      <h2>${t('cal_feed_h')}</h2>
+      <p class="hint">${t('cal_feed_p')}</p>
+      <p class="hint">${t('cal_feed_priv')}</p>
+      ${ready ? `<div class="pair">
+        <a class="btn primary" href="${esc(webcal)}">${t('cal_feed_apple')}</a>
+        <a class="btn secondary" href="${esc(gcalSub)}" target="_blank" rel="noopener noreferrer">${t('cal_feed_google')}</a>
+        <button type="button" class="btn secondary" data-act="feedCopy">${t('cal_feed_copy')}</button>
+        <button type="button" class="btn text danger" data-act="feedReset">${CalUI.feedReset ? t('cal_feed_reset2') : t('cal_feed_reset')}</button>
+      </div>
+      <p class="feed-box" id="feed-url">${esc(https)}</p>
+      <p class="hint">${t('cal_feed_hint')}</p>` : `<p class="hint">${t('cal_feed_wait')}</p>`}
+    </section>
+    <section class="cal-card" id="cal-oauth">
+      <h2>${t('cal_oauth_h')} <span class="badge-soon">${t('preview_badge')}</span></h2>
+      <p class="hint">${t('cal_oauth_p')}</p>
+    </section>`;
+}
+
+function waWave() {
+  return `<span class="wa-wave" aria-hidden="true">${[8, 14, 10, 16, 7, 13, 9, 15, 8, 12].map(h => `<i style="--h:${h}px"></i>`).join('')}</span>`;
+}
+function vWhatsapp() {
+  const empty = !WA.lines.length;
+  return `<button type="button" class="back" data-act="nav" data-v="home">${ICON.chevL}<span>${t('back')}</span></button>
+    <h1 tabindex="-1">${t('wa_page')} <span class="badge-soon">${t('preview_badge')}</span></h1>
+    <p class="lede">${t('wa_intro')}</p>
+    <div class="wa-frame">
+      <div class="wa-head"><span class="wa-av">E</span><div><h2>${t('wa_head')}</h2><p>${t('wa_sub')}</p></div></div>
+      <div class="wa-thread" id="wa-thread">
+        ${empty ? `<p class="wa-b status">${t('wa_empty')}</p>` : ''}
+        <button type="button" class="wa-b out wa-note-btn" data-act="waNote" ${WA.busy ? 'disabled' : ''} aria-label="${t('wa_note')}">${waWave()}<span>${t('wa_note')}</span></button>
+        ${WA.lines.map(l => l.kind === 'note'
+          ? `<div class="wa-b out">${waWave()}<span> ${esc(l.text)}</span></div>`
+          : `<div class="wa-b ${l.kind}">${esc(l.text)}</div>`).join('')}
+      </div>
+      <form class="wa-composer" data-form="wa" autocomplete="off">
+        <label class="sr" for="wa-in">${t('wa_ph')}</label>
+        <input id="wa-in" class="input" name="q" type="text" maxlength="200" placeholder="${t('wa_ph')}" ${WA.busy ? 'disabled' : ''} required>
+        <button type="submit" class="btn primary" ${WA.busy ? 'disabled' : ''}>${t('wa_send')}</button>
+      </form>
+    </div>
+    <div class="wa-actions pair">
+      <button type="button" class="btn secondary" data-act="waList">${t('wa_open_list')}</button>
+      <button type="button" class="btn text" data-act="waCal">${t('wa_open_cal')}</button>
+    </div>`;
+}
+function waScroll() {
+  const el = $('#wa-thread'); if (el) el.scrollTop = el.scrollHeight;
+}
+function waWait(ms) {
+  if (reduced()) return Promise.resolve();
+  return new Promise(r => setTimeout(r, ms));
+}
+async function waIngest(raw, fromNote) {
+  if (WA.busy) return;
+  const said = String(raw || '').trim(); if (!said) return;
+  WA.busy = true;
+  if (fromNote) WA.lines.push({ kind: 'status', text: t('wa_transcribe') });
+  else WA.lines.push({ kind: 'out', text: said });
+  render(); waScroll();
+  if (fromNote) { await waWait(900); WA.lines = WA.lines.filter(l => l.kind !== 'status' || l.text !== t('wa_transcribe')); WA.lines.push({ kind: 'note', text: said }); render(); waScroll(); await waWait(500); }
+  const parsed = parseLooseWhen(said);
+  const x = addFromDump(parsed.title, parsed.due, parsed.time);
+  const when = x && x.due ? (x.time ? fmtDate(x.due) + ' ' + x.time : fmtDate(x.due)) : fmtDate(dayKey());
+  WA.lines.push({ kind: 'in', text: t('wa_saved', { t: parsed.title, d: when }) });
+  WA.busy = false;
+  if (x && x.due) { ui.day = x.due; ui.month = x.due.slice(0, 7); }
+  render(); waScroll();
+}
+
+function copyText(s) {
+  const go = () => toast(t('cal_feed_copied'));
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(s).then(go, () => fallbackCopy(s, go));
+  } else fallbackCopy(s, go);
+}
+function fallbackCopy(s, go) {
+  const ta = document.createElement('textarea');
+  ta.value = s; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); go(); } catch (e) { /* ignore */ }
+  ta.remove();
 }
 
 /* ---------- actions ---------- */
@@ -1488,16 +2300,37 @@ const ACT = {
   voiceClose: () => closeVoice(),
   wipe: () => {
     if (!ui.wipe) { ui.wipe = true; render(); setTimeout(() => { if (ui.wipe) { ui.wipe = false; if (ui.view === 'about') render(); } }, 6000); return; }
+    const tok = S.feedToken;
+    if (tok) fetch(FEED_API(tok), { method: 'DELETE' }).catch(() => {});
     endSession(); store.del(KEY);
     S = Object.assign(fresh(), { lang: S.lang, phaseMode: S.phaseMode, motion: S.motion, musicOn: S.musicOn, musicVol: S.musicVol });
     addRecOfDay();
-    Object.assign(ui, { wipe: false, step: 'pick', task: null, fly: null }); save(); toast(t('ab_wiped')); render();
-  }
+    feedLast = ''; CalUI.feedReady = false; CalUI.feedReset = false;
+    Object.assign(ui, { wipe: false, step: 'pick', task: null, fly: null }); save(true); toast(t('ab_wiped')); render();
+  },
+  calRefresh: d => { const f = (S.cals || []).find(x => x.id === d.id); if (f && f.url) importFromUrl(f.url, { id: f.id }); },
+  calRemove: d => { S.cals = (S.cals || []).filter(x => x.id !== d.id); save(); toast(t('cal_cleared')); render(); },
+  taskIcs: d => { const x = byId(d.id); if (x) downloadIcs('enfoco-' + d.id + '.ics', itemsToIcs([exportableForTask(x)])); },
+  goalIcs: d => { const g = S.goals.find(k => k.id === d.id); if (g) downloadIcs('enfoco-goal-' + d.id + '.ics', itemsToIcs([exportableForGoal(g)])); },
+  icsAll: () => {
+    const items = scheduledItems();
+    if (!items.length) { toast(t('cal_ics_none')); return; }
+    downloadIcs('enfoco-tarefas.ics', itemsToIcs(items));
+  },
+  feedCopy: () => { if (S.feedToken) copyText(feedHttps()); },
+  feedReset: () => {
+    if (!CalUI.feedReset) { CalUI.feedReset = true; render(); setTimeout(() => { if (CalUI.feedReset) { CalUI.feedReset = false; if (ui.view === 'cals') render(); } }, 6000); return; }
+    resetFeed();
+  },
+  waNote: () => waIngest(t('wa_note_sample'), true),
+  waList: () => { nav('home'); goPlace('list'); },
+  waCal: () => { nav('home'); goPlace('cal'); }
 };
 const CHG = {
   skipAlways: el => { S.skipBreath = el.checked; save(); },
   breathOn: el => { S.skipBreath = !el.checked; save(); },
-  musicVol: el => setMusicVol((+el.value || 0) / 100)
+  musicVol: el => setMusicVol((+el.value || 0) / 100),
+  calFile: el => { const f = el.files && el.files[0]; el.value = ''; if (f) importFromFile(f); }
 };
 const BIND = { step: v => { const x = byId(ui.task); if (x) { x.step = v.trim(); save(); } } };
 const FORMS = {
@@ -1517,6 +2350,14 @@ const FORMS = {
   voice: f => {
     const q = String(new FormData(f).get('q') || '').trim(); if (!q) return;
     handleVoice(q); f.reset(); const inp = $('#vo-in'); if (inp) inp.placeholder = t('vo_ph');
+  },
+  calUrl: f => {
+    const url = String(new FormData(f).get('url') || '').trim(); if (!url) return;
+    importFromUrl(url); f.reset();
+  },
+  wa: f => {
+    const q = String(new FormData(f).get('q') || '').trim(); if (!q) return;
+    f.reset(); waIngest(q, false);
   }
 };
 
@@ -1583,7 +2424,8 @@ function calModel() {
     cells.push({
       date: k, num: d.getDate(), col: i % 7, row: Math.floor(i / 7), inMonth: d.getMonth() === m - 1, today: k === today, sel: k === ui.day, future: k > today,
       lit: ui.fly && k === today ? Math.min(st.lit, ui.fly.from) : st.lit,          // the new light stays off until it lands
-      min: st.min, goal: S.goals.some(g => !g.done && g.due === k)
+      min: st.min, goal: S.goals.some(g => !g.done && g.due === k) || scheduledItems().some(ev => ev.start === k),
+      ev: eventsOn(k).length
     });
   }
   return { key: ui.month, rows, cells };
@@ -1613,8 +2455,8 @@ function syncScene() {
 function calendar2D(model) {
   const at = [[27, 9], [50, 9], [73, 9], [91, 27], [91, 50], [91, 73], [73, 91], [50, 91], [27, 91], [9, 73], [9, 50], [9, 27]];
   return `<div class="c2d">${wdNames().map(n => `<span class="c2-wd">${n}</span>`).join('')}${model.cells.map(c =>
-    `<button type="button" class="c2${c.inMonth ? '' : ' out'}${c.today ? ' today' : ''}" data-act="openDay" data-v="${c.date}" aria-pressed="${c.sel}" aria-label="${t('cell_aria', { day: fmtDate(c.date), lit: c.lit, total: LIGHTS })}">${c.num}${
-      at.map((p, j) => `<i class="${j < c.lit ? 'on' : ''}" style="left:${p[0]}%;top:${p[1]}%"></i>`).join('')}</button>`).join('')}</div>`;
+    `<button type="button" class="c2${c.inMonth ? '' : ' out'}${c.today ? ' today' : ''}${c.ev ? ' has-ev' : ''}" data-act="openDay" data-v="${c.date}" aria-pressed="${c.sel}" aria-label="${t('cell_aria', { day: fmtDate(c.date), lit: c.lit, total: LIGHTS })}">${c.num}${
+      at.map((p, j) => `<i class="${j < c.lit ? 'on' : ''}" style="left:${p[0]}%;top:${p[1]}%"></i>`).join('')}${c.ev ? `<span class="c2-evs" aria-hidden="true">${'<i></i>'.repeat(Math.min(3, c.ev))}</span>` : ''}</button>`).join('')}</div>`;
 }
 
 /* ---------- start-up ---------- */
@@ -2267,8 +3109,8 @@ function syncWorld(model) {
   const R = scene3, W = R.W; W.model = model;
   const cells = model.cells, focusable = (cells.find(c => c.sel) || cells.find(c => c.today) || cells.find(c => c.inMonth)).date;
   $('#cal-grid').innerHTML = wdNames().map((n, i) => `<span class="wd" data-w="${i}" aria-hidden="true">${n}</span>`).join('') + cells.map((c, i) =>
-    `<button type="button" class="day${c.inMonth ? '' : ' out'}${c.today ? ' today' : ''}" data-act="openDay" data-v="${c.date}" data-i="${i}" tabindex="${c.date === focusable ? 0 : -1}" aria-pressed="${c.sel}"
-      aria-label="${t('cell_aria', { day: fmtDate(c.date), lit: c.lit, total: LIGHTS })}${c.today ? ' (' + t('d_today') + ')' : ''}">${c.num}${c.min ? `<small aria-hidden="true">${c.min} min</small>` : ''}</button>`).join('');
+    `<button type="button" class="day${c.inMonth ? '' : ' out'}${c.today ? ' today' : ''}${c.ev ? ' has-ev' : ''}" data-act="openDay" data-v="${c.date}" data-i="${i}" tabindex="${c.date === focusable ? 0 : -1}" aria-pressed="${c.sel}"
+      aria-label="${t('cell_aria', { day: fmtDate(c.date), lit: c.lit, total: LIGHTS })}${c.today ? ' (' + t('d_today') + ')' : ''}">${c.num}${c.min ? `<small aria-hidden="true">${c.min} min</small>` : ''}${c.ev ? `<small class="ev-mark" aria-hidden="true">${c.ev}</small>` : ''}</button>`).join('');
   if (W.rowsShown !== model.rows) { W.rowsShown = model.rows; R.layoutDirty = true; }
   if (R.L) placeCalendar();
   if (ui.fly && !ui.fly.started) startFly();
@@ -2805,7 +3647,7 @@ function handleVoice(raw) {
   else if (parsed.cmd === 'add') {
     const title = parsed.text.replace(/[.?!]+$/, '').trim();
     if (!title) reply = t('vo_empty');
-    else { S.tasks.push(mk({ t: title })); save(); ui.open.list = true; toast(t('ts_saved')); render(); reply = t('vo_added', { t: title }); }
+    else { const x = addFromDump(title); reply = x ? t('vo_added', { t: title }) : t('vo_empty'); }
   } else if (parsed.cmd === 'timer') reply = voiceStartTimer(parsed.min);
   else if (parsed.cmd === 'empty') reply = t('vo_empty');
   const heard = $('#vo-heard'); if (heard) heard.textContent = reply;
@@ -2904,7 +3746,7 @@ function bindEvents() {
     hiddenAt = 0; if (!ui.drift) lastActive = Date.now();
     onTick(); paintChrome(); scene3.dirty = true;
   });
-  window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if ((v === 'home' || v === 'about') && v !== ui.view) nav(v); });
+  window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (['home', 'about', 'cals', 'whatsapp'].includes(v) && v !== ui.view) nav(v); });
   if (window.matchMedia) {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)'), on = () => { paintChrome(); syncScene(); };
     if (mq.addEventListener) mq.addEventListener('change', on); else if (mq.addListener) mq.addListener(on);
@@ -2921,12 +3763,13 @@ function boot() {
   ui.day = dayKey(); ui.month = ui.day.slice(0, 7); ui.phase = phase();
   bindEvents();
   const hash = (location.hash || '').slice(1);
-  nav(hash === 'home' || hash === 'about' ? hash : 'cover');          // a plain visit always opens on the cover
+  nav(['home', 'about', 'cals', 'whatsapp'].includes(hash) ? hash : 'cover');          // a plain visit always opens on the cover
   initScene();
   window.__enfoco = {
     get state() { return S; }, timer: T, scene: scene3, ui, idle() { lastActive = 0; },
     music: { play: playMusic, stop: stopMusic, toggle: toggleMusic, setVolume: setMusicVol, isOn: () => Music.on, get context() { return Music.ctx; } },
-    voice: { handle: handleVoice, speak, supported: () => Voice.supported, isListening: () => Voice.listening, open: openVoice, close: closeVoice }
+    voice: { handle: handleVoice, speak, supported: () => Voice.supported, isListening: () => Voice.listening, open: openVoice, close: closeVoice },
+    cal: { parseIcs, importFromUrl, pushFeed, eventsOn, scheduledItems, feedUrl: () => S.feedToken ? feedHttps() : '', token: () => S.feedToken }
   };   // small debugging handle
 }
 boot();
