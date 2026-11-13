@@ -281,5 +281,16 @@ main{max-width:1040px;margin:0 auto;padding:28px 18px 120px}
 function upd(){var y=window.scrollY+120,cur=secs[0];secs.forEach(function(s){if(s.offsetTop<=y)cur=s});link.href='../presentacion/#'+cur.id;link.textContent='Open slide '+cur.id}
 addEventListener('scroll',upd,{passive:true});upd();})();
 </script>
+<script>
+/* follow the deck: when a slide changes in another tab or window, jump to its notes */
+(function(){var last=0;
+function show(n){n=parseInt(n,10);if(!n||n===last)return;last=n;var el=document.getElementById(String(n));if(!el)return;
+el.scrollIntoView({behavior:'smooth',block:'start'});
+[].forEach.call(document.querySelectorAll('.note.live'),function(x){x.classList.remove('live')});el.classList.add('live')}
+try{new BroadcastChannel('enfoco-deck').onmessage=function(e){show(e.data)}}catch(e){}
+addEventListener('storage',function(e){if(e.key==='enfoco-slide'&&e.newValue)show(e.newValue.split(':')[0])});
+var st=document.createElement('style');st.textContent='.note.live{outline:2px solid #f2b552;outline-offset:6px;border-radius:14px}';document.head.appendChild(st);
+})();
+</script>
 </body>
 </html>
