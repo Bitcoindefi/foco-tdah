@@ -58,6 +58,8 @@ A versão 3 tinha cerca de vinte funcionalidades e não sabíamos dizer quais er
 
 Podem voltar se os testes com pessoas o pedirem.
 
+As notas «Porquê?» voltaram para dentro da app, em cada funcionalidade que ainda existe, com ligações às fontes. O resumo abaixo mantém-se.
+
 ## Porquê este desenho
 
 Justificação curta, com as leituras que a sustentam.
@@ -183,6 +185,8 @@ Version 3 had about twenty features and we could not say which ones were used. W
 | Loading `./models/bulb.glb` | Every model is now drawn in code |
 
 They can come back if testing with people asks for them.
+
+The “Why?” notes are back inside the app, on each feature that remains, with links to the sources. The short table below still stands.
 
 ## Why this design
 

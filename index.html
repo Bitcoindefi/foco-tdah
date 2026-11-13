@@ -261,6 +261,18 @@ html[data-motion="reduce"] .orb[data-p="exhale"],html[data-motion="reduce"] .orb
 #p-cal{--pw:340px;padding:10px 12px}
 #p-day{--pw:300px;padding:16px 20px}
 #p-list{--pw:360px;padding:10px 24px 12px}
+.badge-rec{display:inline-flex;align-items:center;flex:none;padding:2px 8px;border-radius:999px;background:var(--wash);color:var(--accent-text);
+  font:600 .72rem var(--display);letter-spacing:.01em;line-height:1.3;white-space:nowrap}
+.row-t{flex-wrap:wrap}
+.rec-btn{width:100%;margin:var(--s3) 0 0;min-height:48px;font-size:var(--t-sm)}
+.pick .pick-t{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0;overflow-wrap:anywhere}
+details.why{margin-top:var(--s3)}
+details.why>summary{cursor:pointer;font:600 var(--t-sm) var(--display);color:var(--muted);list-style:none}
+details.why>summary::-webkit-details-marker{display:none}
+details.why p{margin-top:var(--s2);font-size:var(--t-sm);color:var(--muted);max-width:62ch;line-height:1.45}
+details.why .src{font-size:var(--t-xs)}
+details.why .src a{color:var(--accent-text)}
+.breath .why{text-align:left;max-width:520px;margin-inline:auto}
 
 /* the flat fallback: same surfaces, drawn with CSS, in a column */
 .world.flat .plate{position:relative;transform:none!important;width:100%;max-width:560px;margin:0 auto;will-change:auto}
@@ -573,7 +585,31 @@ pt: {
   go_add: "Guardar objetivo",
   go_when: "até {d}",
   go_mark: "Marcar como alcançado",
-  ls_sample: "A lista e o histórico de luzes são um exemplo, com dados inventados. Em «Sobre» podes apagar tudo.",
+  ls_sample: "O histórico de luzes é um exemplo, com dados inventados. Em «Sobre» podes apagar tudo.",
+  rec_badge: "Recomendada do dia",
+  rec_btn: "Ver tarefas recomendadas do dia",
+  rec_added: "Entraram as tarefas recomendadas de hoje.",
+  rec_all: "Já tens as de hoje na lista.",
+  why: "Porquê?",
+  sources: "Fontes",
+  why_breath: "É só uma pausa curta para mudar de registo antes de começar. Não é tratamento nem exercício clínico, e podes sempre saltar. O guia prático ADHD-EU (projeto Erasmus+) refere abordagens de atenção plena entre os apoios possíveis para adultos com PHDA. Não avalia este ecrã.",
+  why_one: "Uma coisa de cada vez reduz a carga sobre as funções executivas. Barkley descreve a PHDA como um problema dessas funções, incluindo a memória de trabalho e o arranque da ação. Nas entrevistas de Chen, Meng e Nie, o bloqueio no início é central. Por isso este ecrã pede só a tarefa de agora.",
+  why_two: "O primeiro passo minúsculo serve para passar da intenção ao gesto. Gollwitzer mostrou que um plano concreto (quando X, faço Y) ajuda a começar. Ensaios de TCC para adultos com PHDA, como o de Safren e colegas, incluem estratégias de organização e de partir tarefas em passos. Podes reescrever a sugestão.",
+  why_focus: "Na teoria de Barkley, a PHDA dificulta sentir o tempo e orientar o comportamento para o futuro. Chen, Meng e Nie descrevem planos feitos para dias raros de hiperfoco, e pouca urgência até o prazo estar em cima. O NICE inclui, nas modificações do ambiente, períodos de foco mais curtos com pausas para se mexer. Por isso as sessões são de 2, 10 ou 25 min, com o temporizador bem visível.",
+  why_nudge: "No estudo de Chen, Meng e Nie, as pessoas entrevistadas descrevem vergonha e autoculpa quando um plano falha, e rejeitam a vigilância. Se saíres ou se a página ficar quieta, a luz apenas baixa e pede um toque. Nada fica registado como falha.",
+  why_cal: "As mesmas entrevistas valorizam marcas de progresso que sobrevivem aos dias em branco, e não sistemas que punem uma quebra de série. As luzes à volta de cada dia são só um registo visível do foco e das tarefas feitas. Um dia vazio não apaga os outros, e não há séries para quebrar.",
+  why_list: "A memória de trabalho é uma das funções executivas que Barkley liga à PHDA: o que não está à vista custa a manter. O NICE sublinha a estrutura no dia a dia e as modificações no ambiente. A lista tira as tarefas da cabeça e deixa-as num sítio só, até estarem feitas.",
+  why_goals: "Um prazo longe custa a sentir. O NICE pede um plano partilhado que tenha em conta os objetivos da pessoa. Um objetivo com data ganha uma bandeira no calendário, para o prazo ficar visível, sem contar atrasos.",
+  why_rec: "Escolher o que fazer agora também pede funções executivas, e o bloqueio no arranque aparece de forma clara nas entrevistas de Chen, Meng e Nie. Uma pequena lista do dia reduz essa decisão e oferece primeiros passos curtos e concretos, na linha dos planos simples de Gollwitzer. O NICE recomenda estrutura nas atividades diárias e, nas modificações do ambiente, períodos curtos de foco com pausas para movimento. Uma meta-análise de Yang e colegas associa o exercício agudo a um efeito pequeno no controlo inibitório em adultos com PHDA. Isso não avalia esta lista, e a app não é um tratamento.",
+  why_privacy: "No estudo de Chen, Meng e Nie, as pessoas rejeitam a vigilância e querem ver, ajustar e contrariar o que a ferramenta sugere. Por isso tudo fica só neste navegador. Nada é inferido às escondidas e nada é partilhado sem ti.",
+  src_chen: "Chen, Meng e Nie (2026), «Not Just Me and My To-Do List»",
+  src_nice: "NICE, diretriz NG87 (PHDA)",
+  src_barkley_ef: "Barkley (1997), funções executivas e PHDA",
+  src_barkley_time: "Barkley (1997), autorregulação e tempo",
+  src_gollwitzer: "Gollwitzer (1999), implementation intentions",
+  src_safren: "Safren et al. (2010), TCC para adultos com PHDA",
+  src_yang: "Yang et al. (2025), atividade física e controlo inibitório",
+  src_adhdeu: "ADHD-EU, «Adult ADHD: A Practical Guide» (2024)",
 
   fs_mail: "Abre a mensagem e escreve só a primeira frase. Pode ficar feia.",
   fs_call: "Encontra o número e deixa-o aberto no ecrã. Só isso.",
@@ -600,13 +636,13 @@ pt: {
   ab_export: "Exportar os meus dados",
   ab_wipe: "Apagar tudo",
   ab_wipe2: "Confirmar: apagar tudo",
-  ab_wiped: "Tudo apagado. Começas com a lista vazia.",
+  ab_wiped: "Tudo apagado. Ficam as tarefas recomendadas de hoje.",
   ab_exported: "Ficheiro exportado.",
   ab_limits: "Limites",
   ab_l1: "O primeiro passo vem de regras por palavras-chave, não de IA.",
   ab_l2: "Ainda não foi testado com pessoas com PHDA.",
   ab_l3: "A cena 3D precisa de WebGL e de rede para carregar a biblioteca. Sem isso, aparece a vista simples.",
-  ab_more: "As leituras que justificam o desenho estão no README do repositório.",
+  ab_more: "Cada funcionalidade tem na app uma nota «Porquê?», com fontes. Há mais contexto no README do repositório.",
   ab_repo: "Ver o repositório",
   ab_cover: "Ecrã inicial",
   ab_team: "Equipa EnFoco: Leonardo Cagliero e Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, com a Brainstorm.",
@@ -713,7 +749,31 @@ en: {
   go_add: "Save goal",
   go_when: "by {d}",
   go_mark: "Mark as reached",
-  ls_sample: "The list and the history of lights are an example, with made-up data. You can delete everything under “About”.",
+  ls_sample: "The history of lights is an example, with made-up data. You can delete everything under “About”.",
+  rec_badge: "Recommended today",
+  rec_btn: "See today's recommended tasks",
+  rec_added: "Today's recommended tasks are on the list.",
+  rec_all: "Today's recommended tasks are already on the list.",
+  why: "Why?",
+  sources: "Sources",
+  why_breath: "It is only a short pause to change gear before you start. It is not treatment or a clinical exercise, and you can always skip it. The ADHD-EU practical guide (an Erasmus+ project) lists mindfulness-based approaches among possible supports for adults with ADHD. It does not evaluate this screen.",
+  why_one: "One thing at a time lowers the load on executive functions. Barkley describes ADHD as a problem in those functions, including working memory and getting started. In the interviews by Chen, Meng and Nie, initiation block is central. So this screen asks only for the task for now.",
+  why_two: "The tiny first step is there to get from intention to action. Gollwitzer showed that a concrete plan (when X, I do Y) helps people start. CBT trials for adults with ADHD, such as Safren and colleagues, include organising strategies and breaking tasks into steps. You can rewrite the suggestion.",
+  why_focus: "In Barkley's account, ADHD makes it hard to feel time and to steer behaviour toward the future. Chen, Meng and Nie describe plans made for rare hyperfocus days, and little urgency until a deadline is on top of you. NICE includes, among environmental modifications, shorter periods of focus with movement breaks. That is why sessions last 2, 10 or 25 min, with the timer in plain view.",
+  why_nudge: "In the study by Chen, Meng and Nie, the people interviewed describe shame and self-blame when a plan fails, and they reject surveillance. If you leave, or if the page goes still, the light only dims and asks for a tap. Nothing is logged as a failure.",
+  why_cal: "The same interviews value progress markers that survive blank days, and not systems that punish a broken streak. The lights around each day are only a visible record of focus and of tasks done. An empty day does not erase the others, and there are no streaks to break.",
+  why_list: "Working memory is one of the executive functions Barkley links to ADHD: what is out of sight is hard to hold. NICE stresses structure in daily life and environmental modifications. The list gets tasks out of your head and keeps them in one place until they are done.",
+  why_goals: "A far-off deadline is hard to feel. NICE asks for a shared plan that takes the person's goals into account. A goal with a date gets a flag on the calendar, so the deadline stays visible, without counting delays.",
+  why_rec: "Choosing what to do now also asks for executive functions, and initiation block comes through clearly in the interviews by Chen, Meng and Nie. A small list for the day cuts that decision and offers short, concrete first steps, in the spirit of Gollwitzer's simple plans. NICE recommends structure in daily activities and, among environmental modifications, shorter focus periods with movement breaks. A meta-analysis by Yang and colleagues links acute exercise to a small effect on inhibitory control in adults with ADHD. That does not evaluate this list, and the app is not a treatment.",
+  why_privacy: "In the study by Chen, Meng and Nie, people reject surveillance and want to see, adjust and override what the tool suggests. So everything stays only in this browser. Nothing is inferred behind your back, and nothing is shared without you.",
+  src_chen: "Chen, Meng and Nie (2026), “Not Just Me and My To-Do List”",
+  src_nice: "NICE guideline NG87 (ADHD)",
+  src_barkley_ef: "Barkley (1997), executive functions and ADHD",
+  src_barkley_time: "Barkley (1997), self-regulation and time",
+  src_gollwitzer: "Gollwitzer (1999), implementation intentions",
+  src_safren: "Safren et al. (2010), CBT for adults with ADHD",
+  src_yang: "Yang et al. (2025), physical activity and inhibitory control",
+  src_adhdeu: "ADHD-EU, “Adult ADHD: A Practical Guide” (2024)",
 
   fs_mail: "Open the message and write only the first sentence. It can be ugly.",
   fs_call: "Find the number and leave it open on the screen. That's all.",
@@ -740,13 +800,13 @@ en: {
   ab_export: "Export my data",
   ab_wipe: "Delete everything",
   ab_wipe2: "Confirm: delete everything",
-  ab_wiped: "Everything deleted. You start with an empty list.",
+  ab_wiped: "Everything deleted. Today's recommended tasks are back.",
   ab_exported: "File exported.",
   ab_limits: "Limits",
   ab_l1: "The first step comes from keyword rules, not from AI.",
   ab_l2: "It has not yet been tested with people with ADHD.",
   ab_l3: "The 3D scene needs WebGL and a network to load the library. Without them, the simple view appears.",
-  ab_more: "The reading behind the design is in the repository's README.",
+  ab_more: "Each feature has a “Why?” note in the app, with sources. There is more context in the repository's README.",
   ab_repo: "See the repository",
   ab_cover: "Start screen",
   ab_team: "Team EnFoco: Leonardo Cagliero and Sofía Vázquez Furriel. Portugal Tech Week, Hackathon for a Cause, with Brainstorm.",
@@ -820,14 +880,56 @@ function normalise(o) {
   if (!DURATIONS.includes(s.min)) s.min = 10;
   return s;
 }
-/* first run: a small made-up list and two weeks of made-up lights, so the calendar is not empty */
+/* ADHD-friendly pool: tiny first steps, timeboxed, executive-function helpers.
+   A few are picked each day from the date, always in the same order for that day. */
+const REC_N = 6;
+const REC_POOL = [
+  L('Escolher 1 só prioridade do dia', 'Pick just 1 priority for the day'),
+  L('Preparar o espaço: despejar a secretária 5 min', 'Prep the space: clear the desk 5 min'),
+  L('Bloco de foco 25 min com o foquito', '25 min focus block with the little bulb'),
+  L('Beber água e mexer-te 3 min', 'Drink water and move for 3 min'),
+  L('Esvaziar a cabeça: anotar tudo o que está pendente 5 min', 'Empty your head: jot down everything pending 5 min'),
+  L('Responder a 1 mensagem pendente', 'Reply to 1 pending message'),
+  L('Pôr um alarme para a próxima pausa', 'Set an alarm for the next break'),
+  L('Rever a medicação ou a rotina, se fizer sentido', 'Check medication or routine, if it applies'),
+  L('Abrir a tarefa evitada e fazer só 2 min', 'Open the avoided task and do just 2 min'),
+  L('Juntar o que precisas num sítio só 5 min', 'Gather what you need in one place 5 min'),
+  L('Pausa de corpo: alongar ou caminhar 5 min', 'Body break: stretch or walk 5 min'),
+  L('Pomodoro curto: 10 min só numa coisa', 'Short pomodoro: 10 min on just one thing'),
+  L('Escrever o primeiro passo da tarefa mais difícil', 'Write the first step of the hardest task'),
+  L('Tirar 3 coisas do caminho 5 min', 'Move 3 things out of the way 5 min'),
+  L('Beber um copo de água agora', 'Drink a glass of water now'),
+  L('Marcar o próximo bloco de foco na agenda', 'Put the next focus block on the calendar'),
+  L('Partir uma tarefa grande em 3 passos minúsculos', 'Split a big task into 3 tiny steps'),
+  L('Fazer só o começo: abrir o ficheiro e o título', 'Just start: open the file and the title'),
+  L('15 min com um body double ou um temporizador', '15 min with a body double or a timer'),
+  L('Fechar separadores a mais e deixar só um 5 min', 'Close extra tabs and leave just one 5 min')
+];
+const normT = v => String(v || '').trim().toLowerCase();
+function titleKeys(t) {
+  if (t && typeof t === 'object') return [t.pt, t.en].map(normT).filter(Boolean);
+  return [normT(t)];
+}
+function sameTitle(a, b) {
+  const A = new Set(titleKeys(a));
+  return titleKeys(b).some(k => A.has(k));
+}
+function recOfDay(d = dayKey()) {
+  let h = 0;
+  for (let i = 0; i < d.length; i++) h = Math.imul(31, h) + d.charCodeAt(i) | 0;
+  const start = Math.abs(h) % REC_POOL.length;
+  return Array.from({ length: REC_N }, (_, i) => REC_POOL[(start + i) % REC_POOL.length]);
+}
+const isTodayRec = x => recOfDay().some(t => sameTitle(x.t, t));
+const pendingHasTitle = t => S.tasks.some(x => !x.done && sameTitle(x.t, t));
+function addRecOfDay() {
+  let n = 0;
+  recOfDay().slice().reverse().forEach(t => { if (!pendingHasTitle(t)) { S.tasks.unshift(mk({ t })); n++; } });
+  return n;
+}
+/* first run: today's recommended tasks, plus two weeks of made-up lights so the calendar is not empty */
 function seed() {
-  S.tasks = [
-    mk({ t: L('Responder ao e-mail da senhoria', "Reply to the landlady's email") }),
-    mk({ t: L('Arrumar a secretária', 'Tidy the desk') }),
-    mk({ t: L('Ligar à junta de freguesia', 'Call the parish council') }),
-    mk({ t: L('Regar as plantas', 'Water the plants'), done: true, date: dayKey() })
-  ];
+  S.tasks = recOfDay().map(t => mk({ t }));
   S.goals = [{ id: uid(), t: L('Entregar a candidatura', 'Submit the application'), due: dayPlus(9), done: false }];
   S.focus = {};
   [50, 20, 0, 75, 35, 10, 0, 0, 60, 25, 40, 0, 15, 30].forEach((m, i) => { if (m) S.focus[dayPlus(-(i + 1))] = m * 60; });
@@ -836,7 +938,11 @@ function seed() {
 function load() {
   let s = null;
   try { s = JSON.parse(store.get(KEY) || 'null'); } catch (e) { s = null; }
-  if (s && typeof s === 'object' && Array.isArray(s.tasks)) { S = normalise(s); return; }
+  if (s && typeof s === 'object' && Array.isArray(s.tasks)) {
+    S = normalise(s);
+    if (!S.tasks.length) { addRecOfDay(); save(); }
+    return;
+  }
   S = fresh(); seed(); save();
 }
 
@@ -993,6 +1099,23 @@ function paintBreath() {
 }
 
 /* ---------- views ---------- */
+const SRC = {
+  chen: 'https://arxiv.org/abs/2603.17258',
+  nice: 'https://www.nice.org.uk/guidance/NG87',
+  barkley_ef: 'https://pubmed.ncbi.nlm.nih.gov/9000892/',
+  barkley_time: 'https://pubmed.ncbi.nlm.nih.gov/9276836/',
+  gollwitzer: 'https://www.socmot.uni-konstanz.de/sites/default/files/99_Gollwitzer_Implementation_Intentions.pdf',
+  safren: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3641654/',
+  yang: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11907377/',
+  adhdeu: 'https://adhdireland.ie/wp-content/uploads/2024/09/Erasmus-Shared-Practices-1.pdf'
+};
+const keep = k => `data-keep="${k}"${ui.open[k] ? ' open' : ''}`;
+/* research note: a short paragraph and compact source links, same pattern as v3 */
+function why(id, items) {
+  return `<details class="why" ${keep('why_' + id)}><summary>${t('why')}</summary>${items.map(([k, srcs]) =>
+    `<p>${t('why_' + k)}</p><p class="src">${t('sources')}: ${srcs.map(s => `<a href="${SRC[s]}" target="_blank" rel="noopener noreferrer">${t('src_' + s)}</a>`).join('; ')}</p>`).join('')}</details>`;
+}
+
 function vCover() {
   return `<div class="cover-icon">${LOGO}</div>
     <h1 class="wordmark" tabindex="-1">${LOGO}<span>EnFoco</span></h1>
@@ -1013,6 +1136,7 @@ function vBreath() {
     <p class="b-cycle" id="b-cycle">${t('b_cycle', { n: B.cycle + 1, total: CYCLES })}</p>
     <button type="button" class="btn secondary" data-act="skipBreath">${t('b_skip')}</button>
     <label class="switch"><input type="checkbox" data-chg="skipAlways"${S.skipBreath ? ' checked' : ''}><i aria-hidden="true"></i><span>${t('b_never')}</span></label>
+    ${why('breath', [['breath', ['adhdeu']]])}
   </div>`;
 }
 /* the core loop: pick -> ready -> focus -> done */
@@ -1027,7 +1151,8 @@ function loopHTML() {
       <div class="seg-row"><span class="label" id="l-min">${t('rd_min')}</span>
         <div class="seg" role="group" aria-labelledby="l-min">${DURATIONS.map(n => `<button type="button" data-act="dur" data-v="${n}" aria-pressed="${S.min === n}">${t('rd_min_v', { n })}</button>`).join('')}</div></div>
       <button type="button" class="btn primary huge" data-act="start">${ICON.bulb}${t('rd_start')}</button>
-      <button type="button" class="btn text" data-act="other">${t('rd_other')}</button>`;
+      <button type="button" class="btn text" data-act="other">${t('rd_other')}</button>
+      ${why('ready', [['two', ['gollwitzer', 'safren']], ['focus', ['barkley_time', 'chen', 'nice']]])}`;
   }
   if (ui.step === 'focus' && T.id && byId(T.id)) {
     const k = byId(T.id), pct = T.total ? 100 * (1 - T.left / T.total) : 0;
@@ -1056,7 +1181,8 @@ function loopHTML() {
       ${next ? `<p class="label">${t('dn_next')}</p>
         <button type="button" class="btn primary huge" data-act="next" data-id="${next.id}">${ICON.bulb}<span class="clip">${t('dn_start', { t: esc(tx(next.t)) })}</span></button>
         <button type="button" class="btn text" data-act="other">${t('dn_other')}</button>`
-        : `<p class="hint">${t('dn_none')}</p><button type="button" class="btn secondary" data-act="other">${t('dn_write')}</button>`}`;
+        : `<p class="hint">${t('dn_none')}</p><button type="button" class="btn secondary" data-act="other">${t('dn_write')}</button>`}
+      ${why('done', [['cal', ['chen']], ['nudge', ['chen']]])}`;
   }
   return `<h1 tabindex="-1">${t('pk_title')}</h1>
     <form data-form="now" autocomplete="off">
@@ -1064,9 +1190,9 @@ function loopHTML() {
       <div class="field-go big"><input id="now-in" name="t" type="text" maxlength="90" placeholder="${t('pk_ph')}" enterkeyhint="go" required><button type="submit" aria-label="${t('pk_go')}">${ICON.arrow}</button></div>
     </form>
     ${p.length ? `<p class="label">${t('pk_or')}</p>
-      <ul class="picks">${p.slice(0, 3).map(k => `<li><button type="button" class="pick" data-act="pick" data-id="${k.id}"><span>${esc(tx(k.t))}</span>${ICON.arrow}</button></li>`).join('')}</ul>` : ''}`;
+      <ul class="picks">${p.slice(0, 3).map(k => `<li><button type="button" class="pick" data-act="pick" data-id="${k.id}"><span class="pick-t">${esc(tx(k.t))}${isTodayRec(k) ? `<span class="badge-rec">${t('rec_badge')}</span>` : ''}</span>${ICON.arrow}</button></li>`).join('')}</ul>` : ''}
+    ${why('pick', [['one', ['barkley_ef', 'chen']]])}`;
 }
-const keep = k => `data-keep="${k}"${ui.open[k] ? ' open' : ''}`;
 function listHTML() {
   const p = pending(), n = p.length, doneToday = dayStats(dayKey()).done, goals = S.goals.filter(g => !g.done);
   return `<details class="drawer" ${keep('list')}>
@@ -1074,9 +1200,10 @@ function listHTML() {
     <div class="drawer-in">
       ${S.sample ? `<p class="hint">${t('ls_sample')}</p>` : ''}
       <h2>${t('ls_tasks')}</h2>
-      ${n ? `<ul class="rows">${p.map(x => { const title = esc(tx(x.t)); return `<li><span class="row-t">${title}</span>
+      ${n ? `<ul class="rows">${p.map(x => { const title = esc(tx(x.t)); return `<li><span class="row-t"><span>${title}</span>${isTodayRec(x) ? `<span class="badge-rec">${t('rec_badge')}</span>` : ''}</span>
           <button type="button" class="btn secondary mini" data-act="pick" data-id="${x.id}" aria-label="${t('ls_now')}: ${title}">${t('ls_now')}</button>
           <button type="button" class="icon-btn bare" data-act="del" data-id="${x.id}" aria-label="${t('remove')}: ${title}">${ICON.x}</button></li>`; }).join('')}</ul>` : `<p class="hint">${t('ls_none')}</p>`}
+      <button type="button" class="btn secondary rec-btn" data-act="recToday">${t('rec_btn')}</button>
       <form data-form="later" autocomplete="off"><label class="sr" for="ls-in">${t('ls_add_in')}</label>
         <div class="field-go"><input id="ls-in" name="t" type="text" maxlength="90" placeholder="${t('ls_add_ph')}" required><button type="submit" aria-label="${t('ls_add')}">${ICON.plus}</button></div></form>
       ${doneToday ? `<p class="hint">${t('ls_done', { n: doneToday })}</p>` : ''}
@@ -1090,6 +1217,7 @@ function listHTML() {
         <label class="sr" for="go-date">${t('go_date')}</label><input id="go-date" class="input" name="due" type="date" min="${dayKey()}">
         <button type="submit" class="btn secondary">${t('go_add')}</button>
       </form>
+      ${why('list', [['rec', ['chen', 'gollwitzer', 'nice', 'yang']], ['list', ['barkley_ef', 'nice']], ['goals', ['nice', 'chen']]])}
     </div></details>`;
 }
 /* the month sign: a stone slab at the head of the calendar */
@@ -1100,7 +1228,7 @@ function calSign() {
     <button type="button" class="icon-btn" data-act="monthShift" data-v="1" aria-label="${t('cal_next')}">${ICON.chevR}</button></div>
     <div id="cal-flat"></div>`;
 }
-const dayPlate = () => `<h2>${t('day_title')}</h2><p>${daySum()}</p><p class="hint">${t('day_legend')}</p>`;
+const dayPlate = () => `<h2>${t('day_title')}</h2><p>${daySum()}</p><p class="hint">${t('day_legend')}</p>${why('day', [['cal', ['chen']]])}`;
 const PLACES = [['loop', 'bulb', 'pl_loop'], ['cal', 'cal', 'pl_cal'], ['list', 'list', 'pl_list']];
 const daySum = () => { const d = ui.day, st = dayStats(d); return t('day_sum', { day: d === dayKey() ? cap(t('d_today')) : fmtDate(d), min: st.min, done: st.done }); };
 function sceneStatus() {
@@ -1114,6 +1242,7 @@ function vAbout() {
     <h1 tabindex="-1">${t('ab_title')}</h1>
     <p class="lede">${t('ab_what')}</p>
     <section class="sec"><h2>${t('ab_data')}</h2><ul class="bullets"><li>${t('ab_d1')}</li><li>${t('ab_d2')}</li><li>${t('ab_d3')}</li><li>${t('ab_d4')}</li></ul>
+      ${why('privacy', [['privacy', ['chen']], ['nudge', ['chen']]])}
       <div class="pair"><button type="button" class="btn secondary" data-act="export">${t('ab_export')}</button><button type="button" class="btn text danger" data-act="wipe">${ui.wipe ? t('ab_wipe2') : t('ab_wipe')}</button></div></section>
     <section class="sec"><h2>${t('ab_prefs')}</h2>
       <div class="seg-row"><span class="label">${t('ab_phase')}</span>${seg('phase', S.phaseMode, [['auto', t('ph_auto')]].concat(PHASES.map(p => [p, `<span class="ico">${ICON[p]}${t('ph_' + p)}</span>`])), t('ab_phase'))}</div>
@@ -1241,10 +1370,16 @@ const ACT = {
   go: d => goPlace(d.v),
   motion: d => { S.motion = d.v; save(); render(); },
   export: () => exportData(),
+  recToday: () => {
+    const n = addRecOfDay();
+    if (n) { save(); ui.open.list = true; toast(t('rec_added')); render(); goPlace('list'); }
+    else toast(t('rec_all'));
+  },
   wipe: () => {
     if (!ui.wipe) { ui.wipe = true; render(); setTimeout(() => { if (ui.wipe) { ui.wipe = false; if (ui.view === 'about') render(); } }, 6000); return; }
     endSession(); store.del(KEY);
     S = Object.assign(fresh(), { lang: S.lang, phaseMode: S.phaseMode, motion: S.motion });
+    addRecOfDay();
     Object.assign(ui, { wipe: false, step: 'pick', task: null, fly: null }); save(); toast(t('ab_wiped')); render();
   }
 };
