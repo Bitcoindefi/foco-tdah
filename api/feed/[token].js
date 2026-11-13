@@ -105,8 +105,15 @@ function toIcs(payload) {
     lines.push('UID:' + it.uid);
     lines.push('DTSTAMP:' + now);
     if (it.startTime) {
+      let endDate = it.end || it.start, endTime = it.endTime;
+      if (!endTime) {
+        const [h, m] = it.startTime.split(':').map(Number);
+        const add = h + 1;
+        if (add >= 24) { endDate = nextDate(it.start); endTime = pad(add - 24) + ':' + pad(m); }
+        else endTime = pad(add) + ':' + pad(m);
+      }
       lines.push('DTSTART:' + icsTime(it.start, it.startTime));
-      lines.push('DTEND:' + icsTime(it.end || it.start, it.endTime || it.startTime));
+      lines.push('DTEND:' + icsTime(endDate, endTime));
     } else {
       lines.push('DTSTART;VALUE=DATE:' + icsDate(it.start));
       lines.push('DTEND;VALUE=DATE:' + icsDate(it.end || nextDate(it.start)));

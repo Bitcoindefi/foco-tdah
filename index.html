@@ -1916,8 +1916,15 @@ function itemsToIcs(items, calName) {
     lines.push('UID:' + uid);
     lines.push('DTSTAMP:' + now);
     if (it.startTime) {
+      let endDate = it.end || it.start, endTime = it.endTime;
+      if (!endTime) {
+        const [h, m] = it.startTime.split(':').map(Number);
+        const add = h + 1;
+        if (add >= 24) { endDate = addDaysKey(it.start, 1); endTime = pad(add - 24) + ':' + pad(m); }
+        else endTime = pad(add) + ':' + pad(m);
+      }
       lines.push('DTSTART:' + compactDate(it.start) + 'T' + it.startTime.replace(':', '') + '00');
-      lines.push('DTEND:' + compactDate(it.end || it.start) + 'T' + (it.endTime || it.startTime).replace(':', '') + '00');
+      lines.push('DTEND:' + compactDate(endDate) + 'T' + endTime.replace(':', '') + '00');
     } else {
       lines.push('DTSTART;VALUE=DATE:' + compactDate(it.start));
       lines.push('DTEND;VALUE=DATE:' + (it.end ? compactDate(it.end) : nextDay(it.start)));
